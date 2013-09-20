@@ -19,7 +19,7 @@ require("ember-routing/system/dsl");
   @namespace Ember
   @extends Ember.Object
 */
-Ember.Router = Ember.Object.extend({
+Ember.Router = Ember.Object.extend(Ember.Evented, {
   location: 'hash',
 
   init: function() {
@@ -52,7 +52,7 @@ Ember.Router = Ember.Object.extend({
     this.handleURL(location.getURL());
   },
 
-  didTransition: function(infos) {
+  finalizeTransition: function(infos) {
     var appController = this.container.lookup('controller:application'),
         path = Ember.Router._routePath(infos);
 
@@ -63,6 +63,12 @@ Ember.Router = Ember.Object.extend({
     set(appController, 'currentRouteName', infos[infos.length - 1].name);
 
     this.notifyPropertyChange('url');
+
+    if (Ember.FEATURES.isEnabled("ember-routing-didTransition-hook")) {
+      // Put this in the runloop so url will be accurate. Seems
+      // less surprising than didTransition being out of sync.
+      Ember.run.once(this, this.trigger, 'didTransition');
+    }
 
     if (get(this, 'namespace').LOG_TRANSITIONS) {
       Ember.Logger.log("Transitioned into '" + path + "'");
@@ -211,7 +217,7 @@ Ember.Router = Ember.Object.extend({
     }
 
     router.didTransition = function(infos) {
-      emberRouter.didTransition(infos);
+      emberRouter.finalizeTransition(infos);
     };
   },
 
