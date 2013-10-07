@@ -120,7 +120,7 @@ function giveMethodSuper(obj, key, method, values, descs) {
   superMethod = superMethod || obj[key];
 
   // Only wrap the new method if the original method was a function
-  if ('function' !== typeof superMethod) {
+  if ('function' !== typeof superMethod && superMethod) {
     return method;
   }
 
