@@ -58,6 +58,14 @@ test('warn on attempts to get a property path of undefined', function() {
   }, /Cannot call get with 'aProperty.on.aPath' on an undefined object/);
 });
 
+test('returns null when fetching a complex local path on a null context', function() {
+  equal(get(null, 'aProperty.on.aPath'), null);
+});
+
+test('returns null when fetching a simple local path on a null context', function() {
+  equal(get(null, 'aProperty'), null);
+});
+
 test('warn on attempts to get a falsy property', function() {
   var obj = {};
   expectAssertion(function() {

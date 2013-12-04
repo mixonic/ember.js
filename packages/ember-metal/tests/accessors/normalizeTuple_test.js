@@ -73,11 +73,8 @@ test('[obj, this.Foo.bar] -> [obj, Foo.bar]', function() {
 // ..........................................................
 // GLOBAL PATHS
 //
-
-test('[obj, Foo] -> [obj, Foo]', function() {
-  expectDeprecation(function(){
-    deepEqual(normalizeTuple(obj, 'Foo'), [obj, 'Foo']);
-  }, "normalizeTuple will return 'Foo' as a non-global. This behavior will change in the future (issue #3852)");
+test('[obj, Foo] -> [Ember.lookup, Foo]', function() {
+  deepEqual(normalizeTuple(obj, 'Foo'), [Ember.lookup, 'Foo']);
 });
 
 test('[obj, Foo.bar] -> [Foo, bar]', function() {
@@ -92,12 +89,26 @@ test('[obj, $foo.bar.baz] -> [$foo, bar.baz]', function() {
 // NO TARGET
 //
 
-test('[null, Foo] -> EXCEPTION', function() {
-  raises(function() {
-    normalizeTuple(null, 'Foo');
-  }, Error);
+test('[null, Foo] -> [Ember.lookup, Foo]', function() {
+  deepEqual(normalizeTuple(null, 'Foo'), [Ember.lookup, 'Foo']);
 });
 
 test('[null, Foo.bar] -> [Foo, bar]', function() {
   deepEqual(normalizeTuple(null, 'Foo.bar'), [Foo, 'bar']);
+});
+
+test("[null, foo] -> [undefined, '']", function() {
+  deepEqual(normalizeTuple(null, 'foo'), [undefined, '']);
+});
+
+test("[null, foo.bar] -> [undefined, '']", function() {
+  deepEqual(normalizeTuple(null, 'foo'), [undefined, '']);
+});
+
+test('[null, $foo] -> [Ember.lookup, $foo]', function() {
+  deepEqual(normalizeTuple(null, '$foo'), [Ember.lookup, '$foo']);
+});
+
+test('[null, $foo.bar] -> [$foo, bar]', function() {
+  deepEqual(normalizeTuple(null, '$foo.bar'), [$foo, 'bar']);
 });

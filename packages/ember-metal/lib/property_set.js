@@ -7,11 +7,10 @@ import {
 import { defineProperty } from "ember-metal/properties";
 import EmberError from "ember-metal/error";
 import {
-  isPath
+  isPath,
+  isGlobalPath
 } from "ember-metal/path_cache";
 import { hasPropertyAccessors } from "ember-metal/platform";
-
-var IS_GLOBAL = /^([A-Z$]|([0-9][A-Z$]))/;
 
 /**
   Sets the value of a property on an object, respecting computed properties
@@ -28,15 +27,15 @@ var IS_GLOBAL = /^([A-Z$]|([0-9][A-Z$]))/;
 */
 var set = function set(obj, keyName, value, tolerant) {
   if (typeof obj === 'string') {
-    Ember.assert("Path '" + obj + "' must be global if no obj is given.", IS_GLOBAL.test(obj));
+    Ember.assert("Path '" + obj + "' must be global if no obj is given.", isGlobalPath(obj));
     value = keyName;
     keyName = obj;
-    obj = null;
+    obj = Ember.lookup;
   }
 
   Ember.assert("Cannot call set with "+ keyName +" key.", !!keyName);
 
-  if (!obj) {
+  if (obj === Ember.lookup) {
     return setPath(obj, keyName, value, tolerant);
   }
 
@@ -44,7 +43,7 @@ var set = function set(obj, keyName, value, tolerant) {
   var desc = meta && meta.descs[keyName];
   var isUnknown, currentValue;
 
-  if (desc === undefined && isPath(keyName)) {
+  if ((!obj || desc === undefined) && isPath(keyName)) {
     return setPath(obj, keyName, value, tolerant);
   }
 

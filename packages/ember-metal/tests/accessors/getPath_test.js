@@ -11,7 +11,10 @@ var moduleOpts = {
           baz: { biff: 'BIFF' }
         }
       },
-      falseValue: false
+      falseValue: false,
+      Wuz: {
+        nar: 'foo'
+      }
     };
 
     window.Foo = {
@@ -20,20 +23,20 @@ var moduleOpts = {
       }
     };
 
+    window.aProp = 'aPropy';
+
     window.$foo = {
       bar: {
         baz: { biff: '$FOOBIFF' }
       }
     };
-
-    window.localPathGlobal = 5;
   },
 
   teardown: function() {
     obj = undefined;
     window.Foo = undefined;
+    window.aProp = undefined;
     window.$foo = undefined;
-    window.localPathGlobal = undefined;
   }
 };
 
@@ -59,39 +62,66 @@ test('[obj, this.foo.bar] -> obj.foo.bar', function() {
   deepEqual(get(obj, 'this.foo.bar'), obj.foo.bar);
 });
 
-test('[obj, this.Foo.bar] -> (null)', function() {
-  deepEqual(get(obj, 'this.Foo.bar'), undefined);
+test('[obj, this.Foo.bar] -> (undefined)', function() {
+  equal(get(obj, 'this.Foo.bar'), undefined);
 });
 
-test('[obj, falseValue.notDefined] -> (null)', function() {
-  deepEqual(get(obj, 'falseValue.notDefined'), undefined);
+test('[obj, falseValue.notDefined] -> (undefined)', function() {
+  equal(get(obj, 'falseValue.notDefined'), undefined);
 });
 
 // ..........................................................
-// LOCAL PATHS WITH NO TARGET DEPRECATION
+// GLOBAL PATHS TREATED LOCAL WITH GET
 //
 
-test('[null, length] returning data is deprecated', function() {
-  expectDeprecation(function(){
-    equal(5, Ember.get(null, 'localPathGlobal'));
-  }, "Ember.get fetched 'localPathGlobal' from the global context. This behavior will change in the future (issue #3852)");
+test('[obj, Wuz] -> obj.Wuz', function() {
+  deepEqual(get(obj, 'Wuz'), obj.Wuz);
 });
 
-test('[length] returning data is deprecated', function() {
-  expectDeprecation(function(){
-    equal(5, Ember.get('localPathGlobal'));
-  }, "Ember.get fetched 'localPathGlobal' from the global context. This behavior will change in the future (issue #3852)");
+test('[obj, Wuz.nar] -> obj.Wuz.nar', function() {
+  deepEqual(get(obj, 'Wuz.nar'), obj.Wuz.nar);
+});
+
+test('[obj, Foo] -> (undefined)', function() {
+  equal(get(obj, 'Foo'), undefined);
+});
+
+test('[obj, Foo.bar] -> (undefined)', function() {
+  equal(get(obj, 'Foo.bar'), undefined);
+});
+
+// ..........................................................
+// NULL TARGET
+//
+
+test('[null, Foo] -> Foo', function() {
+  equal(get(null, 'Foo'), Foo);
+});
+
+test('[null, Foo.bar] -> Foo.bar', function() {
+  deepEqual(get(null, 'Foo.bar'), Foo.bar);
+});
+
+test('[null, $foo] -> $foo', function() {
+  equal(get(null, '$foo'), window.$foo);
+});
+
+test('[null, aProp] -> null', function() {
+  equal(get(null, 'aProp'), null);
 });
 
 // ..........................................................
 // NO TARGET
 //
 
-test('[null, Foo] -> Foo', function() {
+test('[Foo] -> Foo', function() {
   deepEqual(get('Foo'), Foo);
 });
 
-test('[null, Foo.bar] -> Foo.bar', function() {
-  deepEqual(get('Foo.bar'), Foo.bar);
+test('[aProp] -> aProp', function() {
+  deepEqual(get('aProp'), window.aProp);
 });
 
+test('[Foo.bar] -> Foo.bar', function() {
+  deepEqual(get('Foo.bar'), Foo.bar);
+});

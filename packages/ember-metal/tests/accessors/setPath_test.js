@@ -94,12 +94,9 @@ QUnit.module("set with path - deprecated", {
 });
 
 test('[null, bla] gives a proper exception message', function() {
-  var exceptionMessage = 'Property set failed: object in path \"bla\" could not be found or was destroyed.';
-  try {
+  expectAssertion(function(){
     set(null, 'bla', "BAM");
-  } catch(ex) {
-    equal(ex.message, exceptionMessage);
-  }
+  }, /You need to provide an object and key to `set`/);
 });
 
 test('[obj, bla.bla] gives a proper exception message', function() {
