@@ -1378,3 +1378,108 @@ Ember.computed.defaultTo = function(defaultPath) {
   });
 };
 
+if (Ember.FEATURES.isEnabled('computed-slice')) {
+/**
+  Returns a sliced array
+
+  A computed property that slices an array. Adheres to the same
+  syntax of Array.slice as closely as possible.
+
+  Example
+
+  ```javascript
+  App.TodoList = Ember.Object.extend({
+    topTodos: Ember.computed.slice('todos', 0, 2)
+  });
+
+  var todoList = App.TodoList.create({todos: ["feed the dog", "write code", "clean the kitchen"]});
+  todoList.get('topTodos'); // ["feed the dog", "write code"]
+  todoList.get('todos').insertAt(0, "put out the fire");
+  todoList.get('topTodos'); // ["put out the fire", "feed the dog"]
+  ```
+
+  @method computed.slice
+  @for Ember
+  @param {String} dependentKey
+  @return {Ember.ComputedProperty} a slice of the dependant array
+*/
+Ember.computed.slice = function(dependentKey, begin, end) {
+  var setup = false,
+      dest = Ember.A([]);
+
+  // Return a computed property that has no dependencies.
+  // Instead, it is always the same array. On first call,
+  // add an observer to the dependent-key array that
+  // causes the slice to recomputed and notify as is
+  // required.
+  return Ember.computed(function(key){
+    if (!setup) {
+      setup = true;
+      computeSliceChanges.call(this, get(this, dependentKey), dest, begin, end, false);
+      Ember.addObserver(this, dependentKey+'.[]', function(){
+        computeSliceChanges.call(this, get(this, dependentKey), dest, begin, end, true);
+      });
+    }
+    return dest;
+  }).property();
+};
+}
+
+function computeSliceChanges(source, dest, begin, end, notify){
+  // If the source is null or otherwise not an array
+  // use an empty array to empty the dest.
+  if (!(source instanceof Array)) {
+    source = [];
+  }
+
+  var operations = [],
+      sourceLength = get(source, 'length'),
+      destLength = get(dest, 'length'),
+      // Normalize negative indexes to positive indexes.
+      beginIndex = begin >= 0 ? begin : sourceLength + begin,
+      endIndex = end >= 0 ? end : sourceLength + end,
+      // Max number of elements in the slice
+      sliceLength = endIndex - beginIndex;
+
+  // Walk indexes. Abort if we go past the proposed length of
+  // the slice or length of the source array. Update dest if
+  // the index is new for dest, or if the values at an index differ.
+  var index = 0;
+  while (index<sliceLength && index+beginIndex<sourceLength) {
+    if (index >= destLength || dest[index] !== source[index+beginIndex]) {
+      operations.push([setArrayIndex, index, source[index+beginIndex]]);
+    }
+    index++;
+  }
+
+  // Trim any excess on the dest after the index we
+  // stopped at.
+  if (destLength > index) {
+    operations.push([dest.removeAt, index, (destLength-index)]);
+  }
+
+  // If there are no operations, there is nothing left
+  // to do. The dest has not changed.
+  if (operations.length <= 0) { return; }
+
+  if (notify) {
+    dest.propertyWillChange('[]');
+    dest.propertyWillChange('@each');
+  }
+  // Iterate the operations, and run each operation.
+  // Using an array of operations allows us to only
+  // notify of change and make changes if they must be
+  // made.
+  for (var o=0;o<operations.length;o++){
+    var fn = operations[o].shift();
+    fn.apply(dest, operations[o]);
+  }
+  if (notify) {
+    dest.propertyDidChange('@each');
+    dest.propertyDidChange('[]');
+  }
+}
+
+function setArrayIndex(index,value) {
+  this[index] = value;
+}

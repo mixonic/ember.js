@@ -14,6 +14,7 @@
     "ember-testing-routing-helpers": true,
     "ember-testing-triggerEvent-helper": true,
     "computed-read-only": true,
+    "computed-slice": null,
     "composable-computed-properties": null,
     "ember-routing-drop-deprecated-action-style": null,
     "ember-metal-is-blank": true,
