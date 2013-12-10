@@ -275,6 +275,7 @@ DependentArraysObserver.prototype = {
         itemPropertyKeys = this.cp._itemPropertyKeys[dependentKey],
         length = get(dependentArray, 'length'),
         normalizedIndex = normalizeIndex(index, length, addedCount),
+
         changeMeta,
         observerContext;
 

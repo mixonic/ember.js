@@ -743,3 +743,68 @@ Ember.computed.sort = function (itemsKey, sortDefinition) {
     }
   });
 };
+
+if (Ember.FEATURES.isEnabled('reduce-computed-slice')) {
+/**
+  Returns a sliced array
+
+  A computed property that slices an array. Adheres to the same
+  syntax of Array.slice as closely as possible.
+
+  Example
+
+  ```javascript
+  App.TodoList = Ember.Object.extend({
+    topTodos: Ember.computed.slice('todos', 0, 2)
+  });
+
+  var todoList = App.TodoList.create({todos: ["feed the dog", "write code", "clean the kitchen"]});
+  todoList.get('topTodos'); // ["feed the dog", "write code"]
+  todoList.get('todos').insertAt(0, "put out the fire");
+  todoList.get('topTodos'); // ["put out the fire", "feed the dog"]
+  ```
+
+  @method computed.slice
+  @for Ember
+  @param {String} dependentKey
+  @return {Ember.ComputedProperty} a slice of the dependant array
+*/
+Ember.computed.slice = function(itemsKey, begin, end) {
+
+  var currentOperation = 0;
+
+  return Ember.arrayComputed(itemsKey, {
+
+    addedItem: function (array, item, changeMeta, instanceMeta) {
+      var destIndex = changeMeta.index-begin;
+      if (destIndex < 1) {
+        if (changeMeta.arrayChanged.length > begin) {
+          array.unshift(changeMeta.arrayChanged[begin]);
+        }
+      } else if (destIndex < (end-begin)) {
+        array.insertAt(destIndex, item);
+      }
+      if (array.length > end-begin) array.pop();
+      return array;
+    },
+
+    removedItem: function (array, item, changeMeta, instanceMeta) {
+      var destIndex = changeMeta.index-begin;
+      if (currentOperation > 1) {
+        currentOperation--;
+      } else {
+        currentOperation = changeMeta.changeCount;
+      }
+      if (destIndex < 1) {
+        array.shift();
+      } else if (destIndex < (end-begin)) {
+        array.removeAt(destIndex, 1);
+      }
+      if (array.length < end-begin && changeMeta.arrayChanged.length > end-currentOperation) {
+        array.push(changeMeta.arrayChanged[end-currentOperation]);
+      }
+      return array;
+    }
+  });
+};
+}

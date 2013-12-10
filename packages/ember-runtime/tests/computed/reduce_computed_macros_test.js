@@ -1349,3 +1349,253 @@ test('updates when array is modified', function(){
 
   equal(sum(), 6, 'recomputes when elements are removed');
 });
+
+if (Ember.FEATURES.isEnabled('reduce-computed-slice')) {
+module('Ember.computed.slice', {
+  setup: function() {
+    Ember.run(function() {
+      obj = Ember.Object.createWithMixins({
+        array: Ember.A([1, 2, 3, 4, 5])
+      });
+    });
+  },
+  teardown: function() {
+    Ember.run(obj, obj.destroy);
+  }
+});
+
+test("it fires observers only for change", function() {
+  expect(8);
+
+  obj.reopen({
+    slicedRoot: Ember.computed.slice('array', 0, 2)
+  });
+
+  deepEqual(obj.get('array'), [1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedRoot'), [1, 2]);
+
+  function assertChange(){
+    ok(true, "Calls observer on change.");
+  }
+  obj.addObserver('slicedRoot.[]', assertChange);
+  obj.addObserver('slicedRoot.@each', assertChange);
+  obj.get('array').insertAt(1, 1);
+  obj.removeObserver('slicedRoot.@each', assertChange);
+  obj.removeObserver('slicedRoot.[]', assertChange);
+
+  deepEqual(obj.get('array'), [1, 1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedRoot'), [1, 1]);
+
+  function assertNoChange(){
+    ok(false, "Does not call observer for changes outside the slice.");
+  }
+
+  obj.addObserver('slicedRoot.[]', assertNoChange);
+  obj.addObserver('slicedRoot.@each', assertNoChange);
+  console.log('will push');
+  obj.get('array').pushObject(6);
+  console.log('have pushed');
+  obj.removeObserver('slicedRoot.@each', assertNoChange);
+  obj.removeObserver('slicedRoot.[]', assertNoChange);
+
+  deepEqual(obj.get('array'), [1, 1, 2, 3, 4, 5, 6]);
+  deepEqual(obj.get('slicedRoot'), [1, 1]);
+});
+
+test("it slices the array", function() {
+  expect(12);
+
+  obj.reopen({
+    slicedRoot: Ember.computed.slice('array', 0, 2)
+  });
+
+  deepEqual(obj.get('array'), [1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedRoot'), [1, 2]);
+
+  obj.get('array').insertAt(0, 0);
+
+  deepEqual(obj.get('array'), [0, 1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedRoot'), [0, 1]);
+
+  obj.get('array').removeAt(1, 5);
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedRoot'), [0]);
+
+  obj.get('array').insertAt(1, 1);
+
+  deepEqual(obj.get('array'), [0, 1]);
+  deepEqual(obj.get('slicedRoot'), [0, 1]);
+
+  obj.get('array').pushObject(2);
+
+  deepEqual(obj.get('array'), [0, 1, 2]);
+  deepEqual(obj.get('slicedRoot'), [0, 1]);
+
+  obj.get('array').removeAt(1, 2);
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedRoot'), [0]);
+});
+
+test("it slices the array from the middle", function() {
+  expect(12);
+
+  obj.reopen({
+    slicedMiddle: Ember.computed.slice('array', 2, 5)
+  });
+
+  deepEqual(obj.get('array'), [1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedMiddle'), [3, 4, 5]);
+
+  console.log('insert 0 at 0');
+  obj.get('array').insertAt(0, 0);
+  console.log('done insert 0 at 0');
+
+  deepEqual(obj.get('array'), [0, 1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedMiddle'), [2, 3, 4]);
+
+  console.log('remove several');
+  obj.get('array').removeAt(1, 5);
+  console.log('done remove several');
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedMiddle'), []);
+
+  obj.get('array').insertAt(1, 1);
+
+  deepEqual(obj.get('array'), [0, 1]);
+  deepEqual(obj.get('slicedMiddle'), []);
+
+  obj.get('array').pushObject(2);
+
+  deepEqual(obj.get('array'), [0, 1, 2]);
+  deepEqual(obj.get('slicedMiddle'), [2]);
+
+  obj.get('array').removeAt(1, 2);
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedMiddle'), []);
+});
+
+test("it speaks negative slice arguments", function() {
+  expect(6);
+
+  obj.reopen({
+    slicedNegative: Ember.computed.slice('array', 2, -1)
+  });
+
+  deepEqual(obj.get('array'), [1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedNegative'), [3, 4]);
+
+  obj.get('array').insertAt(0, 0);
+
+  deepEqual(obj.get('array'), [0, 1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedNegative'), [2, 3, 4]);
+
+  obj.get('array').removeAt(3, 2);
+
+  deepEqual(obj.get('array'), [0, 1, 2, 5]);
+  deepEqual(obj.get('slicedNegative'), [2]);
+
+  obj.get('array').removeAt(1, 4);
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedNegative'), []);
+});
+
+test("it grows the array", function() {
+  expect(8);
+
+  obj.reopen({
+    array: Ember.A([1,2]),
+    slicedRoot: Ember.computed.slice('array', 0, 4)
+  });
+
+  deepEqual(obj.get('array'), [1, 2]);
+  deepEqual(obj.get('slicedRoot'), [1, 2]);
+
+  obj.get('array').pushObject(3);
+
+  deepEqual(obj.get('array'), [1, 2, 3]);
+  deepEqual(obj.get('slicedRoot'), [1, 2, 3]);
+
+  obj.get('array').pushObject(4);
+
+  deepEqual(obj.get('array'), [1, 2, 3, 4]);
+  deepEqual(obj.get('slicedRoot'), [1, 2, 3, 4]);
+
+  obj.get('array').pushObject(5);
+
+  deepEqual(obj.get('array'), [1, 2, 3, 4, 5]);
+  deepEqual(obj.get('slicedRoot'), [1, 2, 3, 4]);
+});
+
+test("observes through change", function() {
+  expect(8);
+
+  obj.reopen({
+    array: null,
+    slicedRoot: Ember.computed.slice('array', 0, 2)
+  });
+
+  deepEqual(obj.get('array'), null);
+  deepEqual(obj.get('slicedRoot'), []);
+
+  Ember.run(function(){
+    // Setting a new value to an array computed requires
+    // a runloop.
+    obj.set('array', Ember.A([0]));
+  });
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedRoot'), [0]);
+
+  obj.get('array').pushObject(1);
+
+  deepEqual(obj.get('array'), [0, 1]);
+  deepEqual(obj.get('slicedRoot'), [0, 1]);
+
+  obj.get('array').pushObject(2);
+
+  deepEqual(obj.get('array'), [0, 1, 2]);
+  deepEqual(obj.get('slicedRoot'), [0, 1]);
+});
+
+test("observes indirectly", function() {
+  expect(10);
+
+  obj.reopen({
+    array: null,
+    slicedRoot: Ember.computed.slice('array', 0, 2)
+  });
+
+  deepEqual(obj.get('array'), null);
+  deepEqual(obj.get('slicedRoot'), []);
+
+  var array = Ember.A([0]);
+  Ember.run(function(){
+    // Setting a new value to an array computed requires
+    // a runloop.
+    obj.set('array', array);
+  });
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedRoot'), [0]);
+
+  array.pushObject(1);
+
+  deepEqual(obj.get('array'), [0, 1]);
+  deepEqual(obj.get('slicedRoot'), [0, 1]);
+
+  array.popObject();
+
+  deepEqual(obj.get('array'), [0]);
+  deepEqual(obj.get('slicedRoot'), [0]);
+
+  array.pushObject(2);
+
+  deepEqual(obj.get('array'), [0, 2]);
+  deepEqual(obj.get('slicedRoot'), [0, 2]);
+});
+}

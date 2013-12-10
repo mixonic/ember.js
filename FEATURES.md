@@ -73,6 +73,11 @@ for a detailed explanation.
 
   Added in [#3879](https://github.com/emberjs/ember.js/pull/3879)
 
+* `reduce-computed-slice`
+
+  Enables `Ember.computed.slice` which provides a one-way bound
+  slice of arrays.
+
 * `composable-computed-properties`
 
   This feature allows you to combine (compose) different computed
