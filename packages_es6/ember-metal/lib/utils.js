@@ -609,7 +609,7 @@ if (needsFinallyFix) {
 
 var TYPE_MAP = {};
 var t = "Boolean Number String Function Array Date RegExp Object".split(" ");
-ArrayPolyfills.forEach.call(t, function(name) {
+forEach.call(t, function(name) {
   TYPE_MAP[ "[object " + name + "]" ] = name.toLowerCase();
 });
 
