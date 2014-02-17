@@ -18,10 +18,10 @@
 // require('ember-runtime/system/lazy_load');
 
 
-import Namespace "ember-runtime/system/namespace";
+import Namespace from "ember-runtime/system/namespace";
 import EmberObject from "ember-runtime/system/object";
-import TrackedArray "ember-runtime/system/tracked_array";
-import SubArray "ember-runtime/system/tracked_array";
+import TrackedArray from "ember-runtime/system/tracked_array";
+import SubArray from "ember-runtime/system/tracked_array";
 import Container from "ember-runtime/system/container";
 import Application from "ember-runtime/system/application";
 import CoreObject from "ember-runtime/system/core_object";
@@ -31,4 +31,5 @@ import Set from "ember-runtime/system/set";
 import EmberStringUtils from "ember-runtime/system/string";
 import Deferred from "ember-runtime/system/deferred";
 import {onLoad, runLoadHooks} from "ember-runtime/system/lazy_load";
+
 export {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks}

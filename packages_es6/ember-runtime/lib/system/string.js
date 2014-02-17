@@ -271,9 +271,9 @@ if (Ember.FEATURES.isEnabled("string-parameterize")) {
     return str.replace(STRING_PARAMETERIZE_REGEXP_1, '-') // replace underscores, slashes and spaces with separator
               .replace(STRING_PARAMETERIZE_REGEXP_2, '')  // remove non-alphanumeric characters except the separator
               .replace(STRING_PARAMETERIZE_REGEXP_3, '-') // replace multiple occurring separators
-              .replace(STRING_PARAMETERIZE_REGEXP_4, '')  // trim leading and trailing separators 
+              .replace(STRING_PARAMETERIZE_REGEXP_4, '')  // trim leading and trailing separators
               .toLowerCase();
   };
 }
 
-export EmberStringUtils;
+export default EmberStringUtils;

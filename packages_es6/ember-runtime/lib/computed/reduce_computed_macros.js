@@ -314,7 +314,7 @@ function filter(dependentKey, callback) {
   @for Ember
   @param {String} dependentKey
   @param {String} propertyKey
-  @param {String} value
+  @param {*} value
   @return {Ember.ComputedProperty} the filtered array
 */
 function filterBy (dependentKey, propertyKey, value) {

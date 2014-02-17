@@ -196,4 +196,4 @@ if (Ember.EXTEND_PROTOTYPES === true || Ember.EXTEND_PROTOTYPES.Array) {
   NativeArray.activate();
 }
 
-Export {NativeArray, A}
+export {NativeArray, A}

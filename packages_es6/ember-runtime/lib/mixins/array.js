@@ -20,7 +20,7 @@ import {hasListeners} from "ember-metal/events";
 import {addListener, removeListener, propertyWillChange, propertyDidChange, sendEvent} from "ember-metal/property_events";
 import {isWatching} from "ember-metal/watching";
 
-import {A} from from "ember-runtime/system/native_array";
+import {A} from "ember-runtime/system/native_array";
 
 
 var isNone = Ember.isNone, map = EnumerableUtils.map;

@@ -13,6 +13,7 @@ import EmberObject from "ember-runtime/system/object"
 import MutableArray from "ember-runtime/mixins/mutable_array"
 import isArray from "ember-metal/utils";
 import Enumerable from "ember-runtime/mixins/enumerable";
+import EmberStringUtils from "ember-runtime/system/string";
 
 /**
 @module ember
@@ -159,6 +160,10 @@ var ArrayProxy = EmberObject.extend(MutableArray, {
     var content = get(this, 'content');
 
     if (content) {
+      Ember.assert(EmberStringUtils.fmt('ArrayProxy expects an Array or ' + 
+        'Ember.ArrayProxy, but you passed %@', [typeof content]), 
+        isArray(content));
+
       content.addArrayObserver(this, {
         willChange: 'contentArrayWillChange',
         didChange: 'contentArrayDidChange'
@@ -192,6 +197,10 @@ var ArrayProxy = EmberObject.extend(MutableArray, {
     var arrangedContent = get(this, 'arrangedContent');
 
     if (arrangedContent) {
+      Ember.assert(EmberStringUtils.fmt('ArrayProxy expects an Array or ' + 
+        'Ember.ArrayProxy, but you passed %@', [typeof arrangedContent]), 
+        isArray(arrangedContent));
+
       arrangedContent.addArrayObserver(this, {
         willChange: 'arrangedContentArrayWillChange',
         didChange: 'arrangedContentArrayDidChange'

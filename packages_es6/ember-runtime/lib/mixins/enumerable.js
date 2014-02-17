@@ -14,7 +14,7 @@ import EnumerableUtils from "ember-metal/enumerable_utils";
 import {computed} from "ember-metal/computed";
 import {hasListeners} from "ember-metal/events";
 import {addListener, removeListener, propertyWillChange, propertyDidChange, sendEvent} from "ember-metal/property_events";
-import {A} from from "ember-runtime/system/native_array";
+import {A} from "ember-runtime/system/native_array";
 import {compare} from "ember-runtime/core";
 
 var a_slice = Array.prototype.slice;
@@ -397,7 +397,7 @@ var Enumerable = Mixin.create({
 
     @method filterBy
     @param {String} key the property to test
-    @param {String} [value] optional value to test against.
+    @param {*} [value] optional value to test against.
     @return {Array} filtered array
   */
   filterBy: function(key, value) {
