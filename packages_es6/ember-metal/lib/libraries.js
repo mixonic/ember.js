@@ -4,7 +4,7 @@ import EnumerableUtils from "ember-metal/enumerable_utils";
 var forEach = EnumerableUtils.forEach,
     indexOf = EnumerableUtils.indexOf;
 
-export defult function libraries() {
+var libraries = function() {
   var _libraries   = [];
   var coreLibIndex = 0;
 
@@ -41,3 +41,5 @@ export defult function libraries() {
 
   return _libraries;
 }();
+
+export default libraries;
