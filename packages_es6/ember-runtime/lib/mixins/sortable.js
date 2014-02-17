@@ -3,7 +3,20 @@
 @submodule ember-runtime
 */
 
-var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach;
+import Ember from "ember-metal/core"; // Ember.assert
+
+import get from "ember-metal/property_get";
+import set from "ember-metal/property_set";
+import EnumerableUtils from "ember-metal/enumerable_utils";
+import Mixin from "ember-metal/mixin";
+import MutableEnumerable from "ember-runtime/mixins/mutable_enumerable";
+import {compare} from "ember-runtime/core";
+import {addObserver, removeObserver} from "ember-metal/observer";
+import computed from "ember-metal/computed";
+import A from "ember-runtime/system/native_array";
+import {beforeObserver, observer} from "ember-metal/mixin"; //ES6TODO: should we access these directly from their package or from how thier exposed in ember-metal?
+
+var forEach = EnumerableUtils.forEach;
 
 /**
   `Ember.SortableMixin` provides a standard interface for array proxies
@@ -48,8 +61,8 @@ var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach;
    ```javascript
   songsController.get('content').get('firstObject'); // Returns the unsorted original content
   songsController.get('firstObject'); // Returns the sorted content.
-  ``` 
-  
+  ```
+
   Although the sorted content can also be accessed through the arrangedContent property,
   it is preferable to use the proxied class and not the arrangedContent array directly.
 
@@ -57,7 +70,7 @@ var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach;
   @namespace Ember
   @uses Ember.MutableEnumerable
 */
-Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
+var SortableMixin = Mixin.create(MutableEnumerable, {
 
   /**
     Specifies which properties dictate the arrangedContent's sort order.
@@ -96,7 +109,7 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     @type {Function}
     @default Ember.compare
   */
-  sortFunction: Ember.compare,
+  sortFunction: compare,
 
   orderBy: function(item1, item2) {
     var result = 0,
@@ -125,7 +138,7 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     if (content && sortProperties) {
       forEach(content, function(item) {
         forEach(sortProperties, function(sortProperty) {
-          Ember.removeObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
+          removeObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
         }, this);
       }, this);
     }
@@ -133,16 +146,16 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     return this._super();
   },
 
-  isSorted: Ember.computed.bool('sortProperties'),
+  isSorted: computed.bool('sortProperties'),
 
   /**
     Overrides the default arrangedContent from arrayProxy in order to sort by sortFunction.
     Also sets up observers for each sortProperty on each item in the content Array.
-    
+
     @property arrangedContent
   */
 
-  arrangedContent: Ember.computed('content', 'sortProperties.@each', function(key, value) {
+  arrangedContent: computed('content', 'sortProperties.@each', function(key, value) {
     var content = get(this, 'content'),
         isSorted = get(this, 'isSorted'),
         sortProperties = get(this, 'sortProperties'),
@@ -155,23 +168,23 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
       });
       forEach(content, function(item) {
         forEach(sortProperties, function(sortProperty) {
-          Ember.addObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
+          addObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
         }, this);
       }, this);
-      return Ember.A(content);
+      return A(content);
     }
 
     return content;
   }),
 
-  _contentWillChange: Ember.beforeObserver('content', function() {
+  _contentWillChange: beforeObserver('content', function() {
     var content = get(this, 'content'),
         sortProperties = get(this, 'sortProperties');
 
     if (content && sortProperties) {
       forEach(content, function(item) {
         forEach(sortProperties, function(sortProperty) {
-          Ember.removeObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
+          removeObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
         }, this);
       }, this);
     }
@@ -179,11 +192,11 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     this._super();
   }),
 
-  sortAscendingWillChange: Ember.beforeObserver('sortAscending', function() {
+  sortAscendingWillChange: beforeObserver('sortAscending', function() {
     this._lastSortAscending = get(this, 'sortAscending');
   }),
 
-  sortAscendingDidChange: Ember.observer('sortAscending', function() {
+  sortAscendingDidChange: observer('sortAscending', function() {
     if (get(this, 'sortAscending') !== this._lastSortAscending) {
       var arrangedContent = get(this, 'arrangedContent');
       arrangedContent.reverseObjects();
@@ -202,7 +215,7 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
         arrangedContent.removeObject(item);
 
         forEach(sortProperties, function(sortProperty) {
-          Ember.removeObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
+          removeObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
         }, this);
       }, this);
     }
@@ -221,7 +234,7 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
         this.insertItemSorted(item);
 
         forEach(sortProperties, function(sortProperty) {
-          Ember.addObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
+          addObserver(item, sortProperty, this, 'contentItemSortPropertyDidChange');
         }, this);
       }, this);
     }
@@ -274,3 +287,5 @@ Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     return mid;
   }
 });
+
+export default SortableMixin;

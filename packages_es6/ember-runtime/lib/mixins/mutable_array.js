@@ -4,8 +4,8 @@
 */
 
 
-require('ember-runtime/mixins/array');
-require('ember-runtime/mixins/mutable_enumerable');
+// require('ember-runtime/mixins/array');
+// require('ember-runtime/mixins/mutable_enumerable');
 
 // ..........................................................
 // CONSTANTS
@@ -18,8 +18,13 @@ var EMPTY = [];
 // HELPERS
 //
 
-var get = Ember.get, set = Ember.set;
-
+import get from "ember-metal/property_get";
+import set from "ember-metal/property_set";
+import {Mixin, required} from "ember-metal/mixin";
+import EmberError from "ember-metal/error";
+import EmberArray from "ember-runtime/mixin/array";
+import MutableEnumerable from "ember-runtime/mixins/mutable_enumerable";
+import {isArray} from "ember-metal/utils";
 /**
   This mixin defines the API for modifying array-like objects. These methods
   can be applied only to a collection that keeps its items in an ordered set.
@@ -33,7 +38,7 @@ var get = Ember.get, set = Ember.set;
   @uses Ember.Array
   @uses Ember.MutableEnumerable
 */
-Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable, {
+var MutableArray = Mixin.create(EmberArray, MutableEnumerable, {
 
   /**
     __Required.__ You must implement this method to apply this mixin.
@@ -50,7 +55,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable, {
     @param {Array} objects An array of zero or more objects that should be
       inserted into the array at *idx*
   */
-  replace: Ember.required(),
+  replace: required(),
 
   /**
     Remove all elements from self. This is useful if you
@@ -89,7 +94,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable, {
     @return this
   */
   insertAt: function(idx, object) {
-    if (idx > get(this, 'length')) throw new Ember.Error(OUT_OF_RANGE_EXCEPTION) ;
+    if (idx > get(this, 'length')) throw new EmberError(OUT_OF_RANGE_EXCEPTION) ;
     this.replace(idx, 0, [object]) ;
     return this ;
   },
@@ -117,7 +122,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable, {
     if ('number' === typeof start) {
 
       if ((start < 0) || (start >= get(this, 'length'))) {
-        throw new Ember.Error(OUT_OF_RANGE_EXCEPTION);
+        throw new EmberError(OUT_OF_RANGE_EXCEPTION);
       }
 
       // fast case
@@ -161,7 +166,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable, {
     @return {Ember.Array} receiver
   */
   pushObjects: function(objects) {
-    if (!(Ember.Enumerable.detect(objects) || Ember.isArray(objects))) {
+    if (!(Enumerable.detect(objects) || isArray(objects))) {
       throw new TypeError("Must pass Ember.Enumerable to Ember.MutableArray#pushObjects");
     }
     this.replace(get(this, 'length'), 0, objects);
@@ -305,3 +310,5 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable, {
   }
 
 });
+
+export default MutableArray;

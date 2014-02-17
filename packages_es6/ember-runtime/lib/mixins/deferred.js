@@ -1,5 +1,11 @@
 var RSVP = requireModule("rsvp");
 
+import Ember from "ember-metal/core"; // Ember.FEATURES, Ember.Test
+import get from "ember-metal/property_get";
+import Mixin from "ember-metal/mixin";
+import computed from "ember-metal/computed";
+import run from "ember-metal/run_loop";
+
 if (Ember.FEATURES['ember-runtime-test-friendly-promises']) {
 
   var asyncStart = function() {
@@ -15,18 +21,18 @@ if (Ember.FEATURES['ember-runtime-test-friendly-promises']) {
   };
 
   RSVP.configure('async', function(callback, promise) {
-    var async = !Ember.run.currentRunLoop;
+    var async = !run.currentRunLoop;
 
     if (Ember.testing && async) { asyncStart(); }
 
-    Ember.run.backburner.schedule('actions', function(){
+    run.backburner.schedule('actions', function(){
       if (Ember.testing && async) { asyncEnd(); }
       callback(promise);
     });
   });
 } else {
   RSVP.configure('async', function(callback, promise) {
-    Ember.run.backburner.schedule('actions', function(){
+    run.backburner.schedule('actions', function(){
       callback(promise);
     });
   });
@@ -42,13 +48,12 @@ RSVP.Promise.prototype.fail = function(callback, label){
 @submodule ember-runtime
 */
 
-var get = Ember.get;
 
 /**
   @class Deferred
   @namespace Ember
  */
-Ember.DeferredMixin = Ember.Mixin.create({
+var DeferredMixin = Mixin.create({
   /**
     Add handlers to be called when the Deferred object is resolved or rejected.
 
@@ -101,8 +106,9 @@ Ember.DeferredMixin = Ember.Mixin.create({
     get(this, '_deferred').reject(value);
   },
 
-  _deferred: Ember.computed(function() {
+  _deferred: computed(function() {
     return RSVP.defer('Ember: DeferredMixin - ' + this);
   })
 });
 
+export default DeferredMixin;

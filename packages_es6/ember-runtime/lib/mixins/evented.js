@@ -1,3 +1,6 @@
+import Mixin from "ember-metal/mixin";
+import {addListener, removeListener, hasListeners, sendEvent} from "ember-metal/events";
+
 /**
 @module ember
 @submodule ember-runtime
@@ -38,7 +41,7 @@
   @class Evented
   @namespace Ember
  */
-Ember.Evented = Ember.Mixin.create({
+var Evented = Mixin.create({
 
   /**
    Subscribes to a named event with given function.
@@ -61,7 +64,7 @@ Ember.Evented = Ember.Mixin.create({
    @return this
   */
   on: function(name, target, method) {
-    Ember.addListener(this, name, target, method);
+    addListener(this, name, target, method);
     return this;
   },
 
@@ -86,7 +89,7 @@ Ember.Evented = Ember.Mixin.create({
       target = null;
     }
 
-    Ember.addListener(this, name, target, method, true);
+    addListener(this, name, target, method, true);
     return this;
   },
 
@@ -113,7 +116,7 @@ Ember.Evented = Ember.Mixin.create({
     for (i = 1, l = arguments.length; i < l; i++) {
       args.push(arguments[i]);
     }
-    Ember.sendEvent(this, name, args);
+    sendEvent(this, name, args);
   },
 
   /**
@@ -126,7 +129,7 @@ Ember.Evented = Ember.Mixin.create({
     @return this
   */
   off: function(name, target, method) {
-    Ember.removeListener(this, name, target, method);
+    removeListener(this, name, target, method);
     return this;
   },
 
@@ -138,6 +141,8 @@ Ember.Evented = Ember.Mixin.create({
     @return {Boolean} does the object have a subscription for event
    */
   has: function(name) {
-    return Ember.hasListeners(this, name);
+    return hasListeners(this, name);
   }
 });
+
+export default Evented;

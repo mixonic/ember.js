@@ -12,10 +12,10 @@
 // require('ember-runtime/system/native_array');
 // require('ember-runtime/system/object');
 // require('ember-runtime/system/set');
-require('ember-runtime/system/string');
-require('ember-runtime/system/deferred');
+// require('ember-runtime/system/string');
+// require('ember-runtime/system/deferred');
 
-require('ember-runtime/system/lazy_load');
+// require('ember-runtime/system/lazy_load');
 
 
 import Namespace "ember-runtime/system/namespace";
@@ -28,6 +28,7 @@ import CoreObject from "ember-runtime/system/core_object";
 import {EachArray, EachProxy} from "ember-runtime/system/each_proxy";
 import {NativeArray, A} from "ember-runtime/system/native_array";
 import Set from "ember-runtime/system/set";
-
-export {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, A, Set}
-
+import EmberStringUtils from "ember-runtime/system/string";
+import Deferred from "ember-runtime/system/deferred";
+import {onLoad, runLoadHooks} from "ember-runtime/system/lazy_load";
+export {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks}

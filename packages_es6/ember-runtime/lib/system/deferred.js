@@ -1,10 +1,11 @@
-require("ember-runtime/mixins/deferred");
-require("ember-runtime/system/object");
+// require("ember-runtime/mixins/deferred");
+// require("ember-runtime/system/object");
 
-var DeferredMixin = Ember.DeferredMixin, // mixins/deferred
-    get = Ember.get;
+import DeferredMixin from "ember-runtime/mixins/deferred";
+import get from "ember-metal/property_get";
+import EmberObject from "ember-runtime/system/object";
 
-var Deferred = Ember.Object.extend(DeferredMixin);
+var Deferred = EmberObject.extend(DeferredMixin);
 
 Deferred.reopenClass({
   promise: function(callback, binding) {
@@ -14,4 +15,4 @@ Deferred.reopenClass({
   }
 });
 
-Ember.Deferred = Deferred;
+export default Deferred;

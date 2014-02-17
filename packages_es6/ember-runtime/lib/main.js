@@ -15,11 +15,12 @@ require('ember-runtime/computed/reduce_computed_macros');
 require('ember-runtime/controllers');
 
 // IMPORTS
+import "ember-runtime/ext"; // just for side effect of extending some native prototypes
+
 import Ember from "ember-metal/core";
 import {compare, copy, isEqual, keys} from "ember-runtime/core";
-import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR} from "ember-runtime/mixins";
-import {EmberString} from "ember-runtime/ext";
-import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set} from "ember-runtime/system";
+import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin} from "ember-runtime/mixins";
+import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
 
 // Exports
 Ember.compare = compare;
@@ -32,10 +33,22 @@ Ember.Array = EmberArray;
 Ember.Comparable = Comparable;
 Ember.Copyable = Copyable;
 
+Ember.SortableMixin = SortableMixin;
+
 Ember.Freezable = Freezable;
 Ember.FROZEN_ERROR = FROZEN_ERROR;
 
-Ember.String = EmberString;
+Ember.DeferredMixin = DeferredMixin;
+
+Ember.MutableEnumerable = MutableEnumerable;
+Ember.MutableArray = MutableArray;
+
+Ember.TargetActionSupport = TargetActionSupport;
+Ember.Evented = Evented;
+
+Ember.PromiseProxyMixin = PromiseProxyMixin;
+
+Ember.String = EmberStringUtils;
 Ember.Object = EmberObject;
 Ember.TrackedArray = TrackedArray;
 Ember.SubArray = SubArray;
@@ -51,3 +64,6 @@ Ember.EachProxy = EachProxy;
 Ember.NativeArray = NativeArray;
 Ember.A = A;
 Ember.Set = Set;
+Ember.Deferred = Deferred;
+Ember.onLoad = onLoad;
+Ember.runLoadHooks = runLoadHooks;

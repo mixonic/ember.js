@@ -2,8 +2,13 @@
 @module ember
 @submodule ember-runtime
 */
+import Ember from "ember-metal/core"; // Ember.lookup, Ember.assert
 
-var get = Ember.get, set = Ember.set;
+import get from "ember-metal/property_get";
+import set from "ember-metal/property_set";
+import Mixin from "ember-metal/mixin";
+import computed from "ember-metal/computed";
+import typeOf from "ember-metal/utils";
 
 /**
 `Ember.TargetActionSupport` is a mixin that can be included in a class
@@ -19,15 +24,15 @@ view-aware defaults for target and actionContext.
 @namespace Ember
 @extends Ember.Mixin
 */
-Ember.TargetActionSupport = Ember.Mixin.create({
+var TargetActionSupport = Mixin.create({
   target: null,
   action: null,
   actionContext: null,
 
-  targetObject: Ember.computed(function() {
+  targetObject: computed(function() {
     var target = get(this, 'target');
 
-    if (Ember.typeOf(target) === "string") {
+    if (typeOf(target) === "string") {
       var value = get(this, target);
       if (value === undefined) { value = get(Ember.lookup, target); }
       return value;
@@ -36,10 +41,10 @@ Ember.TargetActionSupport = Ember.Mixin.create({
     }
   }).property('target'),
 
-  actionContextObject: Ember.computed(function() {
+  actionContextObject: computed(function() {
     var actionContext = get(this, 'actionContext');
 
-    if (Ember.typeOf(actionContext) === "string") {
+    if (typeOf(actionContext) === "string") {
       var value = get(this, actionContext);
       if (value === undefined) { value = get(Ember.lookup, actionContext); }
       return value;
@@ -135,3 +140,5 @@ Ember.TargetActionSupport = Ember.Mixin.create({
     }
   }
 });
+
+export default TargetActionSupport;

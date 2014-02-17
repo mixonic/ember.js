@@ -1,4 +1,5 @@
-var forEach = Ember.ArrayPolyfills.forEach;
+import Ember from "ember-metal/core"; // Ember.ENV.EMBER_LOAD_HOOKS
+import forEach from "ember-metal/array";
 
 /**
   @module ember
@@ -26,7 +27,7 @@ var loaded = {};
   @param name {String} name of hook
   @param callback {Function} callback to be called
 */
-Ember.onLoad = function(name, callback) {
+function onLoad(name, callback) {
   var object;
 
   loadHooks[name] = loadHooks[name] || Ember.A();
@@ -46,7 +47,7 @@ Ember.onLoad = function(name, callback) {
   @param name {String} name of hook
   @param object {Object} object to pass to callbacks
 */
-Ember.runLoadHooks = function(name, object) {
+function runLoadHooks(name, object) {
   loaded[name] = object;
 
   if (loadHooks[name]) {
@@ -55,3 +56,5 @@ Ember.runLoadHooks = function(name, object) {
     });
   }
 };
+
+export {onLoad, runLoadHooks}

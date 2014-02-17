@@ -1,6 +1,10 @@
-var set = Ember.set, get = Ember.get,
-    not = Ember.computed.not,
-    or = Ember.computed.or;
+import get from "ember-metal/property_get";
+import set from "ember-metal/property_set";
+import computed from "ember-metal/computed";
+import Mixin from "ember-metal/mixin";
+import EmberError from "ember-metal/error";
+
+var not = computed.not, or = computed.or;
 
 /**
   @module ember
@@ -84,7 +88,7 @@ function tap(proxy, promise) {
   ```
   @class Ember.PromiseProxyMixin
 */
-Ember.PromiseProxyMixin = Ember.Mixin.create({
+var PromiseProxyMixin = Mixin.create({
   /**
     If the proxied promise is rejected this will contain the reason
     provided.
@@ -142,11 +146,11 @@ Ember.PromiseProxyMixin = Ember.Mixin.create({
 
     @property promise
   */
-  promise: Ember.computed(function(key, promise) {
+  promise: computed(function(key, promise) {
     if (arguments.length === 2) {
       return tap(this, promise);
     } else {
-      throw new Ember.Error("PromiseProxy's promise must be set");
+      throw new EmberError("PromiseProxy's promise must be set");
     }
   }),
 
@@ -191,3 +195,5 @@ function promiseAlias(name) {
     return promise[name].apply(promise, arguments);
   };
 }
+
+export default PromiseProxyMixin;
