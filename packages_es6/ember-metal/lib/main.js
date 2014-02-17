@@ -71,7 +71,7 @@ import expandProperties from "ember-metal/expand_properties";
 import {ComputedProperty, computed, cacheFor} from "ember-metal/computed";
 
 import {addObserver, observersFor, removeObserver, addBeforeObserver, _suspendBeforeObserver, _suspendObserver, _suspendBeforeObserver, _suspendObservers, beforeObserversFor, removeBeforeObserver} from "ember-metal/observer";
-import {IS_BINDING, mixin, Mixin, required, aliasMethod, observer, immediateObserver} from "ember-metal/minix";
+import {IS_BINDING, mixin, Mixin, required, aliasMethod, observer, immediateObserver, beforeObserver} from "ember-metal/mixin";
 import {Binding, isGlobalPath, bind, oneWay} from "ember-metal/binding";
 import Run from "ember-metal/run_loop";
 import libraries from "ember-metal/libraries";
