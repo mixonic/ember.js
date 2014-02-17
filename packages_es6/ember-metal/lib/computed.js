@@ -459,7 +459,7 @@ ComputedPropertyPrototype.set = function(obj, keyName, value) {
       funcArgLength, cachedValue, ret;
 
   if (this._readOnly) {
-    throw new Error('Cannot set read-only property "' + keyName + '" on object: ' + Ember.inspect(obj));
+    throw new EmberError('Cannot set read-only property "' + keyName + '" on object: ' + Ember.inspect(obj));
   }
 
   this._suspended = obj;
