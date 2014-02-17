@@ -1,5 +1,8 @@
-require('ember-runtime/system/object_proxy');
-require('ember-runtime/controllers/controller');
+// require('ember-runtime/system/object_proxy');
+// require('ember-runtime/controllers/controller');
+
+import ControllerMixin from "ember-runtime/controllers/controller";
+import ObjectProxy from "ember-runtime/system/object_proxy";
 
 /**
 @module ember
@@ -19,4 +22,5 @@ require('ember-runtime/controllers/controller');
   @extends Ember.ObjectProxy
   @uses Ember.ControllerMixin
 **/
-Ember.ObjectController = Ember.ObjectProxy.extend(Ember.ControllerMixin);
+var ObjectController = ObjectProxy.extend(ControllerMixin);
+export default ObjectController;

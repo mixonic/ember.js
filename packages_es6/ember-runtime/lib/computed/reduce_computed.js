@@ -1,10 +1,11 @@
-require('ember-metal/expand_properties');
-require('ember-metal/computed');
-require('ember-runtime/mixins/array');
+// require('ember-metal/expand_properties');
+// require('ember-metal/computed');
+// require('ember-runtime/mixins/array');
 
 import Ember from "ember-metal/core"; // Ember.assert
 import get from "ember-metal/property_get";
 import set from "ember-metal/property_set";
+import EmberError from "ember-metal/error";
 import {guidFor, metaFor} from "ember-metal/utils";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
 import expandProperties from "ember-metal/expand_properties";
@@ -13,6 +14,10 @@ import {ComputedProperty} from "ember-metal/computed";
 import {create} from "ember-metal/platform";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import TrackedArray from "ember-runtime/system/tracked_array";
+import {EmberArray} from "ember-runtime/mixin/array";
+import run from "ember-metal/run_loop";
+import Set from "ember-runtime/system/set";
+import isArray from "ember-metal/utils";
 
 var e_get = get,
     a_slice = [].slice,
@@ -395,7 +400,7 @@ function partiallyRecomputeFor(obj, dependentKey) {
   }
 
   var value = get(obj, dependentKey);
-  return Ember.Array.detect(value);
+  return EmberArray.detect(value);
 }
 
 function ReduceComputedPropertyInstanceMeta(context, propertyName, initialValue) {
@@ -469,7 +474,7 @@ function ReduceComputedProperty(options) {
     // What we really want to do is coalesce by <cp, propertyName>.
     // We need a form of `scheduleOnce` that accepts an arbitrary token to
     // coalesce by, in addition to the target and method.
-    Ember.run.once(this, recompute, propertyName);
+    run.once(this, recompute, propertyName);
   };
   var recompute = function(propertyName) {
     var dependentKeys = cp._dependentKeys,
@@ -483,7 +488,7 @@ function ReduceComputedProperty(options) {
         Ember.assert(
           "dependent array " + dependentKey + " must be an `Ember.Array`.  " +
           "If you are not extending arrays, you will need to wrap native arrays with `Ember.A`",
-          !(Ember.isArray(get(this, dependentKey)) && !Ember.Array.detect(get(this, dependentKey))));
+          !(isArray(get(this, dependentKey)) && !EmberArray.detect(get(this, dependentKey))));
 
         if (!partiallyRecomputeFor(this, dependentKey)) { return; }
 
@@ -533,7 +538,6 @@ function ReduceComputedProperty(options) {
   };
 }
 
-Ember.ReduceComputedProperty = ReduceComputedProperty;
 ReduceComputedProperty.prototype = o_create(ComputedProperty.prototype);
 
 function defaultCallback(computedValue) {
@@ -599,14 +603,14 @@ ReduceComputedProperty.prototype.clearItemPropertyKeys = function (dependentArra
 ReduceComputedProperty.prototype.property = function () {
   var cp = this,
       args = a_slice.call(arguments),
-      propertyArgs = new Ember.Set(),
+      propertyArgs = new Set(),
       match,
       dependentArrayKey,
       itemPropertyKey;
 
   forEach(args, function (dependentKey) {
     if (doubleEachPropertyPattern.test(dependentKey)) {
-      throw new Ember.Error("Nested @each properties not supported: " + dependentKey);
+      throw new EmberError("Nested @each properties not supported: " + dependentKey);
     } else if (match = eachPropertyPattern.exec(dependentKey)) {
       dependentArrayKey = match[1];
 
@@ -807,7 +811,7 @@ ReduceComputedProperty.prototype.property = function () {
   @param {Object} options
   @return {Ember.ComputedProperty}
 */
-Ember.reduceComputed = function (options) {
+function reduceComputed(options) {
   var args;
 
   if (arguments.length > 1) {
@@ -816,11 +820,11 @@ Ember.reduceComputed = function (options) {
   }
 
   if (typeof options !== "object") {
-    throw new Ember.Error("Reduce Computed Property declared without an options hash");
+    throw new EmberError("Reduce Computed Property declared without an options hash");
   }
 
   if (!('initialValue' in options)) {
-    throw new Ember.Error("Reduce Computed Property declared without an initial value");
+    throw new EmberError("Reduce Computed Property declared without an initial value");
   }
 
   var cp = new ReduceComputedProperty(options);
@@ -831,3 +835,5 @@ Ember.reduceComputed = function (options) {
 
   return cp;
 };
+
+export {reduceComputed, ReduceComputedProperty}

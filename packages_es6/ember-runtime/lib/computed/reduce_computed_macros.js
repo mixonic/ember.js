@@ -1,18 +1,21 @@
-require('ember-runtime/ext/string');
-require('ember-runtime/system/namespace');
-require('ember-runtime/system/object_proxy');
-require('ember-runtime/computed/array_computed');
+// require('ember-runtime/ext/string');
+// require('ember-runtime/system/namespace');
+// require('ember-runtime/system/object_proxy');
+// require('ember-runtime/computed/array_computed');
 
 /**
 @module ember
 @submodule ember-runtime
 */
 
-import import Ember from "ember-metal/core"; // Ember.merge
+import Ember from "ember-metal/core"; // Ember.merge
 import get from "ember-metal/property_get";
 import set from "ember-metal/property_set";
 import guidFor from "ember-metal/utils";
 import EnumerableUtils from "ember-metal/enumerable_utils";
+import arrayComputed from "ember-runtime/computed/array_computed";
+import reduceComputed from "ember-runtime/computed/reduce_computed";
+import ObjectProxy from "ember-runtime/system/object_proxy";
 
 var merge = Ember.merge,
     a_slice = [].slice,
@@ -30,8 +33,8 @@ var merge = Ember.merge,
  @return {Ember.ComputedProperty} computes the sum of all values in the dependentKey's array
 */
 
-Ember.computed.sum = function(dependentKey){
-  return Ember.reduceComputed(dependentKey, {
+function sum(dependentKey){
+  return reduceComputed(dependentKey, {
     initialValue: 0,
 
     addedItem: function(accumulatedValue, item, changeMeta, instanceMeta){
@@ -76,8 +79,8 @@ Ember.computed.sum = function(dependentKey){
   @param {String} dependentKey
   @return {Ember.ComputedProperty} computes the largest value in the dependentKey's array
 */
-Ember.computed.max = function (dependentKey) {
-  return Ember.reduceComputed(dependentKey, {
+function max (dependentKey) {
+  return reduceComputed(dependentKey, {
     initialValue: -Infinity,
 
     addedItem: function (accumulatedValue, item, changeMeta, instanceMeta) {
@@ -124,8 +127,8 @@ Ember.computed.max = function (dependentKey) {
   @param {String} dependentKey
   @return {Ember.ComputedProperty} computes the smallest value in the dependentKey's array
 */
-Ember.computed.min = function (dependentKey) {
-  return Ember.reduceComputed(dependentKey, {
+function min(dependentKey) {
+  return reduceComputed(dependentKey, {
     initialValue: Infinity,
 
     addedItem: function (accumulatedValue, item, changeMeta, instanceMeta) {
@@ -171,7 +174,7 @@ Ember.computed.min = function (dependentKey) {
   @param {Function} callback
   @return {Ember.ComputedProperty} an array mapped via the callback
 */
-Ember.computed.map = function(dependentKey, callback) {
+function map(dependentKey, callback) {
   var options = {
     addedItem: function(array, item, changeMeta, instanceMeta) {
       var mapped = callback.call(this, item);
@@ -184,7 +187,7 @@ Ember.computed.map = function(dependentKey, callback) {
     }
   };
 
-  return Ember.arrayComputed(dependentKey, options);
+  return arrayComputed(dependentKey, options);
 };
 
 /**
@@ -215,7 +218,7 @@ Ember.computed.map = function(dependentKey, callback) {
   @param {String} propertyKey
   @return {Ember.ComputedProperty} an array mapped to the specified key
 */
-Ember.computed.mapBy = function(dependentKey, propertyKey) {
+function mapBy (dependentKey, propertyKey) {
   var callback = function(item) { return get(item, propertyKey); };
   return Ember.computed.map(dependentKey + '.@each.' + propertyKey, callback);
 };
@@ -227,7 +230,7 @@ Ember.computed.mapBy = function(dependentKey, propertyKey) {
   @param dependentKey
   @param propertyKey
 */
-Ember.computed.mapProperty = Ember.computed.mapBy;
+var mapProperty = mapBy;
 
 /**
   Filters the array by the callback.
@@ -260,7 +263,7 @@ Ember.computed.mapProperty = Ember.computed.mapBy;
   @param {Function} callback
   @return {Ember.ComputedProperty} the filtered array
 */
-Ember.computed.filter = function(dependentKey, callback) {
+function filter(dependentKey, callback) {
   var options = {
     initialize: function (array, changeMeta, instanceMeta) {
       instanceMeta.filteredArrayIndexes = new Ember.SubArray();
@@ -288,7 +291,7 @@ Ember.computed.filter = function(dependentKey, callback) {
     }
   };
 
-  return Ember.arrayComputed(dependentKey, options);
+  return arrayComputed(dependentKey, options);
 };
 
 /**
@@ -314,7 +317,7 @@ Ember.computed.filter = function(dependentKey, callback) {
   @param {String} value
   @return {Ember.ComputedProperty} the filtered array
 */
-Ember.computed.filterBy = function(dependentKey, propertyKey, value) {
+function filterBy (dependentKey, propertyKey, value) {
   var callback;
 
   if (arguments.length === 2) {
@@ -338,7 +341,7 @@ Ember.computed.filterBy = function(dependentKey, propertyKey, value) {
   @param value
   @deprecated Use `Ember.computed.filterBy` instead
 */
-Ember.computed.filterProperty = Ember.computed.filterBy;
+var filterProperty = filterBy;
 
 /**
   A computed property which returns a new array with all the unique
@@ -366,7 +369,7 @@ Ember.computed.filterProperty = Ember.computed.filterBy;
   @return {Ember.ComputedProperty} computes a new array with all the
   unique elements from the dependent array
 */
-Ember.computed.uniq = function() {
+function uniq() {
   var args = a_slice.call(arguments);
   args.push({
     initialize: function(array, changeMeta, instanceMeta) {
@@ -394,7 +397,7 @@ Ember.computed.uniq = function() {
       return array;
     }
   });
-  return Ember.arrayComputed.apply(null, args);
+  return arrayComputed.apply(null, args);
 };
 
 /**
@@ -406,7 +409,7 @@ Ember.computed.uniq = function() {
   @return {Ember.ComputedProperty} computes a new array with all the
   unique elements from the dependent array
 */
-Ember.computed.union = Ember.computed.uniq;
+var union = uniq;
 
 /**
   A computed property which returns a new array with all the duplicated
@@ -430,7 +433,7 @@ Ember.computed.union = Ember.computed.uniq;
   @return {Ember.ComputedProperty} computes a new array with all the
   duplicated elements from the dependent arrays
 */
-Ember.computed.intersect = function () {
+function intersect() {
   var getDependentKeyGuids = function (changeMeta) {
     return map(changeMeta.property._dependentKeys, function (dependentKey) {
       return guidFor(dependentKey);
@@ -481,7 +484,7 @@ Ember.computed.intersect = function () {
       return array;
     }
   });
-  return Ember.arrayComputed.apply(null, args);
+  return arrayComputed.apply(null, args);
 };
 
 /**
@@ -512,11 +515,11 @@ Ember.computed.intersect = function () {
   items from the first dependent array that are not in the second
   dependent array
 */
-Ember.computed.setDiff = function (setAProperty, setBProperty) {
+function setDiff(setAProperty, setBProperty) {
   if (arguments.length !== 2) {
     throw new Ember.Error("setDiff requires exactly two dependent arrays.");
   }
-  return Ember.arrayComputed(setAProperty, setBProperty, {
+  return arrayComputed(setAProperty, setBProperty, {
     addedItem: function (array, item, changeMeta, instanceMeta) {
       var setA = get(this, setAProperty),
           setB = get(this, setBProperty);
@@ -590,7 +593,7 @@ function binarySearch(array, item, low, high) {
 }
 
 
-SearchProxy = Ember.ObjectProxy.extend();
+var SearchProxy = ObjectProxy.extend();
 
 /**
   A computed property which returns a new array with all the
@@ -643,7 +646,7 @@ SearchProxy = Ember.ObjectProxy.extend();
   @return {Ember.ComputedProperty} computes a new sorted array based
   on the sort property array or callback function
 */
-Ember.computed.sort = function (itemsKey, sortDefinition) {
+function sort(itemsKey, sortDefinition) {
   Ember.assert("Ember.computed.sort requires two arguments: an array key to sort and either a sort properties key or sort function", arguments.length === 2);
 
   var initFn, sortPropertiesKey;
@@ -720,7 +723,7 @@ Ember.computed.sort = function (itemsKey, sortDefinition) {
     };
   }
 
-  return Ember.arrayComputed(itemsKey, {
+  return arrayComputed(itemsKey, {
     initialize: initFn,
 
     addedItem: function (array, item, changeMeta, instanceMeta) {
@@ -746,3 +749,23 @@ Ember.computed.sort = function (itemsKey, sortDefinition) {
     }
   });
 };
+
+
+// ES6TODO: this seems a less than ideal way/place to add properties to Ember.computed
+import computed from "ember-metal/computed";
+computed.sum = sum;
+computed.min = min;
+computed.max = max;
+computed.map = map;
+computed.sort = sort;
+computed.setDiff = setDiff;
+computed.mapBy = mapBy;
+computed.mapProperty = mapProperty;
+computed.filter = filter;
+computed.filterBy = filterBy;
+computed.filterProperty = filterProperty;
+computed.uniq = uniq;
+computed.union = union;
+computed.intersect = intersect;
+
+export {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect}

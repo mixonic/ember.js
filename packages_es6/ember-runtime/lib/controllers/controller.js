@@ -1,7 +1,12 @@
 require('ember-runtime/system/object');
-require('ember-runtime/system/string');
 
-var get = Ember.get;
+import Ember from "ember-metal/core"; // Ember.assert, Ember.deprecate
+
+import EmberObject from "ember-runtime/system/object";
+import get from "ember-metal/property_get";
+import Mixin from "ember-metal/mixin";
+import computed from "ember-metal/computed";
+import ActionHandler from "ember-metal/mixins/action_handler";
 
 /**
 @module ember
@@ -17,7 +22,7 @@ var get = Ember.get;
   @namespace Ember
   @uses Ember.ActionHandler
 */
-Ember.ControllerMixin = Ember.Mixin.create(Ember.ActionHandler, {
+var ControllerMixin = Mixin.create(ActionHandler, {
   /* ducktype as a controller */
   isController: true,
 
@@ -41,7 +46,7 @@ Ember.ControllerMixin = Ember.Mixin.create(Ember.ActionHandler, {
 
   store: null,
 
-  model: Ember.computed.alias('content'),
+  model: computed.alias('content'),
 
   deprecatedSendHandles: function(actionName) {
     return !!this[actionName];
@@ -62,4 +67,7 @@ Ember.ControllerMixin = Ember.Mixin.create(Ember.ActionHandler, {
   @extends Ember.Object
   @uses Ember.ControllerMixin
 */
-Ember.Controller = Ember.Object.extend(Ember.ControllerMixin);
+var Controller = EmberObject.extend(ControllerMixin);
+
+export {Controller, ControllerMixin};
+

@@ -9,18 +9,24 @@ Ember Runtime
 // require('container');
 // require('ember-metal');
 // require('ember-runtime/core');
-require('ember-runtime/computed/reduce_computed_macros');
+// require('ember-runtime/computed/reduce_computed_macros');
 // require('ember-runtime/ext');
 // require('ember-runtime/system');
-require('ember-runtime/controllers');
+// require('ember-runtime/controllers');
 
 // IMPORTS
 import "ember-runtime/ext"; // just for side effect of extending some native prototypes
 
 import Ember from "ember-metal/core";
 import {compare, copy, isEqual, keys} from "ember-runtime/core";
+
+import {arrayComputed, ArrayComputedProperty} from "ember-runtime/computed/array_computed";
+import {reduceComputed, ReduceComputedProperty} from "ember-runtime/computed/reduce_computed";
+
 import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin} from "ember-runtime/mixins";
 import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
+
+import {ArrayController, ObjectController, Controller, ControllerMixin} from "ember-runtime/controllers";
 
 // Exports
 Ember.compare = compare;
@@ -48,6 +54,12 @@ Ember.Evented = Evented;
 
 Ember.PromiseProxyMixin = PromiseProxyMixin;
 
+
+Ember.arrayComputed = arrayComputed;
+Ember.ArrayComputedProperty = ArrayComputedProperty;
+Ember.reduceComputed = reduceComputed;
+Ember.ReduceComputedProperty = ReduceComputedProperty;
+
 Ember.String = EmberStringUtils;
 Ember.Object = EmberObject;
 Ember.TrackedArray = TrackedArray;
@@ -67,3 +79,8 @@ Ember.Set = Set;
 Ember.Deferred = Deferred;
 Ember.onLoad = onLoad;
 Ember.runLoadHooks = runLoadHooks;
+
+Ember.ArrayController = ArrayController;
+Ember.ObjectController = ObjectController;
+Ember.Controller = Controller;
+Ember.ControllerMixin = ControllerMixin;

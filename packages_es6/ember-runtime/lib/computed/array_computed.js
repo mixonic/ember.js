@@ -2,10 +2,15 @@ require('ember-metal/computed');
 require('ember-runtime/mixins/array');
 require('ember-runtime/computed/reduce_computed');
 
-var ReduceComputedProperty = Ember.ReduceComputedProperty,
-    a_slice = [].slice,
-    o_create = Ember.create,
-    forEach = Ember.EnumerableUtils.forEach;
+import ReduceComputedProperty from "ember-runtime/computed/reduce_computed"
+import EnumerableUtils from "ember-metal/enumerable_utils";
+import {create} from "ember-metal/platform";
+import {addObserver} from "ember-metal/observer";
+import EmberError from "ember-metal/error";
+
+var a_slice = [].slice,
+    o_create = create,
+    forEach = EnumerableUtils.forEach;
 
 function ArrayComputedProperty() {
   var cp = this;
@@ -19,7 +24,7 @@ function ArrayComputedProperty() {
         // retrieved arrays to be updated; we can't simply empty the cache and
         // hope the array is re-retrieved.
         forEach(cp._dependentKeys, function(dependentKey) {
-          Ember.addObserver(this, dependentKey, function() {
+          addObserver(this, dependentKey, function() {
             cp.recomputeOnce.call(this, propertyName);
           });
         }, this);
@@ -31,7 +36,7 @@ function ArrayComputedProperty() {
 
   return this;
 }
-Ember.ArrayComputedProperty = ArrayComputedProperty;
+
 ArrayComputedProperty.prototype = o_create(ReduceComputedProperty.prototype);
 ArrayComputedProperty.prototype.initialValue = function () {
   return Ember.A();
@@ -160,7 +165,7 @@ ArrayComputedProperty.prototype.didChange = function (obj, keyName) {
   @param {Object} options
   @return {Ember.ComputedProperty}
 */
-Ember.arrayComputed = function (options) {
+function arrayComputed (options) {
   var args;
 
   if (arguments.length > 1) {
@@ -169,7 +174,7 @@ Ember.arrayComputed = function (options) {
   }
 
   if (typeof options !== "object") {
-    throw new Ember.Error("Array Computed Property declared without an options hash");
+    throw new EmberError("Array Computed Property declared without an options hash");
   }
 
   var cp = new ArrayComputedProperty(options);
@@ -180,3 +185,5 @@ Ember.arrayComputed = function (options) {
 
   return cp;
 };
+
+export {arrayComputed, ArrayComputedProperty}

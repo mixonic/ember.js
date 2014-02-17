@@ -1,14 +1,24 @@
-require('ember-runtime/system/array_proxy');
-require('ember-runtime/controllers/controller');
-require('ember-runtime/mixins/sortable');
+// require('ember-runtime/system/array_proxy');
+// require('ember-runtime/controllers/controller');
+// require('ember-runtime/mixins/sortable');
 
 /**
 @module ember
 @submodule ember-runtime
 */
 
-var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach,
-    replace = Ember.EnumerableUtils.replace;
+import get from "ember-metal/property_get";
+import set from "ember-metal/property_set";
+import EnumerableUtils from "ember-metal/enumerable_utils";
+import ArrayProxy from "ember-runtime/system/array_proxy";
+import SortableMixin from "ember-runtime/mixins/sortable";
+import ControllerMixin from "ember-runtime/controllers/controller";
+import computed from "ember-metal/computed";
+import EmberError from "ember-metal/error";
+import {A} from "ember-runtime/system/native_array";
+
+var forEach = EnumerableUtils.forEach,
+    replace = EnumerableUtils.replace;
 
 /**
   `Ember.ArrayController` provides a way for you to publish a collection of
@@ -97,8 +107,7 @@ var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach,
   @uses Ember.ControllerMixin
 */
 
-Ember.ArrayController = Ember.ArrayProxy.extend(Ember.ControllerMixin,
-  Ember.SortableMixin, {
+var ArrayController = ArrayProxy.extend(ControllerMixin, SortableMixin, {
 
   /**
     The controller used to wrap items, if any.
@@ -182,11 +191,11 @@ Ember.ArrayController = Ember.ArrayProxy.extend(Ember.ControllerMixin,
   init: function() {
     this._super();
 
-    this.set('_subControllers', Ember.A());
+    this.set('_subControllers', A());
   },
 
-  content: Ember.computed(function () {
-    return Ember.A();
+  content: computed(function () {
+    return A();
   }),
 
   /**
@@ -209,7 +218,7 @@ Ember.ArrayController = Ember.ArrayProxy.extend(Ember.ControllerMixin,
     fullName = "controller:" + controllerClass;
 
     if (!container.has(fullName)) {
-      throw new Ember.Error('Could not resolve itemController: "' + controllerClass + '"');
+      throw new EmberError('Could not resolve itemController: "' + controllerClass + '"');
     }
     var parentController;
     if (this._isVirtual) {
@@ -237,6 +246,8 @@ Ember.ArrayController = Ember.ArrayProxy.extend(Ember.ControllerMixin,
       });
     }
 
-    this.set('_subControllers', Ember.A());
+    this.set('_subControllers', A());
   }
 });
+
+export default ArrayController;
