@@ -657,7 +657,7 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
         return macro.apply(this, [getProperties(this, properties)]);
       });
 
-      return computedFunc.property.apply(computed, args);
+      return computedFunc.property.apply(computedFunc, args);
     };
   };
 } else {
@@ -678,7 +678,7 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
         return macro.apply(this, [getProperties(this, properties)]);
       });
 
-      return computedFunc.property.apply(computed, properties);
+      return computedFunc.property.apply(computedFunc, properties);
     };
   };
 }
