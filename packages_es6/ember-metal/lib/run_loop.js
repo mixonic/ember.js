@@ -1,5 +1,3 @@
-require('ember-metal/vendor/backburner');
-
 var onBegin = function(current) {
   run.currentRunLoop = current;
 };
