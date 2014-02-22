@@ -653,11 +653,11 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
       var args = a_slice.call(arguments);
       var properties = normalizeDependentKeys(args);
 
-      var computed = computed(function() {
+      var computedFunc = computed(function() {
         return macro.apply(this, [getProperties(this, properties)]);
       });
 
-      return computed.property.apply(computed, args);
+      return computedFunc.property.apply(computed, args);
     };
   };
 } else {
@@ -674,11 +674,11 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
     computed[name] = function() {
       var properties = a_slice.call(arguments);
 
-      var computed = computed(function() {
+      var computedFunc = computed(function() {
         return macro.apply(this, [getProperties(this, properties)]);
       });
 
-      return computed.property.apply(computed, properties);
+      return computedFunc.property.apply(computed, properties);
     };
   };
 }
