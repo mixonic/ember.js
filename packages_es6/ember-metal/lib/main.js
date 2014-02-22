@@ -256,6 +256,6 @@ Ember.onerror = null;
 // require('ember-metal/run_loop');
 // require('ember-metal/libraries');
 
-window.Ember = Ember;
+window.Em = window.Ember = Ember;
 
 export default Ember;

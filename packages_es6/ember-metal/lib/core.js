@@ -37,7 +37,7 @@ var exports = Ember.exports = Ember.exports || this;
 var lookup  = Ember.lookup  = Ember.lookup  || this;
 
 // aliases needed to keep minifiers from removing the global context
-exports.Em = exports.Ember = Em = Ember;
+exports.Em = exports.Ember = Ember;
 
 // Make sure these are set whether Ember was already defined or not
 
