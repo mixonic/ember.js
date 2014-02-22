@@ -15,12 +15,12 @@
 
 import Ember from "ember-metal/core"; // warn, assert, wrap, et;
 import {map, indexOf, forEach} from "ember-metal/array";
-import create from "ember-metal/platform";
+import {create} from "ember-metal/platform";
 import {guidFor, meta, META_KEY, wrap, makeArray} from "ember-metal/utils";
 import expandProperties from "ember-metal/expand_properties";
 import {Descriptor, defineProperty} from "ember-metal/properties";
-import ComputedProperty from "ember-metal/computed";
-import Binding from "ember-metal/binding";
+import {ComputedProperty} from "ember-metal/computed";
+import {Binding} from "ember-metal/binding";
 import {addObserver, removeObserver, addBeforeObserver, removeBeforeObserver} from "ember-metal/observer";
 import {addListener, removeListener} from "ember-metal/events";
 
