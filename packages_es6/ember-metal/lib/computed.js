@@ -16,9 +16,8 @@ import EnumerableUtils from "ember-metal/enumerable_utils";
 import {create} from "ember-metal/platform";
 import {watch, unwatch} from "ember-metal/watching";
 import expandProperties from "ember-metal/expand_properties";
-import {Descriptor} from "ember-metal/computed";
 import EmberError from "ember-metal/error";
-import {defineProperty} from "ember-metal/properties";
+import {Descriptor, defineProperty} from "ember-metal/properties";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
 /**
 @module ember-metal

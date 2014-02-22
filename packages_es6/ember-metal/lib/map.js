@@ -29,7 +29,8 @@
 
 import {indexOf} from "ember-metal/array"
 import {guidFor} from "ember-metal/utils";
-import {set} from "ember-metal/propert_set";
+import {set} from "ember-metal/property_set";
+import {create} from "ember-metal/platform";
 
 var copy = function(obj) {
   var output = {};
@@ -347,7 +348,7 @@ MapWithDefault.create = function(options) {
   }
 };
 
-MapWithDefault.prototype = Ember.create(Map.prototype);
+MapWithDefault.prototype = create(Map.prototype);
 
 /**
   Retrieve the value associated with a given key.
