@@ -1,11 +1,12 @@
 /*globals GlobalA:true GlobalB:true */
 
 import testBoth from 'ember-metal/tests/props_helper';
-import {Binding} from "ember-metal/binding";
+import {Binding, bind} from "ember-metal/binding";
 import run from 'ember-metal/run_loop';
 import {create} from 'ember-metal/platform';
 import {set} from 'ember-metal/property_set';
 import {get} from 'ember-metal/property_get';
+import {rewatch} from "ember-metal/watching";
 
 function performTest(binding, a, b, get, set, connect) {
   if (connect === undefined) connect = function() {binding.connect(a);};
@@ -31,6 +32,8 @@ function performTest(binding, a, b, get, set, connect) {
   });
   equal(get(b, 'bar'), 'BARF', 'a should have changed');
 }
+
+var GlobalA, GlobalB;
 
 module("Ember.Binding");
 
@@ -74,7 +77,6 @@ testBoth('Connecting a binding to path', function(get, set) {
   });
 
   equal(get(a, 'foo'), 'BIFF', 'a should have changed');
-
 });
 
 testBoth('Calling connect more than once', function(get, set) {
@@ -101,7 +103,7 @@ testBoth('Bindings should be inherited', function(get, set) {
     binding.connect(a);
 
     a2 = create(a);
-    Ember.rewatch(a2);
+    rewatch(a2);
   });
 
   equal(get(a2, 'foo'), "BAR", "Should have synced binding on child");
@@ -120,7 +122,7 @@ test('inherited bindings should sync on create', function() {
   var a;
   run(function () {
     var A = function() {
-      Ember.bind(this, 'foo', 'bar.baz');
+      bind(this, 'foo', 'bar.baz');
     };
 
     a = new A();
