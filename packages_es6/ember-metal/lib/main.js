@@ -71,7 +71,7 @@ import {watch, isWatching, unwatch, rewatch, destroy} from "ember-metal/watching
 import expandProperties from "ember-metal/expand_properties";
 import {ComputedProperty, computed, cacheFor} from "ember-metal/computed";
 
-import {addObserver, observersFor, removeObserver, addBeforeObserver, _suspendBeforeObserver, _suspendObserver, _suspendBeforeObserver, _suspendObservers, beforeObserversFor, removeBeforeObserver} from "ember-metal/observer";
+import {addObserver, observersFor, removeObserver, addBeforeObserver, _suspendBeforeObserver, _suspendObserver, _suspendBeforeObservers, _suspendObservers, beforeObserversFor, removeBeforeObserver} from "ember-metal/observer";
 import {IS_BINDING, mixin, Mixin, required, aliasMethod, observer, immediateObserver, beforeObserver} from "ember-metal/mixin";
 import {Binding, isGlobalPath, bind, oneWay} from "ember-metal/binding";
 import Run from "ember-metal/run_loop";
@@ -138,8 +138,8 @@ Ember.sendEvent         = sendEvent;
 Ember.hasListeners      = hasListeners;
 Ember.watchedEvents     = watchedEvents;
 Ember.listenersFor      = listenersFor;
-Ember.listenersDiff     = listenersDiff;
-Ember.listenersUnion    = listenersUnion;
+Ember.actionsDiff       = actionsDiff;
+Ember.actionsUnion      = actionsUnion;
 
 Ember._ObserverSet = ObserverSet;
 

@@ -111,4 +111,4 @@ function removeBeforeObserver(obj, _path, target, method) {
   return this;
 };
 
-export {addObserver, observersFor, removeObserver, addBeforeObserver, _suspendBeforeObserver, _suspendObserver,_suspendBeforeObserver, _suspendObservers, beforeObserversFor, removeBeforeObserver};
+export {addObserver, observersFor, removeObserver, addBeforeObserver, _suspendBeforeObserver, _suspendObserver,_suspendBeforeObservers, _suspendObservers, beforeObserversFor, removeBeforeObserver};
