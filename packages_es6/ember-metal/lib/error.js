@@ -32,6 +32,6 @@ var EmberError = function() {
   }
 };
 
-Error.prototype = create(Error.prototype);
+EmberError.prototype = create(Error.prototype);
 
 export default EmberError;
