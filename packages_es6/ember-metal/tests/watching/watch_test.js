@@ -1,10 +1,11 @@
 /*globals Global:true */
 
 import testBoth from 'ember-metal/tests/props_helper';
+import EnumerableUtils from 'ember-metal/enumerable_utils';
 
 var willCount, didCount,
     willKeys, didKeys,
-    indexOf = Ember.EnumerableUtils.indexOf;
+    indexOf = EnumerableUtils.indexOf;
 
 module('Ember.watch', {
   setup: function() {

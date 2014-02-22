@@ -1,4 +1,5 @@
 /*global jQuery*/
+import {platform} from 'ember-metal/platform';
 
 module("Ember.meta");
 
@@ -44,7 +45,7 @@ test("getMeta and setMeta", function() {
 module("Ember.meta enumerable");
 // Tests fix for https://github.com/emberjs/ember.js/issues/344
 // This is primarily for older browsers such as IE8
-if (Ember.platform.defineProperty.isSimulated) {
+if (platform.defineProperty.isSimulated) {
   if (Ember.imports.jQuery) {
     test("meta is not jQuery.isPlainObject", function () {
       var proto, obj;
