@@ -49,8 +49,8 @@ import {
   hasListeners,
   watchedEvents,
   listenersFor,
-  actionsDiff,
-  actionsUnion
+  listenersDiff,
+  listenersUnion
 } from "ember-metal/events";
 
 import ObserverSet from "ember-metal/observer_set";
@@ -138,8 +138,8 @@ Ember.sendEvent         = sendEvent;
 Ember.hasListeners      = hasListeners;
 Ember.watchedEvents     = watchedEvents;
 Ember.listenersFor      = listenersFor;
-Ember.actionsDiff       = actionsDiff;
-Ember.actionsUnion      = actionsUnion;
+Ember.listenersDiff     = listenersDiff;
+Ember.listenersUnion    = listenersUnion;
 
 Ember._ObserverSet = ObserverSet;
 

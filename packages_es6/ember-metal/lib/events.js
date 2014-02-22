@@ -69,7 +69,7 @@ function actionsFor(obj, eventName) {
   return actions;
 }
 
-function actionsUnion(obj, eventName, otherActions) {
+function listenersUnion(obj, eventName, otherActions) {
   var meta = obj[META_KEY],
       actions = meta && meta.listeners && meta.listeners[eventName];
 
@@ -86,7 +86,7 @@ function actionsUnion(obj, eventName, otherActions) {
   }
 }
 
-function actionsDiff(obj, eventName, otherActions) {
+function listenersDiff(obj, eventName, otherActions) {
   var meta = obj[META_KEY],
       actions = meta && meta.listeners && meta.listeners[eventName],
       diffActions = [];
@@ -399,4 +399,4 @@ function on(){
   return func;
 };
 
-export {on, addListener, removeListener, suspendListener, suspendListeners, sendEvent, hasListeners, watchedEvents, listenersFor, actionsDiff, actionsUnion};
+export {on, addListener, removeListener, suspendListener, suspendListeners, sendEvent, hasListeners, watchedEvents, listenersFor, listenersDiff, listenersUnion};
