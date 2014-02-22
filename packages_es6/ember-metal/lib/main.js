@@ -44,6 +44,7 @@ import {
   addListener,
   removeListener,
   suspendListener,
+  suspendListeners,
   sendEvent,
   hasListeners,
   watchedEvents,
