@@ -1,5 +1,4 @@
-/*globals GlobalA:true GlobalB:true */
-
+import Ember from 'ember-metal/core';
 import testBoth from 'ember-metal/tests/props_helper';
 import {Binding, bind} from "ember-metal/binding";
 import run from 'ember-metal/run_loop';
@@ -33,9 +32,18 @@ function performTest(binding, a, b, get, set, connect) {
   equal(get(b, 'bar'), 'BARF', 'a should have changed');
 }
 
-var GlobalA, GlobalB;
+var originalLookup, lookup, GlobalB;
 
-module("Ember.Binding");
+module("Ember.Binding", {
+  setup: function(){
+    originalLookup = Ember.lookup;
+    Ember.lookup = lookup = {};
+  },
+  teardown: function(){
+    lookup = null;
+    Ember.lookup = originalLookup;
+  }
+});
 
 testBoth('Connecting a binding between two properties', function(get, set) {
   var a = { foo: 'FOO', bar: 'BAR' };
@@ -58,7 +66,7 @@ testBoth('Connecting a binding between two objects', function(get, set) {
 
 testBoth('Connecting a binding to path', function(get, set) {
   var a = { foo: 'FOO' };
-  GlobalB = {
+  lookup['GlobalB'] = GlobalB = {
     b: { bar: 'BAR' }
   };
 
