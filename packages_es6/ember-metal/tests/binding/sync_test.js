@@ -1,3 +1,5 @@
+import testBoth from 'ember-metal/tests/props_helper';
+
 module("system/binding/sync_test.js");
 
 testBoth("bindings should not sync twice in a single run loop", function(get, set) {

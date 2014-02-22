@@ -1,6 +1,6 @@
 /*globals testBoth */
 
-require('ember-metal/~tests/props_helper');
+import testBoth from 'ember-metal/tests/props_helper';
 
 var willCount = 0 , didCount = 0,
     willChange = Ember.propertyWillChange,

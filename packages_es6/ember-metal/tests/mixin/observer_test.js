@@ -1,6 +1,6 @@
 /*globals testBoth */
 
-require('ember-metal/~tests/props_helper');
+import testBoth from 'ember-metal/tests/props_helper';
 
 module('Ember.Mixin observer');
 

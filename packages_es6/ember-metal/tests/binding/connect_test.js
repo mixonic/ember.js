@@ -1,6 +1,6 @@
 /*globals GlobalA:true GlobalB:true */
 
-require('ember-metal/~tests/props_helper');
+import testBoth from 'ember-metal/tests/props_helper';
 
 function performTest(binding, a, b, get, set, connect) {
   if (connect === undefined) connect = function() {binding.connect(a);};

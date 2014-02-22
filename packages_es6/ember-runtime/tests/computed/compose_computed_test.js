@@ -1,6 +1,6 @@
 /*global Global: true*/
 
-require('ember-metal/~tests/props_helper');
+import testBoth from 'ember-metal/tests/props_helper';
 
 if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
   var metaFor = Ember.meta,

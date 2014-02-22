@@ -1,6 +1,7 @@
 /*globals Global:true */
 
-require('ember-metal/~tests/props_helper');
+import testBoth from 'ember-metal/tests/props_helper';
+import Ember from "ember-metal/core";
 
 var obj, count;
 

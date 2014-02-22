@@ -1,4 +1,5 @@
-require('ember-metal/~tests/props_helper');
+import testBoth from 'ember-metal/tests/props_helper';
+import Ember from 'ember-metal/core';
 
 if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
   var get = Ember.get,
