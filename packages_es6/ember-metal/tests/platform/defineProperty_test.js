@@ -35,11 +35,14 @@ test('defining a read only property', function() {
 
   equal(obj.foo, 'FOO', 'should have added property');
 
-  obj.foo = "BAR";
   if (platform.defineProperty.isSimulated) {
+    obj.foo = "BAR";
     equal(obj.foo, 'BAR', 'simulated defineProperty should silently work');
   } else {
-    equal(obj.foo, 'FOO', 'real defined property should not be writable');
+    // cannot set read-only property in strict-mode
+    raises(function(){
+      obj.foo = "BAR";
+    });
   }
 
 });
