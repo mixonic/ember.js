@@ -9,8 +9,8 @@
 // require('ember-metal/property_events');
 
 import Ember from "ember-metal/core";
-import {get} from "ember-metal/get_property";
-import {set} from "ember-metal/set_property";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 import {meta, META_KEY, guidFor, typeOf} from "ember-metal/utils";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {create} from "ember-metal/platform";
