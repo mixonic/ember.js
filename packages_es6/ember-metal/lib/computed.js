@@ -19,6 +19,8 @@ import expandProperties from "ember-metal/expand_properties";
 import EmberError from "ember-metal/error";
 import {Descriptor, defineProperty} from "ember-metal/properties";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
+import isEmpty from 'ember-metal/is_empty';
+
 /**
 @module ember-metal
 */
@@ -727,7 +729,7 @@ if (Ember.FEATURES.isEnabled('ember-metal-computed-empty-array')) {
       }
 
       return computed.apply(computed, args.concat(function () {
-        return Ember.isEmpty(get(this, normalizedKey));
+        return isEmpty(get(this, normalizedKey));
       }));
     };
   } else {
@@ -755,7 +757,7 @@ if (Ember.FEATURES.isEnabled('ember-metal-computed-empty-array')) {
     */
     computed.empty = function (dependentKey) {
       return computed(dependentKey + '.length', function () {
-        return Ember.isEmpty(get(this, dependentKey));
+        return isEmpty(get(this, dependentKey));
       });
     };
   }
@@ -787,7 +789,7 @@ if (Ember.FEATURES.isEnabled('ember-metal-computed-empty-array')) {
     the original value for property
   */
   registerComputed('empty', function(dependentKey) {
-    return Ember.isEmpty(get(this, dependentKey));
+    return isEmpty(get(this, dependentKey));
   });
 }
 
@@ -818,7 +820,7 @@ if (Ember.FEATURES.isEnabled('ember-metal-computed-empty-array')) {
   original value for property is not empty.
 */
 registerComputed('notEmpty', function(dependentKey) {
-  return !Ember.isEmpty(get(this, dependentKey));
+  return !isEmpty(get(this, dependentKey));
 });
 
 /**

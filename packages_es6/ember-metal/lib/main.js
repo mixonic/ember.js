@@ -75,6 +75,9 @@ import {IS_BINDING, mixin, Mixin, required, aliasMethod, observer, immediateObse
 import {Binding, isGlobalPath, bind, oneWay} from "ember-metal/binding";
 import Run from "ember-metal/run_loop";
 import libraries from "ember-metal/libraries";
+import {isNone, none} from 'ember-metal/is_none';
+import {isEmpty, empty} from 'ember-metal/is_empty';
+import isBlank from 'ember-metal/is_blank';
 
 // EXPORTS to the global window Ember.
 
@@ -211,6 +214,14 @@ Ember.Run = Run;
 
 Ember.libraries = libraries;
 Ember.libraries.registerCoreLibrary('Ember', Ember.VERSION);
+
+Ember.isNone = isNone;
+Ember.none = none;
+
+Ember.isEmpty = isEmpty;
+Ember.empty = empty;
+
+Ember.isBlank = isBlank;
 
 /**
   A function may be assigned to `Ember.onerror` to be called when Ember
