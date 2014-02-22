@@ -10,8 +10,10 @@ import {meta, META_KEY, tryFinally} from "ember-metal/utils";
 import {create} from "ember-metal/platform";
 
 var a_slice = [].slice,
+    metaFor = meta,
     /* listener flags */
     ONCE = 1, SUSPENDED = 2;
+
 
 /*
   The event system uses a series of nested hashes to store listeners on an
@@ -52,7 +54,7 @@ function actionsFor(obj, eventName) {
 
   if (!meta.hasOwnProperty('listeners')) {
     // setup inherited copy of the listeners object
-    meta.listeners = o_create(meta.listeners);
+    meta.listeners = create(meta.listeners);
   }
 
   actions = meta.listeners[eventName];
