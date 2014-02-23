@@ -1,6 +1,6 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('mapBy');
 
@@ -18,3 +18,5 @@ suite.test('should be aliased to mapProperty', function() {
   var obj = this.newObject([]);
   equal(obj.mapProperty, obj.mapBy);
 });
+
+export default suite;

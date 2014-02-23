@@ -1,6 +1,6 @@
-require('ember-runtime/~tests/suites/mutable_array');
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = Ember.MutableArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('unshiftObject');
 
@@ -78,3 +78,5 @@ suite.test("[A,B,C].unshiftObject(A) => [A,A,B,C] + notify", function() {
   equal(observer.validate('firstObject'), false, 'should NOT have notified firstObject');
   equal(observer.validate('lastObject'), false, 'should NOT have notified lastObject');
 });
+
+export default suite;

@@ -1,8 +1,6 @@
-/*globals raises */
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-require('ember-runtime/~tests/suites/mutable_array');
-
-var suite = Ember.MutableArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('reverseObjects');
 
@@ -26,3 +24,5 @@ suite.test("[A,B,C].reverseObjects() => [] + notify", function () {
   equal(observer.timesCalled('firstObject'), 1, 'should have notified firstObject once');
   equal(observer.timesCalled('lastObject'), 1, 'should have notified lastObject once');
 });
+
+export default suite;

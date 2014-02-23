@@ -1,8 +1,6 @@
-/*globals raises */
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-require('ember-runtime/~tests/suites/mutable_array');
-
-var suite = Ember.MutableArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('removeAt');
 
@@ -121,3 +119,5 @@ suite.test("[A,B,C,D].removeAt(1,2) => [A,D] + notify", function() {
   equal(observer.validate('firstObject'), false, 'should NOT have notified firstObject once');
   equal(observer.validate('lastObject'), false, 'should NOT have notified lastObject once');
 });
+
+export default suite;

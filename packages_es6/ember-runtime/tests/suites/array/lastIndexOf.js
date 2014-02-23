@@ -1,6 +1,6 @@
-require('ember-runtime/~tests/suites/array');
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = Ember.ArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('lastIndexOf');
 
@@ -57,3 +57,5 @@ suite.test("should return -1 when no match is found even startAt search location
   var obj = this.newObject(this.newFixture(3)), foo = {};
   equal(obj.lastIndexOf(foo, obj.length + 1), -1, 'obj.lastIndexOf(foo) should be -1');
 });
+
+export default suite;

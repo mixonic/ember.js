@@ -1,8 +1,9 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
-import {guidFor} from "ember-metal/utils";
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import {get} from 'ember-metal/property_get';
+import {guidFor} from "ember-metal/utils";
 
-var suite = EnumerableTests, global = this;
+var suite = SuiteModuleBuilder.create();
+var global = this;
 
 suite.module('forEach');
 
@@ -65,3 +66,5 @@ suite.test('callback params', function() {
   });
 
 });
+
+export default suite;

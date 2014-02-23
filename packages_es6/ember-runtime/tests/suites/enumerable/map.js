@@ -1,9 +1,9 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import EnumerableUtils from 'ember-metal/enumerable_utils';
 import {get} from 'ember-metal/property_get';
 import {guidFor} from "ember-metal/utils";
 
-var suite = EnumerableTests, global = this;
+var suite = SuiteModuleBuilder.create(), global = this;
 
 suite.module('map');
 
@@ -67,3 +67,5 @@ suite.test('callback params', function() {
   });
 
 });
+
+export default suite;

@@ -1,8 +1,7 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import {EmberObject} from 'ember-runtime/system/object';
 
-var suite = EnumerableTests;
-
+var suite = SuiteModuleBuilder.create();
 // ..........................................................
 // find()
 //
@@ -102,3 +101,5 @@ suite.test('should be aliased to findProperty', function() {
 
   equal(obj.findProperty, obj.findBy);
 });
+
+export default suite;

@@ -1,6 +1,6 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('without');
 
@@ -26,3 +26,4 @@ suite.test('should return same instance if object not found', function() {
   equal(ret, obj, 'should be same instance');
 });
 
+export default suite;

@@ -1,7 +1,7 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import {EmberObject} from 'ember-runtime/system/object';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 // ..........................................................
 // every()
@@ -88,3 +88,5 @@ suite.test('should return true if every property is undefined', function() {
   equal(obj.isEvery('foo', undefined), true, "isEvery('foo', undefined)");
   equal(obj.isEvery('bar', undefined), false, "isEvery('bar', undefined)");
 });
+
+export default suite;

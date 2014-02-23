@@ -1,6 +1,6 @@
-require('ember-runtime/~tests/suites/mutable_array');
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = Ember.MutableArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('popObject');
 
@@ -66,3 +66,5 @@ suite.test("[A,B,C].popObject() => [A,B] + notify", function() {
 
   equal(observer.validate('firstObject'), false, 'should NOT have notified firstObject');
 });
+
+export default suite;

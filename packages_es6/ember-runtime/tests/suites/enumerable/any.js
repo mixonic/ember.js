@@ -1,6 +1,6 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 // ..........................................................
 // any()
@@ -146,3 +146,5 @@ suite.test('isAny should be aliased to someProperty', function() {
   var obj = this.newObject();
   equal(obj.someProperty, obj.isAny);
 });
+
+export default suite;

@@ -1,7 +1,7 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import EmberObject from 'ember-runtime/system/object';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder;
 
 // ..........................................................
 // reject()
@@ -149,3 +149,5 @@ suite.test('should be aliased to rejectProperty', function() {
 
   equal(ary.rejectProperty, ary.rejectBy);
 });
+
+export default suite;

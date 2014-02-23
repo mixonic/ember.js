@@ -1,8 +1,6 @@
-/*globals raises */
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-require('ember-runtime/~tests/suites/mutable_array');
-
-var suite = Ember.MutableArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('insertAt');
 
@@ -197,3 +195,5 @@ suite.test("[A,B,C].insertAt(3,X) => [A,B,C,X] + notify", function() {
 
   equal(observer.validate('firstObject'), false, 'should NOT have notified firstObject');
 });
+
+export default suite;

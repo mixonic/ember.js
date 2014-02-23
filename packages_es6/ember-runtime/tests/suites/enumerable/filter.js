@@ -1,7 +1,7 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import {EmberObject} from 'ember-runtime/system/object';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 // ..........................................................
 // filter()
@@ -138,3 +138,5 @@ suite.test('should be aliased to filterProperty', function() {
 
   equal(ary.filterProperty, ary.filterBy);
 });
+
+export default suite;

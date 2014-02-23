@@ -1,6 +1,6 @@
-require('ember-runtime/~tests/suites/mutable_array');
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = Ember.MutableArrayTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('pushObject');
 
@@ -53,3 +53,5 @@ suite.test("[A,B,C].pushObject(X) => [A,B,C,X] + notify", function() {
 
   equal(observer.validate('firstObject'), false, 'should NOT have notified firstObject');
 });
+
+export default suite;

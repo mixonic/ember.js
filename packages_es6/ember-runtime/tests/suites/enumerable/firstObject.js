@@ -1,7 +1,7 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import {get} from 'ember-metal/property_get';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('firstObject');
 
@@ -14,3 +14,5 @@ suite.test('returns undefined if enumerable is empty', function() {
   var obj = this.newObject([]);
   equal(get(obj, 'firstObject'), undefined);
 });
+
+export default suite;

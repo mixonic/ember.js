@@ -1,6 +1,6 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('reduce');
 
@@ -21,3 +21,5 @@ suite.test('passes enumerable object to callback', function() {
   var res = obj.reduce(function(previousValue, item, index, enumerable) { return enumerable; }, 0);
   equal(res, obj);
 });
+
+export default suite;

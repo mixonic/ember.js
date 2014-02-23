@@ -2,6 +2,7 @@ import EmberObject from "ember-runtime/system/object";
 import {required} from "ember-metal/mixin";
 import {guidFor, generateGuid} from "ember-metal/utils";
 import {get} from "ember-metal/property_get";
+import {forEach} from "ember-metal/array";
 
 /**
   @class
@@ -99,8 +100,27 @@ Suite.reopenClass({
   },
 
   // easy way to disable tests
-  notest: function() {}
+  notest: function() {},
 
+  importModuleTests: function(builder) {
+    var self = this;
+    this.module(builder.module);
+
+    builder.tests.forEach(function(descAndFunc) {
+      self.test.apply(self, descAndFunc);
+    });
+  }
 });
+
+var SuiteModuleBuilder = EmberObject.extend({
+  module: null,
+  tests: [],
+
+  test: function(name, func) {
+    this.tests.push([name, func]);
+  }
+});
+
+export {SuiteModuleBuilder, Suite};
 
 export default Suite;

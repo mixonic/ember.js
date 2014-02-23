@@ -1,7 +1,7 @@
-import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import {EmberObject} from 'ember-runtime/system/object';
 
-var suite = EnumerableTests;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('invoke');
 
@@ -31,4 +31,4 @@ suite.test('invoke should call on each object that implements', function() {
   equal(cnt, 6, 'should have invoked 3 times, passing param');
 });
 
-
+export default suite;
