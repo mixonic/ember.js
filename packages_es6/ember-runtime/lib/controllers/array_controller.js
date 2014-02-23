@@ -7,13 +7,13 @@
 @submodule ember-runtime
 */
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import ArrayProxy from "ember-runtime/system/array_proxy";
 import SortableMixin from "ember-runtime/mixins/sortable";
-import ControllerMixin from "ember-runtime/controllers/controller";
-import computed from "ember-metal/computed";
+import {ControllerMixin} from "ember-runtime/controllers/controller";
+import {computed} from "ember-metal/computed";
 import EmberError from "ember-metal/error";
 import {A} from "ember-runtime/system/native_array";
 

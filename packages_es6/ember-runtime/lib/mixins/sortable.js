@@ -5,14 +5,14 @@
 
 import Ember from "ember-metal/core"; // Ember.assert
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 import EnumerableUtils from "ember-metal/enumerable_utils";
-import Mixin from "ember-metal/mixin";
+import {Mixin} from "ember-metal/mixin";
 import MutableEnumerable from "ember-runtime/mixins/mutable_enumerable";
 import {compare} from "ember-runtime/core";
 import {addObserver, removeObserver} from "ember-metal/observer";
-import computed from "ember-metal/computed";
+import {computed} from "ember-metal/computed";
 import A from "ember-runtime/system/native_array";
 import {beforeObserver, observer} from "ember-metal/mixin"; //ES6TODO: should we access these directly from their package or from how thier exposed in ember-metal?
 

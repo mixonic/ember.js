@@ -1,4 +1,4 @@
-import get from "ember-metal/property_get";
+import {get} from "ember-metal/property_get";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 
 var RETAIN = 'r',

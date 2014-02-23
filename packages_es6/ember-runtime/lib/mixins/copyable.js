@@ -6,10 +6,10 @@
 */
 
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
-import required from "ember-metal/mixin";
-import Freezable from "ember-metal/freezable";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
+import {required} from "ember-metal/mixin";
+import Freezable from "ember-runtime/mixins/freezable";
 
 
 /**

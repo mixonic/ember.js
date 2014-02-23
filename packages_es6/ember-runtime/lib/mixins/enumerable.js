@@ -7,8 +7,8 @@
 // HELPERS
 //
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 import {Mixin, required, aliasMethod} from "ember-metal/mixin";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {computed} from "ember-metal/computed";

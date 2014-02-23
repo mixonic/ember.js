@@ -5,13 +5,13 @@
 @submodule ember-runtime
 */
 import Ember from "ember-metal/core"; // Ember.assert
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
-import fmt from "ember-runtime/system/string";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
+import EmberStringUtils from "ember-runtime/system/string";
 import {addObserver, removeObserver, addBeforeObserver, removeBeforeObserver} from "ember-metal/observer";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
-import defineProperty from "ember-metal/properties";
-import meta from "ember-metal/utils";
+import {defineProperty} from "ember-metal/properties";
+import {meta} from "ember-metal/utils";
 import EmberObject from "ember-runtime/object";
 
 function contentPropertyWillChange(content, contentKey) {
@@ -139,7 +139,7 @@ var ObjectProxy = EmberObject.extend({
     }
 
     var content = get(this, 'content');
-    Ember.assert(fmt("Cannot delegate set('%@', %@) to the 'content' property of object proxy %@: its 'content' is undefined.", [key, value, this]), content);
+    Ember.assert(EmberStringUtils.fmt("Cannot delegate set('%@', %@) to the 'content' property of object proxy %@: its 'content' is undefined.", [key, value, this]), content);
     return set(content, key, value);
   }
 

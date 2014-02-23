@@ -3,8 +3,8 @@
 @submodule ember-runtime
 */
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 
 /**
   The `Ember.Freezable` mixin implements some basic methods for marking an

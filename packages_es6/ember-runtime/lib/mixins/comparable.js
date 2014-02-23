@@ -1,5 +1,4 @@
-// require('ember-runtime/core');
-import required from "ember-metal/mixin";
+import {required} from "ember-metal/mixin";
 
 /**
 @module ember

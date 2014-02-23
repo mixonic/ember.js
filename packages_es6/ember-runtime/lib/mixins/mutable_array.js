@@ -18,11 +18,11 @@ var EMPTY = [];
 // HELPERS
 //
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 import {Mixin, required} from "ember-metal/mixin";
 import EmberError from "ember-metal/error";
-import EmberArray from "ember-runtime/mixin/array";
+import EmberArray from "ember-runtime/mixins/array";
 import MutableEnumerable from "ember-runtime/mixins/mutable_enumerable";
 import {isArray} from "ember-metal/utils";
 /**

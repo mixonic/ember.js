@@ -10,10 +10,10 @@
 //
 import Ember from "ember-metal/core"; // ES6TODO: Ember.isNone; SBB
 
-import get from "ember-metal/property_get";
-import set from "ember-metal/property_set";
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
 import {computed, cacheFor} from "ember-metal/computed";
-import {Enumerable} from "ember-metal/enumerable";
+import {Enumerable} from "ember-runtime/mixins/enumerable";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {Mixin, required} from "ember-metal/mixin";
 import {hasListeners} from "ember-metal/events";

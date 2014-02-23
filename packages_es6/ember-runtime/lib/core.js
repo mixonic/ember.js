@@ -9,7 +9,7 @@
 
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {create} from "ember-metal/platform";
-import {Comparable} from "ember-metal/comparable";
+import {Comparable} from "ember-runtime/mixins";
 
 var indexOf = EnumerableUtils.indexOf;
 
