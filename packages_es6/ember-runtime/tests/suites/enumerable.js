@@ -235,6 +235,7 @@ var EnumerableTests = Suite.extend({
 });
 
 import anyTests         from 'ember-runtime/tests/suites/enumerable/any';
+import isAnyTests       from 'ember-runtime/tests/suites/enumerable/is_any';
 import compactTests     from 'ember-runtime/tests/suites/enumerable/compact';
 import containsTests    from 'ember-runtime/tests/suites/enumerable/contains';
 import everyTests       from 'ember-runtime/tests/suites/enumerable/every';
@@ -254,6 +255,7 @@ import uniqTests        from 'ember-runtime/tests/suites/enumerable/uniq';
 import withoutTests     from 'ember-runtime/tests/suites/enumerable/without';
 
 EnumerableTests.importModuleTests(anyTests);
+EnumerableTests.importModuleTests(isAnyTests);
 EnumerableTests.importModuleTests(compactTests);
 EnumerableTests.importModuleTests(containsTests);
 EnumerableTests.importModuleTests(everyTests);

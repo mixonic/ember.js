@@ -1,5 +1,3 @@
-require('ember-runtime/system/object');
-
 import Ember from "ember-metal/core"; // Ember.assert, Ember.deprecate
 
 import EmberObject from "ember-runtime/system/object";

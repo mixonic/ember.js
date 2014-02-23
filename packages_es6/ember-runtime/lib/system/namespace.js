@@ -12,7 +12,7 @@ import {indexOf} from "ember-metal/array";
 import {GUID_KEY, guidFor} from "ember-metal/utils";
 import {Mixin} from "ember-metal/mixin";
 
-import EmberObject from "ember-runtime/object";
+import EmberObject from "ember-runtime/system/object";
 
 /**
   A Namespace is an object usually used to contain other objects or methods

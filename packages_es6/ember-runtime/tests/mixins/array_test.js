@@ -1,13 +1,13 @@
-/*globals testBoth */
-
-require('ember-runtime/~tests/props_helper');
-require('ember-runtime/~tests/suites/array');
+import {testWithDefault, testBoth} from 'ember-runtime/tests/props_helper';
+import {ArrayTests} from 'ember-runtime/tests/suites/array';
+import EmberObject from 'ember-runtime/system/object';
+import EmberArray from "ember-runtime/mixins/array";
 
 /*
   Implement a basic fake mutable array.  This validates that any non-native
   enumerable can impl this API.
 */
-var TestArray = Ember.Object.extend(Ember.Array, {
+var TestArray = EmberObject.extend(EmberArray, {
 
   _content: null,
 
@@ -41,7 +41,7 @@ var TestArray = Ember.Object.extend(Ember.Array, {
 });
 
 
-Ember.ArrayTests.extend({
+ArrayTests.extend({
 
   name: 'Basic Mutable Array',
 
@@ -62,11 +62,11 @@ Ember.ArrayTests.extend({
 }).run();
 
 test("the return value of slice has Ember.Array applied", function() {
-  var x = Ember.Object.createWithMixins(Ember.Array, {
+  var x = EmberObject.createWithMixins(EmberArray, {
     length: 0
   });
   var y = x.slice(1);
-  equal(Ember.Array.detect(y), true, "mixin should be applied");
+  equal(EmberArray.detect(y), true, "mixin should be applied");
 });
 
 test("slice supports negative index arguments", function() {
@@ -91,7 +91,7 @@ test("slice supports negative index arguments", function() {
 // CONTENT DID CHANGE
 //
 
-var DummyArray = Ember.Object.extend(Ember.Array, {
+var DummyArray = EmberObject.extend(EmberArray, {
   nextObject: function() {},
   length: 0,
   objectAt: function(idx) { return 'ITEM-'+idx; }
@@ -180,7 +180,7 @@ module('notify array observers', {
   setup: function() {
     obj = DummyArray.create();
 
-    observer = Ember.Object.createWithMixins({
+    observer = EmberObject.createWithMixins({
       _before: null,
       _after: null,
 
@@ -245,7 +245,7 @@ module('notify enumerable observers as well', {
   setup: function() {
     obj = DummyArray.create();
 
-    observer = Ember.Object.createWithMixins({
+    observer = EmberObject.createWithMixins({
       _before: null,
       _after: null,
 
@@ -308,7 +308,7 @@ test('removing enumerable observer should disable', function() {
 
 var ary;
 
-module('Ember.Array.@each support', {
+module('EmberArray.@each support', {
   setup: function() {
     ary = new TestArray([
       { isDone: true,  desc: 'Todo 1' },
@@ -328,7 +328,7 @@ test('adding an object should notify (@each)', function() {
   var get = Ember.get, set = Ember.set;
   var called = 0;
 
-  var observerObject = Ember.Object.create({
+  var observerObject = EmberObject.create({
     wasCalled: function() {
       called++;
     }
@@ -337,7 +337,7 @@ test('adding an object should notify (@each)', function() {
   // Ember.get(ary, '@each');
   Ember.addObserver(ary, '@each', observerObject, 'wasCalled');
 
-  ary.addObject(Ember.Object.create({
+  ary.addObject(EmberObject.create({
     desc: "foo",
     isDone: false
   }));
@@ -351,7 +351,7 @@ test('adding an object should notify (@each.isDone)', function() {
   var get = Ember.get, set = Ember.set;
   var called = 0;
 
-  var observerObject = Ember.Object.create({
+  var observerObject = EmberObject.create({
     wasCalled: function() {
       called++;
     }
@@ -359,7 +359,7 @@ test('adding an object should notify (@each.isDone)', function() {
 
   Ember.addObserver(ary, '@each.isDone', observerObject, 'wasCalled');
 
-  ary.addObject(Ember.Object.create({
+  ary.addObject(EmberObject.create({
     desc: "foo",
     isDone: false
   }));
@@ -373,7 +373,7 @@ test('using @each to observe arrays that does not return objects raise error', f
   var get = Ember.get, set = Ember.set;
   var called = 0;
 
-  var observerObject = Ember.Object.create({
+  var observerObject = EmberObject.create({
     wasCalled: function() {
       called++;
     }
@@ -388,7 +388,7 @@ test('using @each to observe arrays that does not return objects raise error', f
   Ember.addObserver(ary, '@each.isDone', observerObject, 'wasCalled');
 
   expectAssertion(function() {
-    ary.addObject(Ember.Object.create({
+    ary.addObject(EmberObject.create({
       desc: "foo",
       isDone: false
     }));
@@ -417,7 +417,7 @@ test('modifying the array should also indicate the isDone prop itself has change
 
 
 testBoth("should be clear caches for computed properties that have dependent keys on arrays that are changed after object initialization", function(get, set) {
-  var obj = Ember.Object.createWithMixins({
+  var obj = EmberObject.createWithMixins({
     init: function() {
       set(this, 'resources', Ember.A());
     },
@@ -427,7 +427,7 @@ testBoth("should be clear caches for computed properties that have dependent key
     }).property('resources.@each.common')
   });
 
-  get(obj, 'resources').pushObject(Ember.Object.create({ common: "HI!" }));
+  get(obj, 'resources').pushObject(EmberObject.create({ common: "HI!" }));
   equal("HI!", get(obj, 'common'));
 
   set(get(obj, 'resources').objectAt(0), 'common', "BYE!");
@@ -437,7 +437,7 @@ testBoth("should be clear caches for computed properties that have dependent key
 testBoth("observers that contain @each in the path should fire only once the first time they are accessed", function(get, set) {
   var count = 0;
 
-  var obj = Ember.Object.createWithMixins({
+  var obj = EmberObject.createWithMixins({
     init: function() {
       // Observer does not fire on init
       set(this, 'resources', Ember.A());
@@ -449,7 +449,7 @@ testBoth("observers that contain @each in the path should fire only once the fir
   });
 
   // Observer fires second time when new object is added
-  get(obj, 'resources').pushObject(Ember.Object.create({ common: "HI!" }));
+  get(obj, 'resources').pushObject(EmberObject.create({ common: "HI!" }));
   // Observer fires third time when property on an object is changed
   set(get(obj, 'resources').objectAt(0), 'common', "BYE!");
 

@@ -12,7 +12,7 @@ import {addObserver, removeObserver, addBeforeObserver, removeBeforeObserver} fr
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
 import {defineProperty} from "ember-metal/properties";
 import {meta} from "ember-metal/utils";
-import EmberObject from "ember-runtime/object";
+import EmberObject from "ember-runtime/system/object";
 
 function contentPropertyWillChange(content, contentKey) {
   var key = contentKey.slice(8); // remove "content."

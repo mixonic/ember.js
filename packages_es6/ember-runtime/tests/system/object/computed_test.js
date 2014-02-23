@@ -1,4 +1,4 @@
-require('ember-runtime/~tests/props_helper');
+import {testWithDefault, testBoth} from 'ember-runtime/tests/props_helper';
 
 module('Ember.Object computed property');
 

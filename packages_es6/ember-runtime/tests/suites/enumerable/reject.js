@@ -1,7 +1,7 @@
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 import EmberObject from 'ember-runtime/system/object';
 
-var suite = SuiteModuleBuilder;
+var suite = SuiteModuleBuilder.create();
 
 // ..........................................................
 // reject()

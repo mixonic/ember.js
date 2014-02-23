@@ -23,7 +23,7 @@ import {compare, copy, isEqual, keys} from "ember-runtime/core";
 import {arrayComputed, ArrayComputedProperty} from "ember-runtime/computed/array_computed";
 import {reduceComputed, ReduceComputedProperty} from "ember-runtime/computed/reduce_computed";
 
-import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin} from "ember-runtime/mixins";
+import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin, Observable} from "ember-runtime/mixins";
 import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
 
 import {ArrayController, ObjectController, Controller, ControllerMixin} from "ember-runtime/controllers";
@@ -54,6 +54,7 @@ Ember.Evented = Evented;
 
 Ember.PromiseProxyMixin = PromiseProxyMixin;
 
+Ember.Observable = Observable;
 
 Ember.arrayComputed = arrayComputed;
 Ember.ArrayComputedProperty = ArrayComputedProperty;

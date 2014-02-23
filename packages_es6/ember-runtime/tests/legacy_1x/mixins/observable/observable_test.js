@@ -1,7 +1,14 @@
 /*global Namespace:true DepObj:true*/
 
-var get = Ember.get, set = Ember.set;
-var forEach = Ember.EnumerableUtils.forEach;
+import {get} from 'ember-metal/property_get';
+import {set} from 'ember-metal/property_set';
+import EmberObject from 'ember-runtime/system/object';
+import EnumerableUtils from 'ember-metal/enumerable_utils';
+import {computed} from 'ember-metal/computed';
+import run from 'ember-metal/run_loop';
+import Observable from 'ember-runtime/mixins/observable';
+
+var forEach = EnumerableUtils.forEach;
 
 /*
   NOTE: This test is adapted from the 1.x series of unit tests.  The tests
@@ -19,7 +26,7 @@ var forEach = Ember.EnumerableUtils.forEach;
     rule on using capital letters for property paths.
   * Removed test passing context to addObserver.  context param is no longer
     supported.
-  * Changed calls to Ember.Binding.flushPendingChanges() -> Ember.run.sync()
+  * Changed calls to Ember.Binding.flushPendingChanges() -> run.sync()
   * removed test in observer around line 862 that expected key/value to be
     the last item in the chained path.  Should be root and chained path
 
@@ -31,7 +38,7 @@ var forEach = Ember.EnumerableUtils.forEach;
 
 var object, ObjectC, ObjectD, objectA, objectB ;
 
-var ObservableObject = Ember.Object.extend(Ember.Observable);
+var ObservableObject = EmberObject.extend(Observable);
 var originalLookup = Ember.lookup, lookup;
 
 // ..........................................................
@@ -41,13 +48,13 @@ var originalLookup = Ember.lookup, lookup;
 module("object.get()", {
 
   setup: function() {
-    object = ObservableObject.createWithMixins(Ember.Observable, {
+    object = ObservableObject.createWithMixins(Observable, {
 
       normal: 'value',
       numberVal: 24,
       toggleVal: true,
 
-      computed: Ember.computed(function() { return 'value'; }).volatile(),
+      computed: computed(function() { return 'value'; }).volatile(),
 
       method: function() { return "value"; },
 
@@ -96,7 +103,7 @@ module("Ember.get()", {
       numberVal: 24,
       toggleVal: true,
 
-      computed: Ember.computed(function() { return 'value'; }).volatile(),
+      computed: computed(function() { return 'value'; }).volatile(),
 
       method: function() { return "value"; },
 
@@ -179,7 +186,7 @@ module("Ember.get() with paths", {
 test("should return a property at a given path relative to the lookup", function() {
   lookup.Foo = ObservableObject.create({
     Bar: ObservableObject.createWithMixins({
-      Baz: Ember.computed(function() { return "blargh"; }).volatile()
+      Baz: computed(function() { return "blargh"; }).volatile()
     })
   });
 
@@ -189,7 +196,7 @@ test("should return a property at a given path relative to the lookup", function
 test("should return a property at a given path relative to the passed object", function() {
   var foo = ObservableObject.create({
     bar: ObservableObject.createWithMixins({
-      baz: Ember.computed(function() { return "blargh"; }).volatile()
+      baz: computed(function() { return "blargh"; }).volatile()
     })
   });
 
@@ -230,7 +237,7 @@ module("object.set()", {
 
       // computed property
       _computed: "computed",
-      computed: Ember.computed(function(key, value) {
+      computed: computed(function(key, value) {
         if (value !== undefined) {
           this._computed = value ;
         }
@@ -314,13 +321,13 @@ module("Computed properties", {
       // REGULAR
 
       computedCalls: [],
-      computed: Ember.computed(function(key, value) {
+      computed: computed(function(key, value) {
         this.computedCalls.push(value);
         return 'computed';
       }).volatile(),
 
       computedCachedCalls: [],
-      computedCached: Ember.computed(function(key, value) {
+      computedCached: computed(function(key, value) {
         this.computedCachedCalls.push(value);
         return 'computedCached';
       }),
@@ -331,44 +338,44 @@ module("Computed properties", {
       changer: 'foo',
 
       dependentCalls: [],
-      dependent: Ember.computed(function(key, value) {
+      dependent: computed(function(key, value) {
         this.dependentCalls.push(value);
         return 'dependent';
       }).property('changer').volatile(),
 
       dependentFrontCalls: [],
-      dependentFront: Ember.computed('changer', function(key, value) {
+      dependentFront: computed('changer', function(key, value) {
         this.dependentFrontCalls.push(value);
         return 'dependentFront';
       }).volatile(),
 
       dependentCachedCalls: [],
-      dependentCached: Ember.computed(function(key, value) {
+      dependentCached: computed(function(key, value) {
         this.dependentCachedCalls.push(value);
         return 'dependentCached';
       }).property('changer'),
 
       // everytime it is recomputed, increments call
       incCallCount: 0,
-      inc: Ember.computed(function() {
+      inc: computed(function() {
         return this.incCallCount++;
       }).property('changer'),
 
       // depends on cached property which depends on another property...
       nestedIncCallCount: 0,
-      nestedInc: Ember.computed(function(key, value) {
+      nestedInc: computed(function(key, value) {
         Ember.get(this, 'inc');
         return this.nestedIncCallCount++;
       }).property('inc'),
 
       // two computed properties that depend on a third property
       state: 'on',
-      isOn: Ember.computed(function(key, value) {
+      isOn: computed(function(key, value) {
         if (value !== undefined) this.set('state', 'on');
         return this.get('state') === 'on';
       }).property('state').volatile(),
 
-      isOff: Ember.computed(function(key, value) {
+      isOff: computed(function(key, value) {
         if (value !== undefined) this.set('state', 'off');
         return this.get('state') === 'off';
       }).property('state').volatile()
@@ -529,7 +536,7 @@ test("dependent keys should be able to be specified as property paths", function
       price: 5
     }),
 
-    menuPrice: Ember.computed(function() {
+    menuPrice: computed(function() {
       return this.get('menu.price');
     }).property('menu.price')
   });
@@ -543,7 +550,7 @@ test("dependent keys should be able to be specified as property paths", function
 
 test("nested dependent keys should propagate after they update", function() {
   var bindObj;
-  Ember.run(function () {
+  run(function () {
     lookup.DepObj = ObservableObject.createWithMixins({
       restaurant: ObservableObject.create({
         menu: ObservableObject.create({
@@ -551,7 +558,7 @@ test("nested dependent keys should propagate after they update", function() {
         })
       }),
 
-      price: Ember.computed(function() {
+      price: computed(function() {
         return this.get('restaurant.menu.price');
       }).property('restaurant.menu.price')
     });
@@ -563,13 +570,13 @@ test("nested dependent keys should propagate after they update", function() {
 
   equal(bindObj.get('price'), 5, "precond - binding propagates");
 
-  Ember.run(function () {
+  run(function () {
     lookup.DepObj.set('restaurant.menu.price', 10);
   });
 
   equal(bindObj.get('price'), 10, "binding propagates after a nested dependent keys updates");
 
-  Ember.run(function () {
+  run(function () {
     lookup.DepObj.set('restaurant.menu', ObservableObject.create({
       price: 15
     }));
@@ -583,7 +590,7 @@ test("cacheable nested dependent keys should clear after their dependencies upda
 
   var DepObj;
 
-  Ember.run(function() {
+  run(function() {
     lookup.DepObj = DepObj = ObservableObject.createWithMixins({
       restaurant: ObservableObject.create({
         menu: ObservableObject.create({
@@ -591,7 +598,7 @@ test("cacheable nested dependent keys should clear after their dependencies upda
         })
       }),
 
-      price: Ember.computed(function() {
+      price: computed(function() {
         return this.get('restaurant.menu.price');
       }).property('restaurant.menu.price')
     });
@@ -599,18 +606,18 @@ test("cacheable nested dependent keys should clear after their dependencies upda
 
   equal(DepObj.get('price'), 5, "precond - computed property is correct");
 
-  Ember.run(function() {
+  run(function() {
     DepObj.set('restaurant.menu.price', 10);
   });
   equal(DepObj.get('price'), 10, "cacheable computed properties are invalidated even if no run loop occurred");
 
-  Ember.run(function() {
+  run(function() {
     DepObj.set('restaurant.menu.price', 20);
   });
   equal(DepObj.get('price'), 20, "cacheable computed properties are invalidated after a second get before a run loop");
   equal(DepObj.get('price'), 20, "precond - computed properties remain correct after a run loop");
 
-  Ember.run(function() {
+  run(function() {
     DepObj.set('restaurant.menu', ObservableObject.create({
       price: 15
     }));
@@ -619,7 +626,7 @@ test("cacheable nested dependent keys should clear after their dependencies upda
 
   equal(DepObj.get('price'), 15, "cacheable computed properties are invalidated after a middle property changes");
 
-  Ember.run(function() {
+  run(function() {
     DepObj.set('restaurant.menu', ObservableObject.create({
       price: 25
     }));
@@ -860,7 +867,7 @@ test("removing an observer inside of an observer shouldn’t cause any problems"
     ObjectD.addObserver('observableValue', null, 'observer1');
     ObjectD.addObserver('observableValue', null, 'observer2');
     ObjectD.addObserver('observableValue', null, 'observer3');
-    Ember.run(function() { ObjectD.set('observableValue', "hi world"); });
+    run(function() { ObjectD.set('observableValue', "hi world"); });
   }
   catch(e) {
     encounteredError = true;
@@ -894,12 +901,12 @@ module("Bind function ", {
 
 test("should bind property with method parameter as undefined", function() {
   // creating binding
-  Ember.run(function() {
+  run(function() {
     objectA.bind("name", "Namespace.objectB.normal",undefined) ;
   });
 
   // now make a change to see if the binding triggers.
-  Ember.run(function() {
+  run(function() {
     objectB.set("normal", "changedValue") ;
   });
 
@@ -924,7 +931,7 @@ test("changing chained observer object to null should not raise exception", func
     callCount++;
   });
 
-  Ember.run(function() {
+  run(function() {
     obj.foo.set('bar', null);
   });
 

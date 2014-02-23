@@ -104,20 +104,22 @@ Suite.reopenClass({
 
   importModuleTests: function(builder) {
     var self = this;
-    this.module(builder.module);
+    this.module(builder._module);
 
-    builder.tests.forEach(function(descAndFunc) {
+    builder._tests.forEach(function(descAndFunc) {
       self.test.apply(self, descAndFunc);
     });
   }
 });
 
 var SuiteModuleBuilder = EmberObject.extend({
-  module: null,
-  tests: [],
+  _module: null,
+  _tests: [],
+
+  module: function(name) { this._module = name; },
 
   test: function(name, func) {
-    this.tests.push([name, func]);
+    this._tests.push([name, func]);
   }
 });
 
