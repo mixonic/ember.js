@@ -110,7 +110,7 @@ ES6Package.prototype = {
 };
 
 
-['container', 'ember-metal'].forEach(function(packageName) {
+['container', 'ember-metal', 'ember-runtime'].forEach(function(packageName) {
   pkg = new ES6Package(packageName);
   pkg.process();
 });
