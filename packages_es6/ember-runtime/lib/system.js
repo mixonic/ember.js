@@ -24,6 +24,8 @@ import TrackedArray from "ember-runtime/system/tracked_array";
 import SubArray from "ember-runtime/system/tracked_array";
 import Container from "ember-runtime/system/container";
 import Application from "ember-runtime/system/application";
+import ArrayProxy from "ember-runtime/system/array_proxy";
+import ObjectProxy from "ember-runtime/system/object_proxy";
 import CoreObject from "ember-runtime/system/core_object";
 import {EachArray, EachProxy} from "ember-runtime/system/each_proxy";
 import {NativeArray, A} from "ember-runtime/system/native_array";
