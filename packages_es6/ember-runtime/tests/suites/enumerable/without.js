@@ -1,6 +1,6 @@
-require('ember-runtime/~tests/suites/enumerable');
+import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
 
-var suite = Ember.EnumerableTests;
+var suite = EnumerableTests;
 
 suite.module('without');
 

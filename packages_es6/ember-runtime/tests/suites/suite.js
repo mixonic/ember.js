@@ -1,3 +1,8 @@
+import EmberObject from "ember-runtime/system/object";
+import {required} from "ember-metal/mixin";
+import {guidFor, generateGuid} from "ember-metal/utils";
+import {get} from "ember-metal/property_get";
+
 /**
   @class
   A Suite can be used to define a reusable set of unit tests that can be
@@ -30,14 +35,14 @@
   @extends Ember.Object
   @private
 */
-Ember.Suite = Ember.Object.extend({
+var Suite = EmberObject.extend({
 
   /**
     Define a name for these tests - all modules are prefixed w/ it.
 
     @type String
   */
-  name: Ember.required(String),
+  name: required(String),
 
   /**
     Invoked to actually run the test - overridden by mixins
@@ -46,7 +51,7 @@ Ember.Suite = Ember.Object.extend({
 
 });
 
-Ember.Suite.reopenClass({
+Suite.reopenClass({
 
   plan: null,
 
@@ -61,7 +66,7 @@ Ember.Suite.reopenClass({
     this.reopen({
       run: function() {
         this._super();
-        var title = Ember.get(this, 'name')+': '+desc, ctx = this;
+        var title = get(this, 'name')+': '+desc, ctx = this;
         module(title, {
           setup: function() {
             if (setup) setup.call(ctx);
@@ -88,8 +93,8 @@ Ember.Suite.reopenClass({
 
   // convert to guids to minimize logging.
   same: function(actual, exp, message) {
-    actual = (actual && actual.map) ? actual.map(function(x) { return Ember.guidFor(x); }) : actual;
-    exp = (exp && exp.map) ? exp.map(function(x) { return Ember.guidFor(x); }) : exp;
+    actual = (actual && actual.map) ? actual.map(function(x) { return guidFor(x); }) : actual;
+    exp = (exp && exp.map) ? exp.map(function(x) { return guidFor(x); }) : exp;
     return deepEqual(actual, exp, message);
   },
 
@@ -97,3 +102,5 @@ Ember.Suite.reopenClass({
   notest: function() {}
 
 });
+
+export default Suite;

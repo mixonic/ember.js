@@ -1,7 +1,7 @@
-require('ember-runtime/~tests/suites/enumerable');
-var get = Ember.get;
+import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {get} from 'ember-metal/property_get';
 
-var suite = Ember.EnumerableTests;
+var suite = EnumerableTests;
 
 suite.module('sortBy');
 

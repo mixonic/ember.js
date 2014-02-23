@@ -1,6 +1,7 @@
-require('ember-runtime/~tests/suites/enumerable');
+import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {EmberObject} from 'ember-runtime/system/object';
 
-var suite = Ember.EnumerableTests;
+var suite = EnumerableTests;
 
 suite.module('invoke');
 
@@ -13,10 +14,10 @@ suite.test('invoke should call on each object that implements', function() {
   cnt = 0;
   ary = [
     { foo: F },
-    Ember.Object.create({ foo: F }),
+    EmberObject.create({ foo: F }),
 
     // NOTE: does not impl foo - invoke should just skip
-    Ember.Object.create({ bar: F }),
+    EmberObject.create({ bar: F }),
 
     { foo: F }
   ];

@@ -1,6 +1,7 @@
-require('ember-runtime/~tests/suites/enumerable');
+import {EnumerableTests, ObserverClass} from 'ember-runtime/tests/enumerable/base';
+import {EmberObject} from 'ember-runtime/system/object';
 
-var suite = Ember.EnumerableTests;
+var suite = EnumerableTests;
 
 // ..........................................................
 // find()
@@ -42,7 +43,7 @@ suite.test('should return first object of property matches', function() {
 
   ary = [
     { foo: 'foo', bar: 'BAZ' },
-    Ember.Object.create({ foo: 'foo', bar: 'bar' })
+    EmberObject.create({ foo: 'foo', bar: 'bar' })
   ];
 
   obj = this.newObject(ary);
@@ -56,7 +57,7 @@ suite.test('should return first object with truthy prop', function() {
 
   ary = [
     { foo: 'foo', bar: false },
-    Ember.Object.create({ foo: 'bar', bar: true })
+    EmberObject.create({ foo: 'bar', bar: true })
   ];
 
   obj = this.newObject(ary);
@@ -71,7 +72,7 @@ suite.test('should return first null property match', function() {
 
   ary = [
     { foo: null, bar: 'BAZ' },
-    Ember.Object.create({ foo: null, bar: null })
+    EmberObject.create({ foo: null, bar: null })
   ];
 
   obj = this.newObject(ary);
@@ -85,7 +86,7 @@ suite.test('should return first undefined property match', function() {
 
   ary = [
     { foo: undefined, bar: 'BAZ' },
-    Ember.Object.create({ })
+    EmberObject.create({ })
   ];
 
   obj = this.newObject(ary);
