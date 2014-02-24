@@ -14,7 +14,7 @@ import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {Mixin} from "ember-metal/mixin";
-import MutableArray from "ember-runtime/mixins/mutable_array"
+import MutableArray from "ember-runtime/mixins/mutable_array";
 import Observable from "ember-runtime/mixins/observable";
 import Copyable from "ember-runtime/mixins/copyable";
 import {FROZEN_ERROR} from "ember-runtime/mixins/freezable";

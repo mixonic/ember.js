@@ -1,9 +1,10 @@
-/*globals raises */
+import {testBoth} from 'ember-runtime/tests/props_helper';
+import EmberObject from 'ember-runtime/system/object';
 
 module('ember-runtime/system/object/destroy_test');
 
 testBoth("should schedule objects to be destroyed at the end of the run loop", function(get, set) {
-  var obj = Ember.Object.create(), meta;
+  var obj = EmberObject.create(), meta;
 
   Ember.run(function() {
     obj.destroy();
@@ -20,7 +21,7 @@ testBoth("should schedule objects to be destroyed at the end of the run loop", f
 
 test("should raise an exception when modifying watched properties on a destroyed object", function() {
   if (Ember.platform.hasAccessors) {
-    var obj = Ember.Object.createWithMixins({
+    var obj = EmberObject.createWithMixins({
       foo: "bar",
       fooDidChange: Ember.observer('foo', function() { })
     });
@@ -39,7 +40,7 @@ test("should raise an exception when modifying watched properties on a destroyed
 
 test("observers should not fire after an object has been destroyed", function() {
   var count = 0;
-  var obj = Ember.Object.createWithMixins({
+  var obj = EmberObject.createWithMixins({
     fooDidChange: Ember.observer('foo', function() {
       count++;
     })
@@ -64,7 +65,7 @@ test("destroyed objects should not see each others changes during teardown but a
 
   var objs = {};
 
-  var A = Ember.Object.extend({
+  var A = EmberObject.extend({
     objs: objs,
     isAlive: true,
     willDestroy: function () {
@@ -78,7 +79,7 @@ test("destroyed objects should not see each others changes during teardown but a
     })
   });
 
-  var B = Ember.Object.extend({
+  var B = EmberObject.extend({
     objs: objs,
     isAlive: true,
     willDestroy: function () {
@@ -92,7 +93,7 @@ test("destroyed objects should not see each others changes during teardown but a
     })
   });
 
-  var C = Ember.Object.extend({
+  var C = EmberObject.extend({
     objs: objs,
     isAlive: true,
     willDestroy: function () {
@@ -106,7 +107,7 @@ test("destroyed objects should not see each others changes during teardown but a
     })
   });
 
-  var LongLivedObject =  Ember.Object.extend({
+  var LongLivedObject =  EmberObject.extend({
     objs: objs,
     isAliveDidChange: Ember.observer('objs.a.isAlive', function () {
       shouldChange++;
@@ -133,14 +134,14 @@ test("destroyed objects should not see each others changes during teardown but a
 });
 
 test("bindings should be synced when are updated in the willDestroy hook", function() {
-  var bar = Ember.Object.create({
+  var bar = EmberObject.create({
     value: false,
     willDestroy: function() {
       this.set('value', true);
     }
   });
 
-  var foo = Ember.Object.create({
+  var foo = EmberObject.create({
     value: null,
     bar: bar
   });

@@ -1,8 +1,3 @@
-// require('ember-runtime/ext/string');
-// require('ember-runtime/system/namespace');
-// require('ember-runtime/system/object_proxy');
-// require('ember-runtime/computed/array_computed');
-
 /**
 @module ember
 @submodule ember-runtime
@@ -15,7 +10,7 @@ import {guidFor} from "ember-metal/utils";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {arrayComputed} from "ember-runtime/computed/array_computed";
 import {reduceComputed} from "ember-runtime/computed/reduce_computed";
-import {ObjectProxy} from "ember-runtime/system/object_proxy";
+import ObjectProxy from "ember-runtime/system/object_proxy";
 
 var merge = Ember.merge,
     a_slice = [].slice,

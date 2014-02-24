@@ -1,3 +1,5 @@
+import {testBoth} from 'ember-runtime/tests/props_helper';
+
 module('mixins/observable');
 
 test('should be able to use getProperties to get a POJO of provided keys', function() {

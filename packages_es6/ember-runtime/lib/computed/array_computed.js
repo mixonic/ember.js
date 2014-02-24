@@ -1,12 +1,9 @@
-require('ember-metal/computed');
-require('ember-runtime/mixins/array');
-require('ember-runtime/computed/reduce_computed');
-
-import ReduceComputedProperty from "ember-runtime/computed/reduce_computed"
+import {reduceComputed, ReduceComputedProperty } from "ember-runtime/computed/reduce_computed";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {create} from "ember-metal/platform";
 import {addObserver} from "ember-metal/observer";
 import EmberError from "ember-metal/error";
+import {A} from "ember-runtime/mixins/array";
 
 var a_slice = [].slice,
     o_create = create,
@@ -39,7 +36,7 @@ function ArrayComputedProperty() {
 
 ArrayComputedProperty.prototype = o_create(ReduceComputedProperty.prototype);
 ArrayComputedProperty.prototype.initialValue = function () {
-  return Ember.A();
+  return A();
 };
 ArrayComputedProperty.prototype.resetValue = function (array) {
   array.clear();

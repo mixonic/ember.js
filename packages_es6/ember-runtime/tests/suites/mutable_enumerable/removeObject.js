@@ -1,7 +1,7 @@
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
-import {get} from 'ember-metal/get';
+import {get} from 'ember-metal/property_get';
 
-var suite = SuiteModuleBuilder;
+var suite = SuiteModuleBuilder.create();
 
 suite.module('removeObject');
 

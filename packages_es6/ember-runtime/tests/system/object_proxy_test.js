@@ -1,3 +1,5 @@
+import {testBoth} from 'ember-runtime/tests/props_helper';
+
 module("Ember.ObjectProxy");
 
 testBoth("should not proxy properties passed to create", function (get, set) {

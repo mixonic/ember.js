@@ -28,7 +28,7 @@ import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, 
 
 import {ArrayController, ObjectController, Controller, ControllerMixin} from "ember-runtime/controllers";
 
-import {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect} from 'ember-runtime/reduce_computed_macros';
+import {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect} from 'ember-runtime/computed/reduce_computed_macros';
 
 // Exports
 Ember.compare = compare;
