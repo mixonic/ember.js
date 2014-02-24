@@ -15,7 +15,7 @@ import SortableMixin from "ember-runtime/mixins/sortable";
 import {ControllerMixin} from "ember-runtime/controllers/controller";
 import {computed} from "ember-metal/computed";
 import EmberError from "ember-metal/error";
-import {A} from "ember-runtime/system/native_array";
+import {A} from "ember-runtime/mixins/array";
 
 var forEach = EnumerableUtils.forEach,
     replace = EnumerableUtils.replace;

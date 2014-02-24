@@ -28,10 +28,11 @@ import ArrayProxy from "ember-runtime/system/array_proxy";
 import ObjectProxy from "ember-runtime/system/object_proxy";
 import CoreObject from "ember-runtime/system/core_object";
 import {EachArray, EachProxy} from "ember-runtime/system/each_proxy";
-import {NativeArray, A} from "ember-runtime/system/native_array";
+import NativeArray from "ember-runtime/system/native_array";
 import Set from "ember-runtime/system/set";
 import EmberStringUtils from "ember-runtime/system/string";
 import Deferred from "ember-runtime/system/deferred";
 import {onLoad, runLoadHooks} from "ember-runtime/system/lazy_load";
+import {A} from "ember-runtime/mixins/array";
 
 export {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks}
