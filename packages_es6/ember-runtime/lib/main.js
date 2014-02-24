@@ -17,7 +17,7 @@ Ember Runtime
 // IMPORTS
 import "ember-runtime/ext"; // just for side effect of extending some native prototypes
 
-import Ember from "ember-metal/core";
+import Ember from "ember-metal/main";
 import {compare, copy, isEqual, keys} from "ember-runtime/core";
 
 import {arrayComputed, ArrayComputedProperty} from "ember-runtime/computed/array_computed";
@@ -27,6 +27,8 @@ import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, D
 import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
 
 import {ArrayController, ObjectController, Controller, ControllerMixin} from "ember-runtime/controllers";
+
+import {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect} from 'ember-runtime/reduce_computed_macros';
 
 // Exports
 Ember.compare = compare;
@@ -60,6 +62,22 @@ Ember.arrayComputed = arrayComputed;
 Ember.ArrayComputedProperty = ArrayComputedProperty;
 Ember.reduceComputed = reduceComputed;
 Ember.ReduceComputedProperty = ReduceComputedProperty;
+
+// ES6TODO: this seems a less than ideal way/place to add properties to Ember.computed
+Ember.computed.sum = sum;
+Ember.computed.min = min;
+Ember.computed.max = max;
+Ember.computed.map = map;
+Ember.computed.sort = sort;
+Ember.computed.setDiff = setDiff;
+Ember.computed.mapBy = mapBy;
+Ember.computed.mapProperty = mapProperty;
+Ember.computed.filter = filter;
+Ember.computed.filterBy = filterBy;
+Ember.computed.filterProperty = filterProperty;
+Ember.computed.uniq = uniq;
+Ember.computed.union = union;
+Ember.computed.intersect = intersect;
 
 Ember.String = EmberStringUtils;
 Ember.Object = EmberObject;

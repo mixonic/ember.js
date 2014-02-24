@@ -751,21 +751,4 @@ function sort(itemsKey, sortDefinition) {
 };
 
 
-// ES6TODO: this seems a less than ideal way/place to add properties to Ember.computed
-import computed from "ember-metal/computed";
-computed.sum = sum;
-computed.min = min;
-computed.max = max;
-computed.map = map;
-computed.sort = sort;
-computed.setDiff = setDiff;
-computed.mapBy = mapBy;
-computed.mapProperty = mapProperty;
-computed.filter = filter;
-computed.filterBy = filterBy;
-computed.filterProperty = filterProperty;
-computed.uniq = uniq;
-computed.union = union;
-computed.intersect = intersect;
-
 export {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect}
