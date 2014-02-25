@@ -1,8 +1,8 @@
+import {A} from "ember-runtime/mixins/array";
 import EnumerableUtils from 'ember-metal/enumerable_utils';
 import EmberObject from 'ember-runtime/system/object';
 import setProperties from "ember-metal/set_properties";
 import ObjectProxy from 'ember-runtime/system/object_proxy';
-import {A} from "ember-runtime/mixins/array";
 import {get} from 'ember-metal/property_get';
 import {set} from 'ember-metal/property_set';
 import run from 'ember-metal/run_loop';
@@ -25,8 +25,7 @@ var computedSum = sum,
     computedUnion = union,
     computedIntersect = intersect;
 
-var map = EnumerableUtils.map,
-    obj, sorted, sortProps, items, userFnCalls, todos, filtered;
+var obj, sorted, sortProps, items, userFnCalls, todos, filtered;
 
 module('computedMap', {
   setup: function() {

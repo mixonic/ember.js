@@ -15,7 +15,6 @@ import ObjectProxy from "ember-runtime/system/object_proxy";
 var merge = Ember.merge,
     a_slice = [].slice,
     forEach = EnumerableUtils.forEach,
-    map = EnumerableUtils.map,
     SearchProxy;
 
 /**
@@ -430,7 +429,7 @@ var union = uniq;
 */
 function intersect() {
   var getDependentKeyGuids = function (changeMeta) {
-    return map(changeMeta.property._dependentKeys, function (dependentKey) {
+    return EnumerableUtils.map(changeMeta.property._dependentKeys, function (dependentKey) {
       return guidFor(dependentKey);
     });
   };

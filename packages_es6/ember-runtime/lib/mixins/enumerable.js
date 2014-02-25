@@ -7,14 +7,15 @@
 // HELPERS
 //
 
+import {A} from "ember-runtime/mixins/array";
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import {Mixin, required, aliasMethod} from "ember-metal/mixin";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {computed} from "ember-metal/computed";
 import {hasListeners} from "ember-metal/events";
-import {addListener, removeListener, propertyWillChange, propertyDidChange, sendEvent} from "ember-metal/property_events";
-import {A} from "ember-runtime/mixins/array";
+import {addListener, removeListener, propertyWillChange, propertyDidChange} from "ember-metal/property_events";
+import {sendEvent, listenersUnion, listenersDiff} from "ember-metal/events";
 import {compare} from "ember-runtime/core";
 
 var a_slice = Array.prototype.slice;

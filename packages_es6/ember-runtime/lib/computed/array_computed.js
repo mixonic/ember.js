@@ -1,9 +1,9 @@
+import {A} from "ember-runtime/mixins/array";
 import {reduceComputed, ReduceComputedProperty } from "ember-runtime/computed/reduce_computed";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {create} from "ember-metal/platform";
 import {addObserver} from "ember-metal/observer";
 import EmberError from "ember-metal/error";
-import {A} from "ember-runtime/mixins/array";
 
 var a_slice = [].slice,
     o_create = create,

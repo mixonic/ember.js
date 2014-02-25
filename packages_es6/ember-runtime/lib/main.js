@@ -18,17 +18,18 @@ Ember Runtime
 import "ember-runtime/ext"; // just for side effect of extending some native prototypes
 
 import Ember from "ember-metal/main";
-import {compare, copy, isEqual, keys} from "ember-runtime/core";
+import {copy, isEqual, keys} from "ember-runtime/core";
+import compare from "ember-runtime/compare";
+
+import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
+import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin, Observable} from "ember-runtime/mixins";
 
 import {arrayComputed, ArrayComputedProperty} from "ember-runtime/computed/array_computed";
 import {reduceComputed, ReduceComputedProperty} from "ember-runtime/computed/reduce_computed";
-
-import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin, Observable} from "ember-runtime/mixins";
-import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
+import {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect} from 'ember-runtime/computed/reduce_computed_macros';
 
 import {ArrayController, ObjectController, Controller, ControllerMixin} from "ember-runtime/controllers";
 
-import {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, filterProperty, uniq, union, intersect} from 'ember-runtime/computed/reduce_computed_macros';
 
 // Exports
 Ember.compare = compare;
