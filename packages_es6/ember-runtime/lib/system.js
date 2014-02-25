@@ -33,6 +33,5 @@ import Set from "ember-runtime/system/set";
 import EmberStringUtils from "ember-runtime/system/string";
 import Deferred from "ember-runtime/system/deferred";
 import {onLoad, runLoadHooks} from "ember-runtime/system/lazy_load";
-import {A} from "ember-runtime/mixins/array";
 
-export {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks}
+export {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks}

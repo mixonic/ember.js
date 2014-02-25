@@ -1,12 +1,11 @@
 import MutableArrayTests from 'ember-runtime/tests/suites/mutable_array';
-import {A} from "ember-runtime/mixins/array";
 
 MutableArrayTests.extend({
 
   name: 'Native Array',
 
   newObject: function(ary) {
-    return A(ary ? ary.slice() : this.newFixture(3));
+    return Ember.A(ary ? ary.slice() : this.newFixture(3));
   },
 
   mutate: function(obj) {

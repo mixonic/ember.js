@@ -14,7 +14,7 @@ import {ComputedProperty} from "ember-metal/computed";
 import {create} from "ember-metal/platform";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import TrackedArray from "ember-runtime/system/tracked_array";
-import {EmberArray} from "ember-runtime/mixins/array";
+import EmberArray from "ember-runtime/mixins/array";
 import run from "ember-metal/run_loop";
 import Set from "ember-runtime/system/set";
 import {isArray} from "ember-metal/utils";

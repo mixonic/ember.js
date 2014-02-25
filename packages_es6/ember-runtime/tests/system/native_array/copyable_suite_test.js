@@ -1,6 +1,5 @@
 import CopyableTests from 'ember-runtime/tests/suites/copyable';
 import {generateGuid} from 'ember-metal/utils';
-import {A} from "ember-runtime/mixins/array";
 
 // ..........................................................
 // COPYABLE TESTS
@@ -9,7 +8,7 @@ CopyableTests.extend({
   name: 'NativeArray Copyable',
 
   newObject: function() {
-    return A([generateGuid()]);
+    return Ember.A([generateGuid()]);
   },
 
   isEqual: function(a,b) {
@@ -25,7 +24,7 @@ CopyableTests.extend({
 module("NativeArray Copyable");
 
 test("deep copy is respected", function() {
-  var array = A([ { id: 1 }, { id: 2 }, { id: 3 } ]);
+  var array = Ember.A([ { id: 1 }, { id: 2 }, { id: 3 } ]);
 
   var copiedArray = array.copy(true);
 

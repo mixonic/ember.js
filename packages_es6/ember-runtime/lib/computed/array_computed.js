@@ -1,4 +1,4 @@
-import {A} from "ember-runtime/mixins/array";
+import Ember from "ember-metal/core";
 import {reduceComputed, ReduceComputedProperty } from "ember-runtime/computed/reduce_computed";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {create} from "ember-metal/platform";
@@ -36,7 +36,7 @@ function ArrayComputedProperty() {
 
 ArrayComputedProperty.prototype = o_create(ReduceComputedProperty.prototype);
 ArrayComputedProperty.prototype.initialValue = function () {
-  return A();
+  return Ember.A();
 };
 ArrayComputedProperty.prototype.resetValue = function (array) {
   array.clear();

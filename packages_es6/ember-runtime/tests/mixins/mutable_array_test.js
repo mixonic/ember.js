@@ -2,7 +2,6 @@ import MutableArrayTests from 'ember-runtime/tests/suites/mutable_array';
 import MutableArray from 'ember-runtime/mixins/mutable_array';
 import EmberObject from 'ember-runtime/system/object';
 import {computed} from 'ember-metal/computed';
-import {A} from "ember-runtime/mixins/array";
 
 /*
   Implement a basic fake mutable array.  This validates that any non-native
@@ -13,7 +12,7 @@ var TestMutableArray = EmberObject.extend(MutableArray, {
   _content: null,
 
   init: function(ary) {
-    this._content = A(ary || []);
+    this._content = Ember.A(ary || []);
   },
 
   replace: function(idx, amt, objects) {

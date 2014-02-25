@@ -94,7 +94,8 @@ Ember.CoreObject = CoreObject;
 Ember.EachArray = EachArray;
 Ember.EachProxy = EachProxy;
 Ember.NativeArray = NativeArray;
-Ember.A = A;
+// ES6TODO: Currently we must rely on the global from ember-metal/core to avoid circular deps
+// Ember.A = A;
 Ember.Set = Set;
 Ember.Deferred = Deferred;
 Ember.onLoad = onLoad;

@@ -1,9 +1,9 @@
-import Ember from 'ember-metal/core'; // for Ember.K
+import Ember from 'ember-metal/core'; // for Ember.K and Ember.A
 import EnumerableTests from 'ember-runtime/tests/suites/enumerable';
 import EnumerableUtils from 'ember-metal/enumerable_utils';
 import EmberObject from 'ember-runtime/system/object';
 import Enumerable from 'ember-runtime/mixins/enumerable';
-import {EmberArray, A} from 'ember-runtime/mixins/array';
+import EmberArray from 'ember-runtime/mixins/array';
 import {get} from 'ember-metal/property_get';
 import {set} from 'ember-metal/property_set';
 import {computed} from 'ember-metal/computed';
@@ -107,7 +107,7 @@ test("should apply Ember.Array to return value of uniq", function() {
 });
 
 test('any', function() {
-  var kittens = A([{
+  var kittens = Ember.A([{
     color: 'white'
   }, {
     color: 'black'
@@ -122,7 +122,7 @@ test('any', function() {
 });
 
 test('any with NaN', function() {
-  var numbers = A([1,2,NaN,4]);
+  var numbers = Ember.A([1,2,NaN,4]);
 
   var hasNaN = numbers.any(function(n){ return isNaN(n); });
 
@@ -130,14 +130,14 @@ test('any with NaN', function() {
 });
 
 test('every', function() {
-  var allColorsKittens = A([{
+  var allColorsKittens = Ember.A([{
     color: 'white'
   }, {
     color: 'black'
   }, {
     color: 'white'
   }]),
-  allWhiteKittens = A([{
+  allWhiteKittens = Ember.A([{
     color: 'white'
   }, {
     color: 'white'
