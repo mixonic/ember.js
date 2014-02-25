@@ -6,7 +6,7 @@ import Ember from "ember-metal/core"; // Ember.assert
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import EmberError from "ember-metal/error";
-import {guidFor, metaFor} from "ember-metal/utils";
+import {guidFor, meta} from "ember-metal/utils";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
 import expandProperties from "ember-metal/expand_properties";
 import {addObserver, observersFor, removeObserver, addBeforeObserver, removeBeforeObserver} from "ember-metal/observer";
@@ -23,6 +23,7 @@ var e_get = get,
     a_slice = [].slice,
     o_create = create,
     forEach = EnumerableUtils.forEach,
+    metaFor = meta,
     // Here we explicitly don't allow `@each.foo`; it would require some special
     // testing, but there's no particular reason why it should be disallowed.
     eachPropertyPattern = /^(.*)\.@each\.(.*)/,
