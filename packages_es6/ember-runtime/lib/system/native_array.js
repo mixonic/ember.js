@@ -14,6 +14,7 @@ import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {Mixin} from "ember-metal/mixin";
+import EmberArray from "ember-runtime/mixins/array";
 import MutableArray from "ember-runtime/mixins/mutable_array";
 import Observable from "ember-runtime/mixins/observable";
 import Copyable from "ember-runtime/mixins/copyable";
@@ -132,5 +133,67 @@ if (ignore.length>0) {
   NativeArray = NativeArray.without.apply(NativeArray, ignore);
 }
 
-export {NativeArray}
+/**
+  Creates an `Ember.NativeArray` from an Array like object.
+  Does not modify the original object. Ember.A is not needed if
+  `Ember.EXTEND_PROTOTYPES` is `true` (the default value). However,
+  it is recommended that you use Ember.A when creating addons for
+  ember or when you can not guarantee that `Ember.EXTEND_PROTOTYPES`
+  will be `true`.
+
+  Example
+
+  ```js
+  var Pagination = Ember.CollectionView.extend({
+    tagName: 'ul',
+    classNames: ['pagination'],
+    init: function() {
+      this._super();
+      if (!this.get('content')) {
+        this.set('content', Ember.A([]));
+      }
+    }
+  });
+  ```
+
+  @method A
+  @for Ember
+  @return {Ember.NativeArray}
+*/
+var A = function(arr) {
+  if (arr === undefined) { arr = []; }
+  return EmberArray.detect(arr) ? arr : NativeArray.apply(arr);
+};
+
+/**
+  Activates the mixin on the Array.prototype if not already applied. Calling
+  this method more than once is safe. This will be called when ember is loaded
+  unless you have `Ember.EXTEND_PROTOTYPES` or `Ember.EXTEND_PROTOTYPES.Array`
+  set to `false`.
+
+  Example
+
+  ```js
+  if (Ember.EXTEND_PROTOTYPES === true || Ember.EXTEND_PROTOTYPES.Array) {
+    Ember.NativeArray.activate();
+  }
+  ```
+
+  @method activate
+  @for Ember.NativeArray
+  @static
+  @return {void}
+*/
+NativeArray.activate = function() {
+  NativeArray.apply(Array.prototype);
+
+  A = function(arr) { return arr || []; };
+};
+
+if (Ember.EXTEND_PROTOTYPES === true || Ember.EXTEND_PROTOTYPES.Array) {
+  NativeArray.activate();
+}
+
+Ember.A = A; // ES6TODO: Setting A onto the object returned by ember-metal/core to avoid circles
+export {A, NativeArray}
 export default NativeArray;
