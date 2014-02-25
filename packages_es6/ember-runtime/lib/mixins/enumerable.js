@@ -13,10 +13,9 @@ import {set} from "ember-metal/property_set";
 import {Mixin, required, aliasMethod} from "ember-metal/mixin";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {computed} from "ember-metal/computed";
-import {hasListeners} from "ember-metal/events";
-import {addListener, removeListener, propertyWillChange, propertyDidChange} from "ember-metal/property_events";
-import {sendEvent, listenersUnion, listenersDiff} from "ember-metal/events";
-import {compare} from "ember-runtime/core";
+import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
+import {addListener, removeListener, sendEvent, hasListeners} from "ember-metal/events";
+import {compare} from "ember-runtime/compare";
 
 var a_slice = Array.prototype.slice;
 var a_indexOf = EnumerableUtils.indexOf;
