@@ -15,7 +15,7 @@ import EnumerableUtils from "ember-metal/enumerable_utils";
 import {computed} from "ember-metal/computed";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
 import {addListener, removeListener, sendEvent, hasListeners} from "ember-metal/events";
-import {compare} from "ember-runtime/compare";
+import compare from "ember-runtime/compare";
 
 var a_slice = Array.prototype.slice;
 var a_indexOf = EnumerableUtils.indexOf;

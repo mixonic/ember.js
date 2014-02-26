@@ -1,3 +1,4 @@
+import EmberObject from "ember-runtime/system/object";
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
 var suite = SuiteModuleBuilder.create();
@@ -11,7 +12,7 @@ suite.module('isAny');
 suite.test('should return true of any property matches', function() {
   var obj = this.newObject([
     { foo: 'foo', bar: 'BAZ' },
-    Ember.Object.create({ foo: 'foo', bar: 'bar' })
+    EmberObject.create({ foo: 'foo', bar: 'bar' })
   ]);
 
   equal(obj.isAny('foo', 'foo'), true, 'isAny(foo)');
@@ -22,7 +23,7 @@ suite.test('should return true of any property matches', function() {
 suite.test('should return true of any property is true', function() {
   var obj = this.newObject([
     { foo: 'foo', bar: true },
-    Ember.Object.create({ foo: 'bar', bar: false })
+    EmberObject.create({ foo: 'bar', bar: false })
   ]);
 
   // different values - all eval to true
@@ -34,7 +35,7 @@ suite.test('should return true of any property is true', function() {
 suite.test('should return true if any property matches null', function() {
   var obj = this.newObject([
     { foo: null, bar: 'bar' },
-    Ember.Object.create({ foo: 'foo', bar: null })
+    EmberObject.create({ foo: 'foo', bar: null })
   ]);
 
   equal(obj.isAny('foo', null), true, "isAny('foo', null)");
@@ -44,7 +45,7 @@ suite.test('should return true if any property matches null', function() {
 suite.test('should return true if any property is undefined', function() {
   var obj = this.newObject([
     { foo: undefined, bar: 'bar' },
-    Ember.Object.create({ foo: 'foo' })
+    EmberObject.create({ foo: 'foo' })
   ]);
 
   equal(obj.isAny('foo', undefined), true, "isAny('foo', undefined)");
@@ -54,7 +55,7 @@ suite.test('should return true if any property is undefined', function() {
 suite.test('should not match undefined properties without second argument', function() {
   var obj = this.newObject([
     { foo: undefined },
-    Ember.Object.create({ })
+    EmberObject.create({ })
   ]);
 
   equal(obj.isAny('foo'), false, "isAny('foo', undefined)");

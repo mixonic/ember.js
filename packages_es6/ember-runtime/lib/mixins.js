@@ -15,7 +15,7 @@
 import EmberArray from "ember-runtime/mixins/array";
 import {Comparable} from "ember-runtime/mixins/comparable";
 import {Copyable} from "ember-runtime/mixins/copyable";
-import {Enumerable} from "ember-runtime/mixins/enumerable";
+import Enumerable from "ember-runtime/mixins/enumerable";
 import {Freezable, FROZEN_ERROR} from "ember-runtime/mixins/freezable";
 import Observable from "ember-runtime/mixins/observable";
 import {ActionHandler} from "ember-runtime/mixins/action_handler";

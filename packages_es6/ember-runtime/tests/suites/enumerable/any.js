@@ -1,3 +1,4 @@
+import Ember from 'ember-metal/core';
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
 
 var suite = SuiteModuleBuilder.create();

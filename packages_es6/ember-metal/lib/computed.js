@@ -204,8 +204,6 @@ function ComputedProperty(func, opts) {
   this._readOnly = opts && (opts.readOnly !== undefined || !!opts.readOnly);
 }
 
-ComputedProperty = ComputedProperty;
-
 ComputedProperty.prototype = new Descriptor();
 
 var ComputedPropertyPrototype = ComputedProperty.prototype;

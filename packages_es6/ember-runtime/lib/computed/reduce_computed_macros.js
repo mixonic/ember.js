@@ -8,10 +8,13 @@ import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import {guidFor} from "ember-metal/utils";
 import EnumerableUtils from "ember-metal/enumerable_utils";
+import run from 'ember-metal/run_loop';
 import {arrayComputed} from "ember-runtime/computed/array_computed";
 import {reduceComputed} from "ember-runtime/computed/reduce_computed";
 import ObjectProxy from "ember-runtime/system/object_proxy";
+import SubArray from "ember-runtime/system/subarray";
 import keys from "ember-runtime/keys";
+import compare from "ember-runtime/compare";
 
 var merge = Ember.merge,
     a_slice = [].slice,
@@ -215,7 +218,7 @@ function map(dependentKey, callback) {
 */
 function mapBy (dependentKey, propertyKey) {
   var callback = function(item) { return get(item, propertyKey); };
-  return Ember.computed.map(dependentKey + '.@each.' + propertyKey, callback);
+  return map(dependentKey + '.@each.' + propertyKey, callback);
 };
 
 /**
@@ -261,7 +264,7 @@ var mapProperty = mapBy;
 function filter(dependentKey, callback) {
   var options = {
     initialize: function (array, changeMeta, instanceMeta) {
-      instanceMeta.filteredArrayIndexes = new Ember.SubArray();
+      instanceMeta.filteredArrayIndexes = new SubArray();
     },
 
     addedItem: function(array, item, changeMeta, instanceMeta) {
@@ -325,7 +328,7 @@ function filterBy (dependentKey, propertyKey, value) {
     };
   }
 
-  return Ember.computed.filter(dependentKey + '.@each.' + propertyKey, callback);
+  return filter(dependentKey + '.@each.' + propertyKey, callback);
 };
 
 /**
@@ -684,7 +687,7 @@ function sort(itemsKey, sortDefinition) {
       }
 
       function updateSortPropertiesOnce() {
-        Ember.run.once(this, updateSortProperties, changeMeta.propertyName);
+        run.once(this, updateSortProperties, changeMeta.propertyName);
       }
 
       function updateSortProperties(propertyName) {
@@ -703,7 +706,7 @@ function sort(itemsKey, sortDefinition) {
 
         for (var i = 0; i < this.sortProperties.length; ++i) {
           sortProperty = this.sortProperties[i];
-          result = Ember.compare(get(itemA, sortProperty), isProxy ? itemB[sortProperty] : get(itemB, sortProperty));
+          result = compare(get(itemA, sortProperty), isProxy ? itemB[sortProperty] : get(itemB, sortProperty));
 
           if (result !== 0) {
             asc = this.sortPropertyAscending[sortProperty];
