@@ -429,7 +429,13 @@ var EmberArray = Mixin.create(Enumerable, {
     @property @each
   */
   '@each': computed(function() {
-    if (!this.__each) this.__each = new Ember.EachProxy(this);
+    if (!this.__each) {
+      // ES6TODO: GRRRRR
+      var EachProxy = requireModule('ember-runtime/system/each_proxy')['EachProxy'];
+
+      this.__each = new EachProxy(this);
+    }
+
     return this.__each;
   })
 
