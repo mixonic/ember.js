@@ -11,6 +11,7 @@ import EnumerableUtils from "ember-metal/enumerable_utils";
 import {arrayComputed} from "ember-runtime/computed/array_computed";
 import {reduceComputed} from "ember-runtime/computed/reduce_computed";
 import ObjectProxy from "ember-runtime/system/object_proxy";
+import keys from "ember-runtime/keys";
 
 var merge = Ember.merge,
     a_slice = [].slice,
@@ -451,7 +452,7 @@ function intersect() {
       if (itemCounts[itemGuid][dependentGuid] === undefined) { itemCounts[itemGuid][dependentGuid] = 0; }
 
       if (++itemCounts[itemGuid][dependentGuid] === 1 &&
-          numberOfDependentArrays === Ember.keys(itemCounts[itemGuid]).length) {
+          numberOfDependentArrays === keys(itemCounts[itemGuid]).length) {
 
         array.addObject(item);
       }
@@ -468,7 +469,7 @@ function intersect() {
       if (itemCounts[itemGuid][dependentGuid] === undefined) { itemCounts[itemGuid][dependentGuid] = 0; }
       if (--itemCounts[itemGuid][dependentGuid] === 0) {
         delete itemCounts[itemGuid][dependentGuid];
-        numberOfArraysItemAppearsIn = Ember.keys(itemCounts[itemGuid]).length;
+        numberOfArraysItemAppearsIn = keys(itemCounts[itemGuid]).length;
 
         if (numberOfArraysItemAppearsIn === 0) {
           delete itemCounts[itemGuid];

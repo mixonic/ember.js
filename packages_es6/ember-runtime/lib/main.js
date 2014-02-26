@@ -18,7 +18,8 @@ Ember Runtime
 import "ember-runtime/ext"; // just for side effect of extending some native prototypes
 
 import Ember from "ember-metal/main";
-import {copy, isEqual, keys} from "ember-runtime/core";
+import {copy, isEqual} from "ember-runtime/core";
+import keys from "ember-runtime/keys";
 import compare from "ember-runtime/compare";
 
 import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";

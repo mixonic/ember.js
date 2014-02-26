@@ -22,7 +22,7 @@ import {IS_BINDING, Mixin, required} from "ember-metal/mixin";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import EmberError from "ember-metal/error";
 import {platform} from "ember-metal/platform";
-import {keys} from "ember-runtime/core";
+import keys from "ember-runtime/keys";
 import ActionHandler from "ember-runtime/mixins/action_handler";
 import {defineProperty} from "ember-metal/properties";
 import {Binding} from "ember-metal/binding";
