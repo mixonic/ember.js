@@ -25,6 +25,9 @@
   @version VERSION_STRING_PLACEHOLDER
 */
 
+// We need to make sure to operate on the same object if window.Ember already
+// existed.
+Ember = window.Ember;
 if ('undefined' === typeof Ember) {
   // Create core object. Make it act like an instance of Ember.Namespace so that
   // objects assigned to it are given a sane string representation.
@@ -233,5 +236,7 @@ Ember.merge = function(original, updates) {
   }
   return original;
 };
+
+window.Em = window.Ember = Ember;
 
 export default Ember;

@@ -1,6 +1,5 @@
 // require('ember-metal/core');
 // require('ember-metal/error');
-
 import Ember from "ember-metal/core";
 import EmberError from "ember-metal/error";
 
