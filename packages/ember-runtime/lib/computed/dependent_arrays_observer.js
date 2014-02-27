@@ -24,7 +24,7 @@ function get(obj, key) {
   @class DependentArraysObserver
 */
 function DependentArraysObserver(callbacks, cp, instanceMeta, context, propertyName, sugarMeta) {
-  // user specified callbacks for `addedItem` and `removedItem`
+  // user specified callbacks for `addedItems` and `removedItems`
   this.callbacks = callbacks;
 
   // the computed property: remember these are shared across instances
@@ -215,7 +215,7 @@ DependentArraysObserver.prototype = {
   dependentArrayWillChange: function (dependentArray, index, removedCount, addedCount) {
     if (this.suspended) { return; }
 
-    var removedItem = this.callbacks.removedItem,
+    var removedItems = this.callbacks.removedItems,
         changeMeta,
         guid = guidFor(dependentArray),
         dependentKey = this.dependentKeysByGuid[guid],
@@ -230,30 +230,27 @@ DependentArraysObserver.prototype = {
 
     observerContexts = this.trackRemove(dependentKey, normalizedIndex, normalizedRemoveCount);
 
-    function removeObservers(propertyKey) {
-      observerContexts[sliceIndex].destroyed = true;
-      removeBeforeObserver(item, propertyKey, this, observerContexts[sliceIndex].beforeObserver);
-      removeObserver(item, propertyKey, this, observerContexts[sliceIndex].observer);
-    }
-
     for (sliceIndex = normalizedRemoveCount - 1; sliceIndex >= 0; --sliceIndex) {
       itemIndex = normalizedIndex + sliceIndex;
       if (itemIndex >= length) { break; }
-
-      item = dependentArray.objectAt(itemIndex);
-
-      forEach(itemPropertyKeys, removeObservers, this);
-
-      changeMeta = createChangeMeta(dependentArray, item, itemIndex, this.instanceMeta.propertyName, this.cp);
-      this.setValue( removedItem.call(
-        this.instanceMeta.context, this.getValue(), item, changeMeta, this.instanceMeta.sugarMeta));
+      forEach(itemPropertyKeys, function(propertyKey){
+        observerContexts[sliceIndex].destroyed = true;
+        removeBeforeObserver(item, propertyKey, this, observerContexts[sliceIndex].beforeObserver);
+        removeObserver(item, propertyKey, this, observerContexts[sliceIndex].observer);
+      }, this);
     }
+
+    changeMeta = createChangeMeta(
+      dependentArray, item, itemIndex, this.instanceMeta.propertyName, this.cp);
+
+    this.setValue(removedItems.call(
+      this.instanceMeta.context, this.getValue(), changeMeta, this.instanceMeta.sugarMeta));
   },
 
   dependentArrayDidChange: function (dependentArray, index, removedCount, addedCount) {
     if (this.suspended) { return; }
 
-    var addedItem = this.callbacks.addedItem,
+    var addedItems = this.callbacks.addedItems,
         guid = guidFor(dependentArray),
         dependentKey = this.dependentKeysByGuid[guid],
         observerContexts = new Array(addedCount),
@@ -273,11 +270,13 @@ DependentArraysObserver.prototype = {
           addObserver(item, propertyKey, this, observerContext.observer);
         }, this);
       }
-
-      changeMeta = createChangeMeta(dependentArray, item, normalizedIndex + sliceIndex, this.instanceMeta.propertyName, this.cp);
-      this.setValue( addedItem.call(
-        this.instanceMeta.context, this.getValue(), item, changeMeta, this.instanceMeta.sugarMeta));
     }, this);
+
+    changeMeta = createChangeMeta(
+      dependentArray, normalizedIndex, this.instanceMeta.propertyName, this.cp);
+
+    this.setValue(addedItems.call(
+      this.instanceMeta.context, this.getValue(), changeMeta, this.instanceMeta.sugarMeta));
 
     this.trackAdd(dependentKey, normalizedIndex, observerContexts);
   },
@@ -311,11 +310,12 @@ DependentArraysObserver.prototype = {
       this.updateIndexes(c.observerContext.trackedArray, c.observerContext.dependentArray);
 
       changeMeta = createChangeMeta(c.array, c.obj, c.observerContext.index, this.instanceMeta.propertyName, this.cp, c.previousValues);
-      this.setValue(
-        this.callbacks.removedItem.call(this.instanceMeta.context, this.getValue(), c.obj, changeMeta, this.instanceMeta.sugarMeta));
-      this.setValue(
-        this.callbacks.addedItem.call(this.instanceMeta.context, this.getValue(), c.obj, changeMeta, this.instanceMeta.sugarMeta));
     }
+
+    this.setValue(
+      this.callbacks.removedItems.call(this.instanceMeta.context, this.getValue(), c.obj, changeMeta, this.instanceMeta.sugarMeta));
+    this.setValue(
+      this.callbacks.addedItems.call(this.instanceMeta.context, this.getValue(), c.obj, changeMeta, this.instanceMeta.sugarMeta));
     this.changedItems = {};
   }
 };
