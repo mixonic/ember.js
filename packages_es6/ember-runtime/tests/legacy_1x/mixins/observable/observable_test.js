@@ -2,10 +2,11 @@
 
 import {get} from 'ember-metal/property_get';
 import {set} from 'ember-metal/property_set';
-import EmberObject from 'ember-runtime/system/object';
 import EnumerableUtils from 'ember-metal/enumerable_utils';
 import {computed} from 'ember-metal/computed';
 import run from 'ember-metal/run_loop';
+import {typeOf} from 'ember-metal/utils';
+import EmberObject from 'ember-runtime/system/object';
 import Observable from 'ember-runtime/mixins/observable';
 
 var forEach = EnumerableUtils.forEach;
@@ -80,7 +81,7 @@ test("should call computed properties and return their result", function() {
 
 test("should return the function for a non-computed property", function() {
   var value = object.get("method") ;
-  equal(Ember.typeOf(value), 'function') ;
+  equal(typeOf(value), 'function') ;
 });
 
 test("should return null when property value is null", function() {
@@ -125,52 +126,52 @@ module("Ember.get()", {
 });
 
 test("should get normal properties on Ember.Observable", function() {
-  equal(Ember.get(objectA, 'normal'), 'value') ;
+  equal(get(objectA, 'normal'), 'value') ;
 });
 
 test("should call computed properties on Ember.Observable and return their result", function() {
-  equal(Ember.get(objectA, "computed"), "value") ;
+  equal(get(objectA, "computed"), "value") ;
 });
 
 test("should return the function for a non-computed property on Ember.Observable", function() {
-  var value = Ember.get(objectA, "method") ;
-  equal(Ember.typeOf(value), 'function') ;
+  var value = get(objectA, "method") ;
+  equal(typeOf(value), 'function') ;
 });
 
 test("should return null when property value is null on Ember.Observable", function() {
-  equal(Ember.get(objectA, "nullProperty"), null) ;
+  equal(get(objectA, "nullProperty"), null) ;
 });
 
 test("should call unknownProperty when value is undefined on Ember.Observable", function() {
-  equal(Ember.get(object, "unknown"), "unknown") ;
+  equal(get(object, "unknown"), "unknown") ;
   equal(object.lastUnknownProperty, "unknown") ;
 });
 
 test("should get normal properties on standard objects", function() {
-  equal(Ember.get(objectB, 'normal'), 'value');
+  equal(get(objectB, 'normal'), 'value');
 });
 
 test("should return null when property is null on standard objects", function() {
-  equal(Ember.get(objectB, 'nullProperty'), null);
+  equal(get(objectB, 'nullProperty'), null);
 });
 
 /*
 test("raise if the provided object is null", function() {
   raises(function() {
-    Ember.get(null, 'key');
+    get(null, 'key');
   });
 });
 */
 
 test("raise if the provided object is undefined", function() {
   expectAssertion(function() {
-    Ember.get(undefined, 'key');
+    get(undefined, 'key');
   }, /Cannot call get with 'key' on an undefined object/i);
 });
 
 test("should work when object is Ember (used in Ember.get)", function() {
-  equal(Ember.get('Ember.RunLoop'), Ember.RunLoop, 'Ember.get');
-  equal(Ember.get(Ember, 'RunLoop'), Ember.RunLoop, 'Ember.get(Ember, RunLoop)');
+  equal(get('Ember.RunLoop'), Ember.RunLoop, 'Ember.get');
+  equal(get(Ember, 'RunLoop'), Ember.RunLoop, 'Ember.get(Ember, RunLoop)');
 });
 
 module("Ember.get() with paths", {
@@ -190,7 +191,7 @@ test("should return a property at a given path relative to the lookup", function
     })
   });
 
-  equal(Ember.get('Foo.Bar.Baz'), "blargh");
+  equal(get('Foo.Bar.Baz'), "blargh");
 });
 
 test("should return a property at a given path relative to the passed object", function() {
@@ -200,7 +201,7 @@ test("should return a property at a given path relative to the passed object", f
     })
   });
 
-  equal(Ember.get(foo, 'bar.baz'), "blargh");
+  equal(get(foo, 'bar.baz'), "blargh");
 });
 
 test("should return a property at a given path relative to the lookup - JavaScript hash", function() {
@@ -210,7 +211,7 @@ test("should return a property at a given path relative to the lookup - JavaScri
     }
   };
 
-  equal(Ember.get('Foo.Bar.Baz'), "blargh");
+  equal(get('Foo.Bar.Baz'), "blargh");
 });
 
 test("should return a property at a given path relative to the passed object - JavaScript hash", function() {
@@ -220,7 +221,7 @@ test("should return a property at a given path relative to the passed object - J
     }
   };
 
-  equal(Ember.get(foo, 'bar.baz'), "blargh");
+  equal(get(foo, 'bar.baz'), "blargh");
 });
 
 // ..........................................................
@@ -292,7 +293,7 @@ test("should change normal properties when passing undefined", function() {
 test("should replace the function for a non-computed property and return this", function() {
   var ret = object.set("method", "changed") ;
   equal(object._method, "method") ; // make sure this was NOT run
-  ok(Ember.typeOf(object.method) !== 'function') ;
+  ok(typeOf(object.method) !== 'function') ;
   equal(ret, object) ;
 });
 
@@ -364,7 +365,7 @@ module("Computed properties", {
       // depends on cached property which depends on another property...
       nestedIncCallCount: 0,
       nestedInc: computed(function(key, value) {
-        Ember.get(this, 'inc');
+        get(this, 'inc');
         return this.nestedIncCallCount++;
       }).property('inc'),
 

@@ -7,11 +7,13 @@
 import Ember from "ember-metal/core"; // Ember.assert
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
-import EmberStringUtils from "ember-runtime/system/string";
 import {addObserver, removeObserver, addBeforeObserver, removeBeforeObserver} from "ember-metal/observer";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
+import {computed} from "ember-metal/computed";
 import {defineProperty} from "ember-metal/properties";
+import {observer} from "ember-metal/mixin";
 import {meta} from "ember-metal/utils";
+import EmberStringUtils from "ember-runtime/system/string";
 import EmberObject from "ember-runtime/system/object";
 
 function contentPropertyWillChange(content, contentKey) {
@@ -102,11 +104,11 @@ var ObjectProxy = EmberObject.extend({
     @default null
   */
   content: null,
-  _contentDidChange: Ember.observer('content', function() {
+  _contentDidChange: observer('content', function() {
     Ember.assert("Can't set ObjectProxy's content to itself", get(this, 'content') !== this);
   }),
 
-  isTruthy: Ember.computed.bool('content'),
+  isTruthy: computed.bool('content'),
 
   _debugContainerKey: null,
 

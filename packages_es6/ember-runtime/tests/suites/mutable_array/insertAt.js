@@ -1,4 +1,5 @@
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
+import {get} from "ember-metal/property_get";
 
 var suite = SuiteModuleBuilder.create();
 
@@ -16,7 +17,7 @@ suite.test("[].insertAt(0, X) => [X] + notify", function() {
   obj.insertAt(0, after[0]);
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
 
   equal(observer.timesCalledBefore('[]'), 1, 'should have notified [] will change once');
@@ -53,7 +54,7 @@ suite.test("[A].insertAt(0, X) => [X,A] + notify", function() {
   obj.insertAt(0, item);
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalledBefore('[]'), 1, 'should have notified [] will change once');
   equal(observer.timesCalledBefore('@each'), 1, 'should have notified @each will change once');
@@ -83,7 +84,7 @@ suite.test("[A].insertAt(1, X) => [A,X] + notify", function() {
   obj.insertAt(1, item);
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalledBefore('[]'), 1, 'should have notified [] will change once');
   equal(observer.timesCalledBefore('@each'), 1, 'should have notified @each will change once');
@@ -120,7 +121,7 @@ suite.test("[A,B,C].insertAt(0,X) => [X,A,B,C] + notify", function() {
   obj.insertAt(0, item);
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalledBefore('[]'), 1, 'should have notified [] will change once');
   equal(observer.timesCalledBefore('@each'), 1, 'should have notified @each will change once');
@@ -150,7 +151,7 @@ suite.test("[A,B,C].insertAt(1,X) => [A,X,B,C] + notify", function() {
   obj.insertAt(1, item);
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalledBefore('[]'), 1, 'should have notified [] will change once');
   equal(observer.timesCalledBefore('@each'), 1, 'should have notified @each will change once');
@@ -180,7 +181,7 @@ suite.test("[A,B,C].insertAt(3,X) => [A,B,C,X] + notify", function() {
   obj.insertAt(3, item);
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalledBefore('[]'), 1, 'should have notified [] will change once');
   equal(observer.timesCalledBefore('@each'), 1, 'should have notified @each will change once');

@@ -3,6 +3,7 @@
 @submodule ember-runtime
 */
 
+import {Mixin} from "ember-metal/mixin";
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 
@@ -62,7 +63,7 @@ import {set} from "ember-metal/property_set";
   @namespace Ember
   @since Ember 0.9
 */
-var Freezable = Ember.Mixin.create({
+var Freezable = Mixin.create({
 
   /**
     Set to `true` when the object is frozen. Use this property to detect

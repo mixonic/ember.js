@@ -1,4 +1,5 @@
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
+import {get} from "ember-metal/property_get";
 
 var suite = SuiteModuleBuilder.create();
 
@@ -16,7 +17,7 @@ suite.test("[X].removeAt(0) => [] + notify", function() {
   equal(obj.removeAt(0), obj, 'return self');
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalled('[]'), 1, 'should have notified [] once');
   equal(observer.timesCalled('@each'), 1, 'should have notified @each once');
@@ -44,7 +45,7 @@ suite.test("[A,B].removeAt(0) => [B] + notify", function() {
   equal(obj.removeAt(0), obj, 'return self');
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalled('[]'), 1, 'should have notified [] once');
   equal(observer.timesCalled('@each'), 1, 'should have notified @each once');
@@ -66,7 +67,7 @@ suite.test("[A,B].removeAt(1) => [A] + notify", function() {
   equal(obj.removeAt(1), obj, 'return self');
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalled('[]'), 1, 'should have notified [] once');
   equal(observer.timesCalled('@each'), 1, 'should have notified @each once');
@@ -88,7 +89,7 @@ suite.test("[A,B,C].removeAt(1) => [A,C] + notify", function() {
   equal(obj.removeAt(1), obj, 'return self');
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalled('[]'), 1, 'should have notified [] once');
   equal(observer.timesCalled('@each'), 1, 'should have notified @each once');
@@ -110,7 +111,7 @@ suite.test("[A,B,C,D].removeAt(1,2) => [A,D] + notify", function() {
   equal(obj.removeAt(1,2), obj, 'return self');
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalled('[]'), 1, 'should have notified [] once');
   equal(observer.timesCalled('@each'), 1, 'should have notified @each once');

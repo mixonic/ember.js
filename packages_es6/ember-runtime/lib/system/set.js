@@ -12,6 +12,7 @@ import Ember from "ember-metal/core"; // Ember.isNone
 
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
+import {isNone} from 'ember-metal/is_none';
 import {guidFor} from "ember-metal/utils";
 import EmberStringUtils from "ember-runtime/system/string";
 import CoreObject from "ember-runtime/system/core_object";
@@ -23,8 +24,6 @@ import EmberError from "ember-metal/error";
 import {propertyWillChange, propertyDidChange} from "ember-metal/property_events";
 import {aliasMethod} from "ember-metal/mixin";
 import {computed} from "ember-metal/computed";
-
-var isNone = Ember.isNone;
 
 /**
   An unordered collection of objects.

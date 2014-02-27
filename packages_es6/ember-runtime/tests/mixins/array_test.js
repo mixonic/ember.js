@@ -1,7 +1,15 @@
+import Ember from "ember-metal/core"; // Ember.A
+import {get} from "ember-metal/property_get";
+import {set} from "ember-metal/property_set";
+import {addObserver} from "ember-metal/observer";
+import {observer} from "ember-metal/mixin";
+import {computed} from "ember-metal/computed";
 import {testWithDefault, testBoth} from 'ember-runtime/tests/props_helper';
 import {ArrayTests} from 'ember-runtime/tests/suites/array';
 import EmberObject from 'ember-runtime/system/object';
 import EmberArray from "ember-runtime/mixins/array";
+
+var EmberObserver = observer;
 
 /*
   Implement a basic fake mutable array.  This validates that any non-native
@@ -35,7 +43,7 @@ var TestArray = EmberObject.extend(EmberArray, {
     return this._content[idx];
   },
 
-  length: Ember.computed(function() {
+  length: computed(function() {
     return this._content.length;
   })
 });
@@ -110,7 +118,7 @@ test('should notify observers of []', function() {
 
   obj = DummyArray.createWithMixins({
     _count: 0,
-    enumerablePropertyDidChange: Ember.observer('[]', function() {
+    enumerablePropertyDidChange: EmberObserver('[]', function() {
       this._count++;
     })
   });
@@ -132,7 +140,7 @@ module('notify observers of length', {
   setup: function() {
     obj = DummyArray.createWithMixins({
       _after: 0,
-      lengthDidChange: Ember.observer('length', function() {
+      lengthDidChange: EmberObserver('length', function() {
         this._after++;
       })
 
@@ -325,7 +333,6 @@ module('EmberArray.@each support', {
 
 test('adding an object should notify (@each)', function() {
 
-  var get = Ember.get, set = Ember.set;
   var called = 0;
 
   var observerObject = EmberObject.create({
@@ -334,8 +341,8 @@ test('adding an object should notify (@each)', function() {
     }
   });
 
-  // Ember.get(ary, '@each');
-  Ember.addObserver(ary, '@each', observerObject, 'wasCalled');
+  // get(ary, '@each');
+  addObserver(ary, '@each', observerObject, 'wasCalled');
 
   ary.addObject(EmberObject.create({
     desc: "foo",
@@ -348,7 +355,6 @@ test('adding an object should notify (@each)', function() {
 
 test('adding an object should notify (@each.isDone)', function() {
 
-  var get = Ember.get, set = Ember.set;
   var called = 0;
 
   var observerObject = EmberObject.create({
@@ -357,7 +363,7 @@ test('adding an object should notify (@each.isDone)', function() {
     }
   });
 
-  Ember.addObserver(ary, '@each.isDone', observerObject, 'wasCalled');
+  addObserver(ary, '@each.isDone', observerObject, 'wasCalled');
 
   ary.addObject(EmberObject.create({
     desc: "foo",
@@ -370,7 +376,6 @@ test('adding an object should notify (@each.isDone)', function() {
 
 test('using @each to observe arrays that does not return objects raise error', function() {
 
-  var get = Ember.get, set = Ember.set;
   var called = 0;
 
   var observerObject = EmberObject.create({
@@ -385,7 +390,7 @@ test('using @each to observe arrays that does not return objects raise error', f
     }
   });
 
-  Ember.addObserver(ary, '@each.isDone', observerObject, 'wasCalled');
+  addObserver(ary, '@each.isDone', observerObject, 'wasCalled');
 
   expectAssertion(function() {
     ary.addObject(EmberObject.create({
@@ -403,11 +408,10 @@ test('modifying the array should also indicate the isDone prop itself has change
   // EachArray materialized but just want to know when the property has
   // changed.
 
-  var get = Ember.get, set = Ember.set;
   var each = get(ary, '@each');
   var count = 0;
 
-  Ember.addObserver(each, 'isDone', function() { count++; });
+  addObserver(each, 'isDone', function() { count++; });
 
   count = 0;
   var item = ary.objectAt(2);
@@ -422,7 +426,7 @@ testBoth("should be clear caches for computed properties that have dependent key
       set(this, 'resources', Ember.A());
     },
 
-    common: Ember.computed(function() {
+    common: computed(function() {
       return get(get(this, 'resources').objectAt(0), 'common');
     }).property('resources.@each.common')
   });
@@ -443,7 +447,7 @@ testBoth("observers that contain @each in the path should fire only once the fir
       set(this, 'resources', Ember.A());
     },
 
-    commonDidChange: Ember.observer('resources.@each.common', function() {
+    commonDidChange: EmberObserver('resources.@each.common', function() {
       count++;
     })
   });

@@ -19,7 +19,7 @@ import MutableArray from "ember-runtime/mixins/mutable_array";
 import Observable from "ember-runtime/mixins/observable";
 import Copyable from "ember-runtime/mixins/copyable";
 import {FROZEN_ERROR} from "ember-runtime/mixins/freezable";
-import {copy} from "ember-runtime/core";
+import copy from "ember-runtime/copy";
 
 var replace = EnumerableUtils._replace,
     forEach = EnumerableUtils.forEach;

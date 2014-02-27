@@ -1,4 +1,5 @@
 import {SuiteModuleBuilder} from 'ember-runtime/tests/suites/suite';
+import {get} from 'ember-metal/property_get';
 
 var suite = SuiteModuleBuilder.create();
 
@@ -16,7 +17,7 @@ suite.test("[A,B,C].reverseObjects() => [] + notify", function () {
   equal(obj.reverseObjects(), obj, 'return self');
 
   deepEqual(this.toArray(obj), after, 'post item results');
-  equal(Ember.get(obj, 'length'), after.length, 'length');
+  equal(get(obj, 'length'), after.length, 'length');
 
   equal(observer.timesCalled('[]'), 1, 'should have notified [] once');
   equal(observer.timesCalled('@each'), 1, 'should have notified @each once');

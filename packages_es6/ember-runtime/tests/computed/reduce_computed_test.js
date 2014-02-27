@@ -1,9 +1,10 @@
 import Ember from 'ember-metal/core';
 import EnumerableUtils from 'ember-metal/enumerable_utils';
-import {get} from 'ember-metal/property_get';
+import {get, getWithDefault} from 'ember-metal/property_get';
 import {set} from 'ember-metal/property_set';
 import {meta} from 'ember-metal/utils';
 import run from 'ember-metal/run_loop';
+import {observer} from 'ember-metal/mixin';
 import keys from "ember-runtime/keys";
 import EmberObject from "ember-runtime/system/object";
 import {ComputedProperty, computed} from "ember-metal/computed";
@@ -79,8 +80,8 @@ module('arrayComputed', {
 });
 
 
-test("array computed properties are instances of Ember.ComputedProperty", function() {
-  ok(arrayComputed({}) instanceof Ember.ComputedProperty);
+test("array computed properties are instances of ComputedProperty", function() {
+  ok(arrayComputed({}) instanceof ComputedProperty);
 });
 
 test("when the dependent array is null or undefined, `addedItem` is not called and only the initial value is returned", function() {
@@ -722,7 +723,7 @@ test("when initialValue is undefined, everything works as advertised", function(
         instanceMeta.matchingItems = Ember.A();
         instanceMeta.subArray = new SubArray();
         instanceMeta.firstMatch = function() {
-          return Ember.getWithDefault(instanceMeta.matchingItems, 'firstObject', initialValue);
+          return getWithDefault(instanceMeta.matchingItems, 'firstObject', initialValue);
         };
       },
 
@@ -865,7 +866,7 @@ test("returning undefined in addedItem/removedItem completely invalidates a redu
       }
     }),
 
-    computedDidChange: Ember.observer('computed', function() {
+    computedDidChange: observer('computed', function() {
       counter++;
     })
   }).create();

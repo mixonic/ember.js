@@ -18,9 +18,10 @@ Ember Runtime
 import "ember-runtime/ext"; // just for side effect of extending some native prototypes
 
 import Ember from "ember-metal/main";
-import {copy, isEqual} from "ember-runtime/core";
+import {isEqual} from "ember-runtime/core";
 import keys from "ember-runtime/keys";
 import compare from "ember-runtime/compare";
+import copy from "ember-runtime/copy";
 
 import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
 import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin, Observable} from "ember-runtime/mixins";
