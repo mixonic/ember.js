@@ -126,6 +126,7 @@ ES6Package.prototype = {
 var packages = {
   'container': [],
   'ember-metal': [],
+  'ember-debug': [],
   'ember-runtime': ['container', 'ember-metal', 'ember-metal/~tests/ember-metal']
 };
 
