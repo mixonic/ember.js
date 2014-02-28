@@ -2,7 +2,9 @@
 // as well as methods vs props.  We are just keeping these for testing; the
 // current impl doesn't care about the differences as much...
 
-import {Mixin} from 'ember-metal/mixin';
+import {guidFor} from 'ember-metal/utils';
+import {mixin, Mixin} from 'ember-metal/mixin';
+import EnumerableUtils from 'ember-metal/enumerable_utils';
 
 var PrivateProperty = Mixin.create({
   _foo: '_FOO'
@@ -37,14 +39,14 @@ var obj ;
 module('Basic introspection', {
   setup: function() {
     obj = {};
-    Ember.mixin(obj, PrivateProperty, PublicProperty, PrivateMethod, PublicMethod, Combined);
+    mixin(obj, PrivateProperty, PublicProperty, PrivateMethod, PublicMethod, Combined);
   }
 });
 
 test('Ember.mixins()', function() {
 
   function mapGuids(ary) {
-    return Ember.EnumerableUtils.map(ary, function(x) { return Ember.guidFor(x); });
+    return EnumerableUtils.map(ary, function(x) { return guidFor(x); });
   }
 
   deepEqual(mapGuids(Mixin.mixins(obj)), mapGuids([PrivateProperty, PublicProperty, PrivateMethod, PublicMethod, Combined, BarProperties, BarMethods]), 'should return included mixins');

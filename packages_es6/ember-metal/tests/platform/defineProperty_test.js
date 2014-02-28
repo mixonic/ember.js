@@ -1,11 +1,12 @@
 import {platform} from 'ember-metal/platform';
+import EnumerableUtils from 'ember-metal/enumerable_utils';
 
 function isEnumerable(obj, keyName) {
   var keys = [];
   for(var key in obj) {
     if (obj.hasOwnProperty(key)) keys.push(key);
   }
-  return Ember.EnumerableUtils.indexOf(keys, keyName)>=0;
+  return EnumerableUtils.indexOf(keys, keyName)>=0;
 }
 
 module("platform.defineProperty()");

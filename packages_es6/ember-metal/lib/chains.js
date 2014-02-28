@@ -1,8 +1,3 @@
-// require('ember-metal/utils');
-// require('ember-metal/property_get');
-// require('ember-metal/array');
-// require('ember-metal/watch_key');
-
 import Ember from "ember-metal/core"; // warn, assert, etc;
 import {meta, META_KEY} from "ember-metal/utils";
 import {get, normalizeTuple} from "ember-metal/property_get";

@@ -1,6 +1,3 @@
-// require('ember-metal/core');
-// require('ember-metal/utils');
-
 /**
 @module ember-metal
 */

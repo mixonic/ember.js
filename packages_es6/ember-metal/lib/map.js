@@ -22,11 +22,6 @@
   `Ember.Map.create()` for symmetry with other Ember classes.
 */
 
-// ES6Todo: Never needed? require('ember-metal/enumerable_utils');
-// require('ember-metal/utils');
-// require('ember-metal/core');
-// require('ember-metal/property_set');
-
 import {indexOf} from "ember-metal/array"
 import {guidFor} from "ember-metal/utils";
 import {set} from "ember-metal/property_set";

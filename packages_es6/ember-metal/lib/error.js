@@ -1,6 +1,3 @@
-// require('ember-metal/core');
-// require('ember-metal/platform');
-
 import {create} from "ember-metal/platform";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];

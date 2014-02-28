@@ -1,13 +1,3 @@
-// require('ember-metal/core');
-// require('ember-metal/platform');
-// require('ember-metal/utils');
-// require('ember-metal/expand_properties');
-// require('ember-metal/property_get');
-// require('ember-metal/property_set');
-// require('ember-metal/properties');
-// require('ember-metal/watching');
-// require('ember-metal/property_events');
-
 import Ember from "ember-metal/core";
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";

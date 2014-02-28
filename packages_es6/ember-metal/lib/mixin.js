@@ -1,13 +1,3 @@
-// require('ember-metal/core');
-// ES6TODO: not actually used? require('ember-metal/property_get');
-// require('ember-metal/computed');
-// require('ember-metal/properties');
-// require('ember-metal/expand_properties');
-// ES6TODO: not actually used? require('ember-metal/observer');
-// require('ember-metal/utils');
-// require('ember-metal/array');
-// require('ember-metal/binding');
-
 /**
 @module ember
 @submodule ember-metal

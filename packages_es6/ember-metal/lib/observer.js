@@ -1,12 +1,3 @@
-/*
-require('ember-metal/core');
-require('ember-metal/platform');
-require('ember-metal/utils'); // Ember.tryFinally
-require('ember-metal/property_get');
-require('ember-metal/array');
-require('ember-metal/events');
-*/
-
 import {watch, unwatch} from "ember-metal/watching";
 import {map} from "ember-metal/array";
 import {listenersFor, addListener, removeListener, suspendListeners, suspendListener} from "ember-metal/events";

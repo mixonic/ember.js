@@ -1,8 +1,3 @@
-// require('ember-metal/core');
-// require('ember-metal/platform');
-// require('ember-metal/array');
-// require('ember-metal/error');
-
 import Ember from "ember-metal/core";
 import {platform, create} from "ember-metal/platform";
 import {forEach} from "ember-metal/array";

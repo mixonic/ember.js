@@ -1,4 +1,5 @@
 import run from 'ember-metal/run_loop';
+import EmberError from 'ember-metal/error';
 
 module('system/run_loop/unwind_test');
 
@@ -7,7 +8,7 @@ test('RunLoop unwinds despite unhandled exception', function() {
 
   raises(function() {
     run(function() {
-      run.schedule('actions', function() { throw new Ember.Error("boom!"); });
+      run.schedule('actions', function() { throw new EmberError("boom!"); });
     });
   }, Error, "boom!");
 
@@ -27,9 +28,9 @@ test('run unwinds despite unhandled exception', function() {
 
   raises(function() {
     run(function() {
-      throw new Ember.Error("boom!");
+      throw new EmberError("boom!");
     });
-  }, Ember.Error, "boom!");
+  }, EmberError, "boom!");
 
   equal(run.currentRunLoop, initialRunLoop, "Previous run loop should be cleaned up despite exception");
 
