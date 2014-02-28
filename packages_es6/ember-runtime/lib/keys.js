@@ -28,7 +28,7 @@ if (keys || create.isSimulated) {
     if (key.substring(0,2) === '__') return;
     if (key === '_super') return;
     if (EnumerableUtils.indexOf(array, key) >= 0) return;
-    if (!obj.hasOwnProperty(key)) return;
+    if (typeof obj.hasOwnProperty === 'function' && !obj.hasOwnProperty(key)) return;
 
     array.push(key);
   };
