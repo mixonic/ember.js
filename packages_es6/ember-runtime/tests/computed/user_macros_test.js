@@ -2,13 +2,14 @@ import Ember from 'ember-metal/core';
 import {get} from 'ember-metal/property_get';
 import {set} from 'ember-metal/property_set';
 import {computed} from 'ember-metal/computed';
-import {slice as a_slice, map} from 'ember-metal/array';
+import {map} from 'ember-metal/array';
 import run from 'ember-metal/run_loop';
 import EmberObject from 'ember-runtime/system/object';
 import testBoth from 'ember-metal/tests/props_helper';
 
 if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
-  var normalizeDependentKeys = computed.normalizeDependentKeys,
+  var a_slice = Array.prototype.slice,
+      normalizeDependentKeys = computed.normalizeDependentKeys,
       union = computed.union,
       obj,
       join;
