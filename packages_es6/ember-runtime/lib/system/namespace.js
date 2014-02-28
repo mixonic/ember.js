@@ -52,10 +52,13 @@ var Namespace = EmberObject.extend({
   },
 
   destroy: function() {
-    var namespaces = Namespace.NAMESPACES;
+    var namespaces = Namespace.NAMESPACES,
+        toString = this.toString();
 
-    Ember.lookup[this.toString()] = undefined;
-    delete Namespace.NAMESPACES_BY_ID[this.toString()];
+    if (toString) {
+      Ember.lookup[toString] = undefined;
+      delete Namespace.NAMESPACES_BY_ID[toString];
+    }
     namespaces.splice(indexOf.call(namespaces, this), 1);
     this._super();
   }
