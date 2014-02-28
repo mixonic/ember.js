@@ -3,7 +3,7 @@
 // require('ember-runtime/mixins/array');
 
 import Ember from "ember-metal/core"; // Ember.assert
-import {get} from "ember-metal/property_get";
+import {get as e_get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import EmberError from "ember-metal/error";
 import {guidFor, meta} from "ember-metal/utils";
@@ -19,8 +19,7 @@ import run from "ember-metal/run_loop";
 import Set from "ember-runtime/system/set";
 import {isArray} from "ember-metal/utils";
 
-var e_get = get,
-    a_slice = [].slice,
+var a_slice = [].slice,
     o_create = create,
     forEach = EnumerableUtils.forEach,
     metaFor = meta,
