@@ -8,7 +8,7 @@ import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import {Mixin} from "ember-metal/mixin";
 import {computed} from "ember-metal/computed";
-import typeOf from "ember-metal/utils";
+import {typeOf} from "ember-metal/utils";
 
 /**
 `Ember.TargetActionSupport` is a mixin that can be included in a class

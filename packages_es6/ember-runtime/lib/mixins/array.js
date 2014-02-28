@@ -8,11 +8,12 @@
 // ..........................................................
 // HELPERS
 //
-import Ember from "ember-metal/core"; // ES6TODO: Ember.isNone; SBB
+import Ember from "ember-metal/core"; // ES6TODO: Ember.A
 
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import {computed, cacheFor} from "ember-metal/computed";
+import {isNone, none} from 'ember-metal/is_none';
 import Enumerable from "ember-runtime/mixins/enumerable";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import {Mixin, required} from "ember-metal/mixin";
@@ -20,7 +21,7 @@ import {propertyWillChange, propertyDidChange} from "ember-metal/property_events
 import {addListener, removeListener, sendEvent, hasListeners } from "ember-metal/events";
 import {isWatching} from "ember-metal/watching";
 
-var isNone = Ember.isNone, map = EnumerableUtils.map;
+var map = EnumerableUtils.map;
 
 // ..........................................................
 // ARRAY
@@ -164,7 +165,7 @@ var EmberArray = Mixin.create(Enumerable, {
     @return {Array} New array with specified slice
   */
   slice: function(beginIndex, endIndex) {
-    var ret = A();
+    var ret = Ember.A();
     var length = get(this, 'length') ;
     if (isNone(beginIndex)) beginIndex = 0 ;
     if (isNone(endIndex) || (endIndex > length)) endIndex = length ;

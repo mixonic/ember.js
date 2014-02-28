@@ -1,5 +1,5 @@
 import Ember from "ember-metal/core"; // Ember.ENV.EMBER_LOAD_HOOKS
-import forEach from "ember-metal/array";
+import {forEach} from "ember-metal/array";
 
 /**
   @module ember

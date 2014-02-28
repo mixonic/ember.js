@@ -10,6 +10,7 @@ import {isArray, guidFor} from "ember-metal/utils";
 import EnumerableUtils from "ember-metal/enumerable_utils";
 import run from 'ember-metal/run_loop';
 import {addObserver} from "ember-metal/observer";
+import EmberError from "ember-metal/error";
 import {arrayComputed} from "ember-runtime/computed/array_computed";
 import {reduceComputed} from "ember-runtime/computed/reduce_computed";
 import ObjectProxy from "ember-runtime/system/object_proxy";
@@ -516,7 +517,7 @@ function intersect() {
 */
 function setDiff(setAProperty, setBProperty) {
   if (arguments.length !== 2) {
-    throw new Ember.Error("setDiff requires exactly two dependent arrays.");
+    throw new EmberError("setDiff requires exactly two dependent arrays.");
   }
   return arrayComputed(setAProperty, setBProperty, {
     addedItem: function (array, item, changeMeta, instanceMeta) {

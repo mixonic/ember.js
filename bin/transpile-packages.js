@@ -127,7 +127,7 @@ var packages = {
   'container': [],
   'ember-metal': [],
   'ember-debug': [],
-  'ember-runtime': ['container', 'ember-metal', 'ember-metal/~tests/ember-metal']
+  'ember-runtime': ['container', 'rsvp', 'ember-metal', 'ember-metal/~tests/ember-metal']
 };
 
 

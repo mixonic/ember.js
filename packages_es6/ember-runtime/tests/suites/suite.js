@@ -114,7 +114,11 @@ Suite.reopenClass({
 
 var SuiteModuleBuilder = EmberObject.extend({
   _module: null,
-  _tests: [],
+  _tests: null,
+
+  init: function(){
+    this._tests = [];
+  },
 
   module: function(name) { this._module = name; },
 

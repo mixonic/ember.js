@@ -40,7 +40,7 @@ function addObserver(obj, _path, target, method) {
 };
 
 function observersFor(obj, path) {
-  return Ember.listenersFor(obj, changeEvent(path));
+  return listenersFor(obj, changeEvent(path));
 };
 
 /**

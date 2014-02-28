@@ -15,19 +15,19 @@ test("undefined and null", function() {
 });
 
 test("strings should be equal",function() {
-	ok( !isEqual("Hello", "Hi"),    "different Strings are unequal" );
-	ok(  isEqual("Hello", "Hello"), "same Strings are equal" );
+  ok( !isEqual("Hello", "Hi"),    "different Strings are unequal" );
+  ok(  isEqual("Hello", "Hello"), "same Strings are equal" );
 });
 
 test("numericals should be equal",function() {
   ok(  isEqual(24, 24), "same numbers are equal" );
-	ok( !isEqual(24, 21), "different numbers are inequal" );
+  ok( !isEqual(24, 21), "different numbers are inequal" );
 });
 
 test("array should be equal",function() {
-	// NOTE: We don't test for array contents -- that would be too expensive.
-	ok( !isEqual( [1,2], [1,2] ), 'two array instances with the same values should not be equal' );
-	ok( !isEqual( [1,2], [1] ),   'two array instances with different values should not be equal' );
+  // NOTE: We don't test for array contents -- that would be too expensive.
+  ok( !isEqual( [1,2], [1,2] ), 'two array instances with the same values should not be equal' );
+  ok( !isEqual( [1,2], [1] ),   'two array instances with different values should not be equal' );
 });
 
 test("first object implements isEqual should use it", function() {

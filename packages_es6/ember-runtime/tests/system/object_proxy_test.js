@@ -1,10 +1,14 @@
+import {addObserver, removeObserver} from "ember-metal/observer";
+import {computed} from "ember-metal/computed";
+import {isWatching} from "ember-metal/watching";
 import {testBoth} from 'ember-runtime/tests/props_helper';
+import ObjectProxy from "ember-runtime/system/object_proxy";
 
-module("Ember.ObjectProxy");
+module("ObjectProxy");
 
 testBoth("should not proxy properties passed to create", function (get, set) {
-  var Proxy = Ember.ObjectProxy.extend({
-    cp: Ember.computed(function (key, value) {
+  var Proxy = ObjectProxy.extend({
+    cp: computed(function (key, value) {
       if (value) {
         this._cp = value;
       }
@@ -26,7 +30,7 @@ testBoth("should proxy properties to content", function(get, set) {
         lastName: 'Dale',
         unknownProperty: function (key) { return key + ' unknown';}
       },
-      proxy = Ember.ObjectProxy.create();
+      proxy = ObjectProxy.create();
 
   equal(get(proxy, 'firstName'), undefined, 'get on proxy without content should return undefined');
   expectAssertion(function () {
@@ -58,8 +62,8 @@ testBoth("should work with watched properties", function(get, set) {
     count = 0,
     last;
 
-  Proxy = Ember.ObjectProxy.extend({
-    fullName: Ember.computed(function () {
+  Proxy = ObjectProxy.extend({
+    fullName: computed(function () {
       var firstName = this.get('firstName'),
           lastName = this.get('lastName');
       if (firstName && lastName) {
@@ -71,7 +75,7 @@ testBoth("should work with watched properties", function(get, set) {
 
   proxy = Proxy.create();
 
-  Ember.addObserver(proxy, 'fullName', function () {
+  addObserver(proxy, 'fullName', function () {
     last = get(proxy, 'fullName');
     count++;
   });
@@ -96,8 +100,8 @@ testBoth("should work with watched properties", function(get, set) {
   equal(count, 5);
   equal(last, 'Yehuda Katz');
   // content1 is no longer watched
-  ok(!Ember.isWatching(content1, 'firstName'), 'not watching firstName');
-  ok(!Ember.isWatching(content1, 'lastName'), 'not watching lastName');
+  ok(!isWatching(content1, 'firstName'), 'not watching firstName');
+  ok(!isWatching(content1, 'lastName'), 'not watching lastName');
 
   // setting property in new content
   set(content2, 'firstName', 'Tomhuda');
@@ -114,7 +118,7 @@ testBoth("should work with watched properties", function(get, set) {
 
 test("set and get should work with paths", function () {
   var content = {foo: {bar: 'baz'}},
-      proxy = Ember.ObjectProxy.create({content: content}),
+      proxy = ObjectProxy.create({content: content}),
       count = 0;
   proxy.set('foo.bar', 'hello');
   equal(proxy.get('foo.bar'), 'hello');
@@ -133,7 +137,7 @@ test("set and get should work with paths", function () {
 
 testBoth("should transition between watched and unwatched strategies", function(get, set) {
   var content = {foo: 'foo'},
-      proxy = Ember.ObjectProxy.create({content: content}),
+      proxy = ObjectProxy.create({content: content}),
       count = 0;
 
   function observer() {
@@ -151,7 +155,7 @@ testBoth("should transition between watched and unwatched strategies", function(
   equal(get(content, 'foo'), 'foo');
   equal(get(proxy, 'foo'), 'foo');
 
-  Ember.addObserver(proxy, 'foo', observer);
+  addObserver(proxy, 'foo', observer);
 
   equal(count, 0);
   equal(get(proxy, 'foo'), 'foo');
@@ -167,7 +171,7 @@ testBoth("should transition between watched and unwatched strategies", function(
   equal(get(content, 'foo'), 'foo');
   equal(get(proxy, 'foo'), 'foo');
 
-  Ember.removeObserver(proxy, 'foo', observer);
+  removeObserver(proxy, 'foo', observer);
 
   set(content, 'foo', 'bar');
 

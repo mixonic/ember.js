@@ -1,7 +1,6 @@
-/*globals module test ok isObj equals expects */
 import {get} from 'ember-metal/property_get';
 import EmberObject from 'ember-runtime/system/object';
-import {compare} from "ember-runtime/core";
+import compare from "ember-runtime/compare";
 import Comparable from 'ember-runtime/mixins/comparable';
 
 var Rectangle = EmberObject.extend(Comparable, {

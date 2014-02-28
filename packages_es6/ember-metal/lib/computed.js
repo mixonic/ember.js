@@ -601,7 +601,7 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
   };
 
   var normalizeDependentKey = function (key) {
-    if (key instanceof computedProperty) {
+    if (key instanceof ComputedProperty) {
       return implicitKey(key);
     } else {
       return key;

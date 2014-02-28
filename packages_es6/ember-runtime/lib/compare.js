@@ -46,7 +46,6 @@ function compare(v, w) {
   var type1 = typeOf(v);
   var type2 = typeOf(w);
 
-  var Comparable = Comparable;
   if (Comparable) {
     if (type1==='instance' && Comparable.detect(v.constructor)) {
       return v.constructor.compare(v, w);

@@ -7,7 +7,7 @@ import EmberArray from 'ember-runtime/mixins/array';
 import {get} from 'ember-metal/property_get';
 import {set} from 'ember-metal/property_set';
 import {computed} from 'ember-metal/computed';
-import {observer} from 'ember-metal/mixin';
+import {observer as emberObserver} from 'ember-metal/mixin';
 
 var indexOf = EnumerableUtils.indexOf;
 
@@ -183,7 +183,7 @@ test('should notify observers of []', function() {
     nextObject: function() {}, // avoid exceptions
 
     _count: 0,
-    enumerablePropertyDidChange: observer('[]', function() {
+    enumerablePropertyDidChange: emberObserver('[]', function() {
       this._count++;
     })
   });
@@ -203,7 +203,7 @@ module('notify observers of length', {
   setup: function() {
     obj = DummyEnum.createWithMixins({
       _after: 0,
-      lengthDidChange: observer('length', function() {
+      lengthDidChange: emberObserver('length', function() {
         this._after++;
       })
 

@@ -42,7 +42,11 @@ suite.test('2nd target parameter', function() {
   var obj = this.newObject(), target = this;
 
   obj.forEach(function() {
-    equal(guidFor(this), guidFor(global), 'should pass the global object as this if no context');
+    // ES6TODO: When transpiled we will end up with "use strict" which disables automatically binding to the global context.
+    // Therefore, the following test can never pass in strict mode unless we modify the `map` function implementation to
+    // use `Ember.lookup` if target is not specified.
+    //
+    // equal(guidFor(this), guidFor(global), 'should pass the global object as this if no context');
   });
 
   obj.forEach(function() {

@@ -346,6 +346,8 @@ function wrap(func, superFunc) {
   return superWrapper;
 };
 
+var EmberArray;
+
 /**
   Returns true if the passed object is an array or Array-like.
 
@@ -369,11 +371,15 @@ function wrap(func, superFunc) {
   @param {Object} obj The object to test
   @return {Boolean} true if the passed object is an array or Array-like
 */
-// ES6TODO: Move up to runtime. This isn't used in ember-metal at all. Also depends on Ember.Array.
+// ES6TODO: Move up to runtime? This is only use in ember-metal by concatenatedProperties
 function isArray(obj) {
+  if (typeof EmberArray === 'undefined') {
+    EmberArray = requireModule("ember-runtime/mixins/array")["default"];
+  }
+
   if (!obj || obj.setInterval) { return false; }
   if (Array.isArray && Array.isArray(obj)) { return true; }
-  if (Ember.Array && Ember.Array.detect(obj)) { return true; }
+  if (EmberArray && EmberArray.detect(obj)) { return true; }
   if ((obj.length !== undefined) && 'object'===typeof obj) { return true; }
   return false;
 };
@@ -615,6 +621,8 @@ forEach.call(t, function(name) {
 
 var toString = Object.prototype.toString;
 
+var EmberObject;
+
 /**
   Returns a consistent type for the passed item.
 
@@ -667,17 +675,21 @@ var toString = Object.prototype.toString;
   @param {Object} item the item to check
   @return {String} the type
 */
-// ES6Todo: Depends on Ember.Object which is defined in runtime.
 function typeOf(item) {
   var ret;
+
+  // ES6TODO: Depends on Ember.Object which is defined in runtime.
+  if (typeof EmberObject === "undefined") {
+    EmberObject = requireModule('ember-runtime/system/object')['default'];
+  }
 
   ret = (item === null || item === undefined) ? String(item) : TYPE_MAP[toString.call(item)] || 'object';
 
   if (ret === 'function') {
-    if (Ember.Object && Ember.Object.detect(item)) ret = 'class';
+    if (EmberObject && EmberObject.detect(item)) ret = 'class';
   } else if (ret === 'object') {
     if (item instanceof Error) ret = 'error';
-    else if (Ember.Object && item instanceof Ember.Object) ret = 'instance';
+    else if (EmberObject && item instanceof EmberObject) ret = 'instance';
     else if (item instanceof Date) ret = 'date';
   }
 

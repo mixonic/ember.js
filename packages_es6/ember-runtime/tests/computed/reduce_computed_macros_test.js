@@ -11,20 +11,21 @@ import {addObserver} from "ember-metal/observer";
 import {beginPropertyChanges, endPropertyChanges} from "ember-metal/property_events";
 import {forEach} from "ember-metal/array";
 import {observer} from 'ember-metal/mixin';
-import {sum, min, max, map, sort, setDiff, mapBy, mapProperty, filter, filterBy, uniq, union, intersect} from 'ember-runtime/computed/reduce_computed_macros';
+import {sum as computedSum,
+        min as computedMin,
+        max as computedMax,
+        map as computedMap,
+        sort as computedSort,
+        setDiff as computedSetDiff,
+        mapBy as computedMapBy,
+        mapProperty,
+        filter as computedFilter,
+        filterBy as computedFilterBy,
+        uniq as computedUniq,
+        union as computedUnion,
+        intersect as computedIntersect} from 'ember-runtime/computed/reduce_computed_macros';
 
-var computedSum = sum,
-    computedMin = min,
-    computedMax = max,
-    computedMap = map,
-    computedSort = sort,
-    computedSetDiff = setDiff,
-    computedMapBy = mapBy,
-    computedFilter = filter,
-    computedFilterBy = filterBy,
-    computedUniq = uniq,
-    computedUnion = union,
-    computedIntersect = intersect;
+import NativeArray from "ember-runtime/system/native_array";
 
 var obj, sorted, sortProps, items, userFnCalls, todos, filtered;
 

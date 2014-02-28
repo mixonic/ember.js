@@ -2,14 +2,12 @@ import Ember from "ember-metal/core"; // Ember.A
 import {get} from "ember-metal/property_get";
 import {set} from "ember-metal/property_set";
 import {addObserver} from "ember-metal/observer";
-import {observer} from "ember-metal/mixin";
+import {observer as emberObserver} from "ember-metal/mixin";
 import {computed} from "ember-metal/computed";
 import {testWithDefault, testBoth} from 'ember-runtime/tests/props_helper';
 import {ArrayTests} from 'ember-runtime/tests/suites/array';
 import EmberObject from 'ember-runtime/system/object';
 import EmberArray from "ember-runtime/mixins/array";
-
-var EmberObserver = observer;
 
 /*
   Implement a basic fake mutable array.  This validates that any non-native
@@ -118,7 +116,7 @@ test('should notify observers of []', function() {
 
   obj = DummyArray.createWithMixins({
     _count: 0,
-    enumerablePropertyDidChange: EmberObserver('[]', function() {
+    enumerablePropertyDidChange: emberObserver('[]', function() {
       this._count++;
     })
   });
@@ -140,7 +138,7 @@ module('notify observers of length', {
   setup: function() {
     obj = DummyArray.createWithMixins({
       _after: 0,
-      lengthDidChange: EmberObserver('length', function() {
+      lengthDidChange: emberObserver('length', function() {
         this._after++;
       })
 
@@ -447,7 +445,7 @@ testBoth("observers that contain @each in the path should fire only once the fir
       set(this, 'resources', Ember.A());
     },
 
-    commonDidChange: EmberObserver('resources.@each.common', function() {
+    commonDidChange: emberObserver('resources.@each.common', function() {
       count++;
     })
   });

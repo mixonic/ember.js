@@ -1,13 +1,15 @@
-import testBoth from 'ember-metal/tests/props_helper';
 import Ember from 'ember-metal/core';
+import {get} from 'ember-metal/property_get';
+import {set} from 'ember-metal/property_set';
+import {computed} from 'ember-metal/computed';
+import {slice as a_slice, map} from 'ember-metal/array';
+import run from 'ember-metal/run_loop';
+import EmberObject from 'ember-runtime/system/object';
+import testBoth from 'ember-metal/tests/props_helper';
 
 if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
-  var get = Ember.get,
-      set = Ember.set,
-      a_slice = Array.prototype.slice,
-      map = Ember.ArrayPolyfills.map,
-      normalizeDependentKeys = Ember.computed.normalizeDependentKeys,
-      union = Ember.computed.union,
+  var normalizeDependentKeys = computed.normalizeDependentKeys,
+      union = computed.union,
       obj,
       join;
 
@@ -25,12 +27,12 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
           }, this).join(separator);
         });
 
-        return Ember.computed.apply(Ember.computed, args);
+        return computed.apply(computed, args);
       };
     },
     teardown: function () {
       if (obj && obj.destroy) {
-        Ember.run(function() {
+        run(function() {
           obj.destroy();
         });
       }
@@ -38,7 +40,7 @@ if (Ember.FEATURES.isEnabled('composable-computed-properties')) {
   });
 
   test('user macros can easily support composition', function () {
-    obj = Ember.Object.extend({
+    obj = EmberObject.extend({
       both: join( join('person0FirstName', 'person0LastName', " "),
                   join('person1FirstName', 'person1LastName', " "),
                   " and ")
