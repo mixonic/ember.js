@@ -18,7 +18,7 @@ import {Copyable} from "ember-runtime/mixins/copyable";
 import Enumerable from "ember-runtime/mixins/enumerable";
 import {Freezable, FROZEN_ERROR} from "ember-runtime/mixins/freezable";
 import Observable from "ember-runtime/mixins/observable";
-import {ActionHandler} from "ember-runtime/mixins/action_handler";
+import ActionHandler from "ember-runtime/mixins/action_handler";
 import Deferred from "ember-runtime/mixins/deferred";
 import MutableEnumerable from "ember-runtime/mixins/mutable_enumerable";
 import MutableArray from "ember-runtime/mixins/mutable_array"

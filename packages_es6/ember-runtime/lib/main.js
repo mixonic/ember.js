@@ -17,14 +17,14 @@ Ember Runtime
 // IMPORTS
 import "ember-runtime/ext"; // just for side effect of extending some native prototypes
 
-import Ember from "ember-metal/main";
+import Ember from "ember-metal";
 import {isEqual} from "ember-runtime/core";
 import keys from "ember-runtime/keys";
 import compare from "ember-runtime/compare";
 import copy from "ember-runtime/copy";
 
-import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, ActionHandler, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
-import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin, Observable} from "ember-runtime/mixins";
+import {Namespace, EmberObject, TrackedArray, SubArray, Container, Application, ArrayProxy, ObjectProxy, CoreObject, EachArray, EachProxy, NativeArray, A, Set, EmberStringUtils, Deferred, onLoad, runLoadHooks} from "ember-runtime/system";
+import {EmberArray, Enumerable, Comparable, Copyable, Freezable, FROZEN_ERROR, Deferred, MutableEnumerable, MutableArray, TargetActionSupport, Evented, PromiseProxyMixin, SortableMixin, Observable, ActionHandler} from "ember-runtime/mixins";
 
 import {arrayComputed, ArrayComputedProperty} from "ember-runtime/computed/array_computed";
 import {reduceComputed, ReduceComputedProperty} from "ember-runtime/computed/reduce_computed";
@@ -49,7 +49,7 @@ Ember.SortableMixin = SortableMixin;
 Ember.Freezable = Freezable;
 Ember.FROZEN_ERROR = FROZEN_ERROR;
 
-Ember.DeferredMixin = DeferredMixin;
+Ember.DeferredMixin = Deferred;
 
 Ember.MutableEnumerable = MutableEnumerable;
 Ember.MutableArray = MutableArray;
@@ -87,6 +87,7 @@ Ember.Object = EmberObject;
 Ember.TrackedArray = TrackedArray;
 Ember.SubArray = SubArray;
 Ember.Container = Container;
+Ember.Namespace = Namespace;
 Ember.Application = Application;
 Ember.Enumerable = Enumerable;
 Ember.ArrayProxy = ArrayProxy;

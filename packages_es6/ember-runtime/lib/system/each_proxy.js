@@ -13,7 +13,7 @@ import {indexOf} from "ember-metal/array";
 import EmberArray from "ember-runtime/mixins/array"; // ES6TODO: WAT? Circular dep?
 import EmberObject from "ember-runtime/system/object";
 import {computed} from "ember-metal/computed";
-import {addObserver, addBeforeObserver, removeObserver, removeObserver} from "ember-metal/observer";
+import {addObserver, addBeforeObserver, removeBeforeObserver, removeObserver} from "ember-metal/observer";
 import {typeOf} from "ember-metal/utils";
 import {watchedEvents} from "ember-metal/events";
 import {defineProperty} from "ember-metal/properties";

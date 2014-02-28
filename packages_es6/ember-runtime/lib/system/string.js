@@ -208,7 +208,7 @@ var EmberStringUtils = {
         out = [];
 
     for (var i=0, l=parts.length; i<l; i++) {
-      var camelized = EmberString.camelize(parts[i]);
+      var camelized = EmberStringUtils.camelize(parts[i]);
       out.push(camelized.charAt(0).toUpperCase() + camelized.substr(1));
     }
 

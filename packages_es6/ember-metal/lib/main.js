@@ -74,7 +74,7 @@ import {ComputedProperty, computed, cacheFor} from "ember-metal/computed";
 import {addObserver, observersFor, removeObserver, addBeforeObserver, _suspendBeforeObserver, _suspendObserver, _suspendBeforeObservers, _suspendObservers, beforeObserversFor, removeBeforeObserver} from "ember-metal/observer";
 import {IS_BINDING, mixin, Mixin, required, aliasMethod, observer, immediateObserver, beforeObserver} from "ember-metal/mixin";
 import {Binding, isGlobalPath, bind, oneWay} from "ember-metal/binding";
-import Run from "ember-metal/run_loop";
+import run from "ember-metal/run_loop";
 import libraries from "ember-metal/libraries";
 import {isNone, none} from 'ember-metal/is_none';
 import {isEmpty, empty} from 'ember-metal/is_empty';
@@ -88,6 +88,8 @@ Ember.Instrumentation = {
   unsubscribe: unsubscribe,
   reset: reset
 };
+Ember.instrument = instrument;
+Ember.subscribe = subscribe;
 
 Ember.generateGuid    = generateGuid;
 Ember.GUID_KEY        = GUID_KEY;
@@ -211,7 +213,7 @@ Ember.bind = bind;
 Ember.Binding = Binding;
 Ember.isGlobalPath = isGlobalPath;
 
-Ember.Run = Run;
+Ember.run = run;
 
 Ember.libraries = libraries;
 Ember.libraries.registerCoreLibrary('Ember', Ember.VERSION);
