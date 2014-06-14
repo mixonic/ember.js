@@ -14,8 +14,5 @@
     "htmlbars": "https://github.com/tildeio/htmlbars.git#5a11771dcf6a8280667b19e85f7a221cf34deaca",
     "dag-map": "https://github.com/krisselden/dag-map.git#e307363256fe918f426e5a646cb5f5062d3245be",
     "ember-dev": "https://github.com/emberjs/ember-dev.git#fb788b5367a592ac39165416d05a39e78b50a520"
-  },
-  "resolutions": {
-    "handlebars": "~2.0.0"
   }
 }
