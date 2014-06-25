@@ -1098,21 +1098,6 @@ var View = CoreView.extend({
     return this.currentState.rerender(this);
   },
 
-  clearRenderedChildren: function() {
-    // var lengthBefore = this.lengthBeforeRender,
-    //     lengthAfter  = this.lengthAfterRender;
-
-    // // If there were child views created during the last call to render(),
-    // // remove them under the assumption that they will be re-created when
-    // // we re-render.
-
-    // // VIEW-TODO: Unit test this path.
-    // var childViews = this._childViews;
-    // for (var i=lengthAfter-1; i>=lengthBefore; i--) {
-    //   if (childViews[i]) { childViews[i].destroy(); }
-    // }
-  },
-
   /**
     Iterates over the view's `classNameBindings` array, inserts the value
     of the specified property into the `classNames` array, then creates an
@@ -1475,9 +1460,6 @@ var View = CoreView.extend({
     // In the interim, we will just re-render if that happens. It is more
     // important than elements get garbage collected.
     if (!this.removedFromDOM) { this.destroyElement(); }
-    this.invokeRecursively(function(view) {
-      if (view.clearRenderedChildren) { view.clearRenderedChildren(); }
-    });
   },
 
   elementId: null,
@@ -1953,19 +1935,9 @@ var View = CoreView.extend({
 
     if (!this._super()) { return; }
 
-    childLen = childViews.length;
-    for (i=childLen-1; i>=0; i--) {
-      childViews[i].removedFromDOM = true;
-    }
-
     // remove from non-virtual parent view if viewName was specified
     if (viewName && nonVirtualParentView) {
       nonVirtualParentView.set(viewName, null);
-    }
-
-    childLen = childViews.length;
-    for (i=childLen-1; i>=0; i--) {
-      childViews[i].destroy();
     }
 
     return this;
