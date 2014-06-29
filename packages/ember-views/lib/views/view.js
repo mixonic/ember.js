@@ -2026,20 +2026,13 @@ var View = CoreView.extend({
     this.invokeRecursively(nullViewsBuffer);
   },
 
-  transitionTo: function(state, children) {
+  transitionTo: function(state) {
     var priorState = this.currentState,
         currentState = this.currentState = this._states[state];
     this._state = state;
 
     if (priorState && priorState.exit) { priorState.exit(this); }
     if (currentState.enter) { currentState.enter(this); }
-    if (state === 'inDOM') { meta(this).cache.element = undefined; }
-
-    if (children !== false) {
-      this.forEachChildView(function(view) {
-        view.transitionTo(state);
-      });
-    }
   },
 
   // .......................................................
