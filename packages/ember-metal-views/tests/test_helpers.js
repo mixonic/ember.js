@@ -1,8 +1,9 @@
 /*globals Node */
-import { Morph } from "morph";
+import { Morph, DOMHelper } from "morph";
 import { Renderer } from "ember-metal-views";
 
-var renderer;
+var renderer,
+    dom = new DOMHelper();
 
 function MetalRenderer () {
   MetalRenderer.super.call(this);
@@ -48,7 +49,7 @@ MetalRenderer.prototype.createElement = function (view) {
     }
   }
   if (view.childViews) {
-    view._childViewsMorph = new Morph(el, null, null);
+    view._childViewsMorph = new Morph(el, null, null, dom, el);
   } else if (view.textContent) {
     el.textContent = view.textContent;
   } else if (view.innerHTML) {

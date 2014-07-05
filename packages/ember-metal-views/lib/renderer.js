@@ -1,4 +1,6 @@
-import { Morph } from "morph";
+import { Morph, DOMHelper } from "morph";
+
+var dom = new DOMHelper();
 
 function Renderer() {
   this._uuid = 0;
@@ -130,14 +132,14 @@ Renderer.prototype.appendTo =
     var end = document.createTextNode('');
     target.appendChild(start);
     target.appendChild(end);
-    view._morph = new Morph(target, start, end);
+    view._morph = new Morph(target, start, end, dom, target);
 
     this.scheduleInsert(view);
   };
 
 Renderer.prototype.replaceIn =
   function Renderer_replaceIn(view, target) {
-    view._morph = new Morph(target, null, null);
+    view._morph = new Morph(target, null, null, dom, target);
 
     this.scheduleInsert(view);
   };

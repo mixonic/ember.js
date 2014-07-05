@@ -1,9 +1,11 @@
 import Renderer from 'ember-metal-views/renderer';
 import { create } from 'ember-metal/platform';
 import renderBuffer from "ember-views/system/render_buffer";
-import { Morph } from "morph";
+import { Morph, DOMHelper } from "morph";
 import run from "ember-metal/run_loop";
 import { set } from "ember-metal/property_set";
+
+var dom = new DOMHelper();
 
 function EmberRenderer() {
   EmberRenderer.super.call(this);
@@ -58,10 +60,10 @@ EmberRenderer.prototype.createChildViewsMorph =
         var end = document.createTextNode('');
         element.appendChild(start);
         element.appendChild(end);
-        view._childViewsMorph = new Morph(element, start, end);
+        view._childViewsMorph = new Morph(element, start, end, dom, element);
       }
     } else {
-      view._childViewsMorph = new Morph(element, null, null);
+      view._childViewsMorph = new Morph(element, null, null, dom, element);
     }
     return element;
   };
