@@ -55,18 +55,6 @@ import ViewCollection from "ember-views/views/view_collection";
 @module ember
 @submodule ember-views
 */
-
-var ContainerView;
-
-function nullViewsBuffer(view) {
-  view.buffer = null;
-
-}
-
-function clearCachedElement(view) {
-  meta(view).cache.element = undefined;
-}
-
 var childViewsProperty = computed(function() {
   var childViews = this._childViews, ret = emberA(), view = this;
 
@@ -2017,10 +2005,6 @@ var View = CoreView.extend({
     }
 
     return false;
-  },
-
-  clearBuffer: function() {
-    this.invokeRecursively(nullViewsBuffer);
   },
   transitionTo: function(state, children) {
     Ember.deprecate("Ember.View#transitionTo has been deprecated, it is for internal use only");
