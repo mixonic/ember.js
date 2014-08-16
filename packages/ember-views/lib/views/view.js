@@ -1472,52 +1472,6 @@ var View = CoreView.extend({
   willClearRender: Ember.K,
 
   /**
-    Run this callback on the current view (unless includeSelf is false) and recursively on child views.
-
-    @method invokeRecursively
-    @param fn {Function}
-    @param includeSelf {Boolean} Includes itself if true.
-    @private
-  */
-  invokeRecursively: function(fn, includeSelf) {
-    var childViews = (includeSelf === false) ? this._childViews : [this];
-    var currentViews, view, currentChildViews;
-
-    while (childViews.length) {
-      currentViews = childViews.slice();
-      childViews = [];
-
-      for (var i=0, l=currentViews.length; i<l; i++) {
-        view = currentViews[i];
-        currentChildViews = view._childViews ? view._childViews.slice(0) : null;
-        fn(view);
-        if (currentChildViews) {
-          childViews.push.apply(childViews, currentChildViews);
-        }
-      }
-    }
-  },
-
-  triggerRecursively: function(eventName) {
-    var childViews = [this], currentViews, view, currentChildViews;
-
-    while (childViews.length) {
-      currentViews = childViews.slice();
-      childViews = [];
-
-      for (var i=0, l=currentViews.length; i<l; i++) {
-        view = currentViews[i];
-        currentChildViews = view._childViews ? view._childViews.slice(0) : null;
-        if (view.trigger) { view.trigger(eventName); }
-        if (currentChildViews) {
-          childViews.push.apply(childViews, currentChildViews);
-        }
-
-      }
-    }
-  },
-
-  /**
     Destroys any existing element along with the element for any child views
     as well. If the view does not currently have a element, then this method
     will do nothing.

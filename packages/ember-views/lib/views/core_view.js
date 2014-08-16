@@ -160,8 +160,6 @@ var CoreView = EmberObject.extend(Evented, ActionHandler, {
   },
 
   clearRenderedChildren: Ember.K,
-  triggerRecursively: Ember.K,
-  invokeRecursively: Ember.K,
   _transitionTo: Ember.K,
   destroyElement: Ember.K
 });
