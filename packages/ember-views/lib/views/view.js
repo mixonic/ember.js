@@ -49,7 +49,6 @@ import jQuery from "ember-views/system/jquery";
 import "ember-views/system/ext";  // for the side effect of extending Ember.run.queues
 
 import CoreView from "ember-views/views/core_view";
-import ViewCollection from "ember-views/views/view_collection";
 
 /**
 @module ember
@@ -1518,19 +1517,6 @@ var View = CoreView.extend({
     }
   },
 
-  viewHierarchyCollection: function() {
-    var currentView, viewCollection = new ViewCollection([this]);
-
-    for (var i = 0; i < viewCollection.length; i++) {
-      currentView = viewCollection.objectAt(i);
-      if (currentView._childViews) {
-        viewCollection.push.apply(viewCollection, currentView._childViews);
-      }
-    }
-
-    return viewCollection;
-  },
-
   /**
     Destroys any existing element along with the element for any child views
     as well. If the view does not currently have a element, then this method
@@ -1564,24 +1550,6 @@ var View = CoreView.extend({
     @event willDestroyElement
   */
   willDestroyElement: Ember.K,
-
-  /**
-    Triggers the `willDestroyElement` event (which invokes the
-    `willDestroyElement()` method if it exists) on this view and all child
-    views.
-
-    Before triggering `willDestroyElement`, it first triggers the
-    `willClearRender` event recursively.
-
-    @method _notifyWillDestroyElement
-    @private
-  */
-  _notifyWillDestroyElement: function() {
-    var viewCollection = this.viewHierarchyCollection();
-    viewCollection.trigger('willClearRender');
-    viewCollection.trigger('willDestroyElement');
-    return viewCollection;
-  },
 
   /**
     Called when the parentView property has changed.
