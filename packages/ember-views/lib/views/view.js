@@ -1437,11 +1437,9 @@ var View = CoreView.extend({
     @return {Ember.View} receiver
   */
   createElement: function() {
-    if (get(this, 'element')) { return this; }
+    if (this.element) { return this; }
 
-    var element = this.constructor.renderer.renderTree(this);
-
-    set(this, 'element', element);
+    this.constructor.renderer.renderTree(this);
 
     return this;
   },
@@ -1517,14 +1515,6 @@ var View = CoreView.extend({
   instrumentDetails: function(hash) {
     hash.template = get(this, 'templateName');
     this._super(hash);
-  },
-
-  _renderToBuffer: function(buffer) {
-    this.lengthBeforeRender = this._childViews.length;
-    this._super(buffer);
-    this.lengthAfterRender = this._childViews.length;
-
-    return buffer;
   },
 
   beforeRender: function(buffer) {},
