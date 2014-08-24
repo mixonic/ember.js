@@ -46,6 +46,55 @@ test("calls render and turns resultant string into element", function() {
   equal(elem.tagName.toString().toLowerCase(), 'span', 'has tagName from view');
 });
 
+test("calls render and parses the buffer string in the right context", function() {
+  view = ContainerView.create({
+    tagName: 'table',
+    childViews: [ EmberView.create({
+      tagName: '',
+      render: function(buffer) {
+        // Emulate a metamorph
+        buffer.push("<script></script><tr><td>snorfblax</td></tr>");
+      }
+    })]
+  });
+
+  equal(get(view, 'element'), null, 'precondition - has no element');
+  run(function() {
+    view.createElement();
+  });
+
+
+  var elem = get(view, 'element');
+  ok(elem, 'has element now');
+  equal(elem.innerHTML, '<script></script><tbody><tr><td>snorfblax</td></tr></tbody>', 'has innerHTML from context');
+  equal(elem.tagName.toString().toLowerCase(), 'table', 'has tagName from view');
+});
+
+test("calls render and parses the buffer string in the right namespace", function() {
+  view = ContainerView.create({
+    tagName: 'svg',
+    childViews: [ EmberView.create({
+      tagName: '',
+      render: function(buffer) {
+        // Emulate a metamorph
+        buffer.push("<path></path>");
+      }
+    })]
+  });
+
+  equal(get(view, 'element'), null, 'precondition - has no element');
+  run(function() {
+    view.createElement();
+  });
+
+
+  var elem = get(view, 'element');
+  ok(elem, 'has element now');
+  equal(elem.innerHTML, '<path></path>', 'has innerHTML from context');
+  equal(elem.childNodes[0].namespaceURI, 'http://www.w3.org/2000/svg', 'has innerHTML from context');
+  equal(elem.tagName.toString().toLowerCase(), 'svg', 'has tagName from view');
+});
+
 test("generated element include HTML from child views as well", function() {
   view = ContainerView.create({
     childViews: [ EmberView.create({ elementId: "foo" })]

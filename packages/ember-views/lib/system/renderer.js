@@ -38,7 +38,7 @@ EmberRenderer.prototype.cancelRender =
   };
 
 EmberRenderer.prototype.createElement =
-  function EmberRenderer_createElement(view) {
+  function EmberRenderer_createElement(view, contextualElement) {
     // If this is the top-most view, start a new buffer. Otherwise,
     // create a new buffer relative to the original using the
     // provided buffer operation (for example, `insertAfter` will
@@ -70,7 +70,7 @@ EmberRenderer.prototype.createElement =
       view.afterRender(buffer);
     }
 
-    var element = buffer.element();
+    var element = buffer.element(contextualElement);
 
     view.buffer = null;
     if (element && element.nodeType === 1) {
