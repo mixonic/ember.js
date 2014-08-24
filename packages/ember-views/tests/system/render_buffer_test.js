@@ -15,7 +15,7 @@ test("RenderBuffers combine strings", function() {
   buffer.push('a');
   buffer.push('b');
 
-  var el = buffer.element();
+  var el = buffer.element(document.body);
   equal(el.tagName.toLowerCase(), 'div');
   equal(el.childNodes[0].nodeValue, 'ab', "Multiple pushes should concatenate");
 });
@@ -25,7 +25,7 @@ test("value of 0 is included in output", function() {
   buffer = new RenderBuffer('input');
   buffer.prop('value', 0);
   buffer.generateElement();
-  el = buffer.element();
+  el = buffer.element(document.body);
   strictEqual(el.value, '0', "generated element has value of '0'");
 });
 
@@ -35,7 +35,7 @@ test("prevents XSS injection via `id`", function() {
   buffer.id('hacked" megahax="yes');
   buffer.generateElement();
 
-  var el = buffer.element();
+  var el = buffer.element(document.body);
   equal(el.id, 'hacked" megahax="yes');
 });
 
@@ -46,7 +46,7 @@ test("prevents XSS injection via `attr`", function() {
   buffer.attr('class', "hax><img src=\"trollface.png\"");
   buffer.generateElement();
 
-  var el = buffer.element();
+  var el = buffer.element(document.body);
   equal(el.tagName.toLowerCase(), 'div');
   equal(el.childNodes.length, 0);
   equal(el.id, 'trololol" onmouseover="pwn()');
@@ -59,7 +59,7 @@ test("prevents XSS injection via `addClass`", function() {
   buffer.addClass('megahax" xss="true');
   buffer.generateElement();
 
-  var el = buffer.element();
+  var el = buffer.element(document.body);
   equal(el.getAttribute('class'), 'megahax" xss="true');
 });
 
@@ -116,7 +116,7 @@ test("lets `setClasses` and `addClass` work together", function() {
   buffer.addClass('baz');
   buffer.generateElement();
 
-  var el = buffer.element();
+  var el = buffer.element(document.body);
   equal(el.tagName.toLowerCase(), 'div');
   equal(el.getAttribute('class'), 'foo bar baz');
 });
@@ -129,7 +129,7 @@ test("It is possible to create a RenderBuffer without a tagName", function() {
   buffer.push('b');
   buffer.push('c');
 
-  var el = buffer.element();
+  var el = buffer.element(document.body);
 
   equal(el.nodeType, 11, "Buffers without tagNames do not wrap the content in a tag");
   equal(el.childNodes.length, 1);
@@ -143,7 +143,7 @@ test("properly handles old IE's zero-scope bug", function() {
   buffer.generateElement();
   buffer.push('<script></script>foo');
 
-  var element = buffer.element();
+  var element = buffer.element(document.body);
   ok(jQuery(element).html().match(/script/i), "should have script tag");
   ok(!jQuery(element).html().match(/&shy;/), "should not have &shy;");
 });

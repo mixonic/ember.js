@@ -51,6 +51,18 @@ test("innerHTML can be specified", function() {
   equalHTML('qunit-fixture', "<div>ohai <a>derp</a></div>");
 });
 
+test("innerHTML tr can be specified", function() {
+  view = {
+    isView: true,
+    tagName: 'table',
+    innerHTML: '<tr><td>ohai</td></tr>'
+  };
+
+  appendTo(view);
+
+  equalHTML('qunit-fixture', "<table><tbody><tr><td>ohai</td></tr></tbody></table>");
+});
+
 test("element can be specified", function() {
   view = {
     isView: true,

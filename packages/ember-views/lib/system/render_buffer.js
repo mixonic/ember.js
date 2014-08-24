@@ -392,7 +392,7 @@ _RenderBuffer.prototype = {
       tagString = tagName;
     }
 
-    var element = document.createElement(tagString);
+    var element = this.dom.createElement(tagString);
     var $element = jQuery(element);
 
     if (id) {
@@ -445,7 +445,7 @@ _RenderBuffer.prototype = {
     @return {DOMElement} The element corresponding to the generated HTML
       of this buffer
   */
-  element: function() {
+  element: function(contextualElement) {
     var html = this.innerString();
 
     if (this._element) {
@@ -455,10 +455,10 @@ _RenderBuffer.prototype = {
       }
     } else {
       if (html) {
+        var parsed = this.dom.parseHTML(html, contextualElement);
         var frag = this._element = document.createDocumentFragment();
-        var parsed = jQuery.parseHTML(html);
         for (var i=0,l=parsed.length; i<l; i++) {
-          frag.appendChild(parsed[i]);
+          frag.appendChild(parsed[0]); // As nodes are appended they are removed from the node list
         }
         this.hydrateMorphs();
       } else if (html === '') {

@@ -50,7 +50,14 @@ function Renderer_renderTree(_view, _parentView, _insertAt) {
     }
 
     this.willCreateElement(view);
-    element = this.createElement(view);
+    var contextualElement = view._morph && view._morph.element;
+    if (!contextualElement) {
+      contextualElement = view._parentView && view._parentView.element;
+    }
+    if (!contextualElement) {
+      contextualElement = view._parentView && view._parentView._morph && view._parentView._morph.element;
+    }
+    element = this.createElement(view, contextualElement || document.body);
 
     parents[level++] = parentIndex;
     parentIndex = index;
