@@ -211,6 +211,8 @@ function bindHelper(property, options) {
 
 export {
   bind,
+  exists,
+  simpleBind,
   _triageMustacheHelper,
   resolveHelper,
   bindHelper

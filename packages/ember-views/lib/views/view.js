@@ -54,6 +54,15 @@ import CoreView from "ember-views/views/core_view";
 
 function K() { return this; }
 
+// Circular dep
+var _htmlbarsDefaultEnv;
+function buildHTMLBarsDefaultEnv(){
+  if (!_htmlbarsDefaultEnv) {
+    _htmlbarsDefaultEnv = require('ember-htmlbars').defaultEnv;
+  }
+  return Object.create(_htmlbarsDefaultEnv);
+}
+
 /**
 @module ember
 @submodule ember-views
@@ -1069,7 +1078,8 @@ var View = CoreView.extend({
       // of returning a string.
       var options = { data: data };
       if (template.length === 3) { // HTMLBars
-        throw "not implemented";
+        var env = Ember.merge(buildHTMLBarsDefaultEnv(), options);
+        output = template(context, env, buffer.innerContextualElement());
       } else {
         output = template(context, options);
       }
