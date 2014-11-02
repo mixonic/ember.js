@@ -13,7 +13,7 @@ function streamifyArgs(view, params, options, env) {
   var hash = options.hash;
   var hashTypes = options.hashTypes;
   for (var key in hash) {
-    if (hashTypes[key] === 'id') {
+    if (hashTypes[key] === 'id' && key !== 'classBinding') {
       hash[key] = view.getStream(hash[key]);
     }
   }

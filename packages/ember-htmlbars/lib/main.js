@@ -2,6 +2,7 @@ import { content, element, subexpr, lookupHelper } from "ember-htmlbars/hooks";
 import { DOMHelper } from "morph";
 
 import { bindHelper } from "ember-htmlbars/helpers";
+import { viewHelper } from "ember-htmlbars/helpers/view";
 
 export var defaultEnv = {
   dom: new DOMHelper(),
@@ -14,6 +15,8 @@ export var defaultEnv = {
   },
 
   helpers: {
-    bindHelper: bindHelper
+    bindHelper: bindHelper,
+    view: viewHelper
   }
 };
+
