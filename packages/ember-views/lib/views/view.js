@@ -58,7 +58,7 @@ function buildHTMLBarsDefaultEnv(){
   if (!_htmlbarsDefaultEnv) {
     _htmlbarsDefaultEnv = require('ember-htmlbars').defaultEnv;
   }
-  return Object.create(_htmlbarsDefaultEnv);
+  return create(_htmlbarsDefaultEnv);
 }
 
 /**
