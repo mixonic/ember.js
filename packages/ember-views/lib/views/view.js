@@ -1077,7 +1077,13 @@ var View = CoreView.extend({
       // The template should write directly to the render buffer instead
       // of returning a string.
       var options = { data: data };
-      if (template.length === 3) { // HTMLBars
+      var useHTMLBars = false;
+
+      if (Ember.FEATURES.isEnabled('ember-htmlbars')) {
+        useHTMLBars = template.length === 3;
+      }
+
+      if (useHTMLBars) {
         var env = Ember.merge(buildHTMLBarsDefaultEnv(), options);
         output = template(this, env, buffer.innerContextualElement());
       } else {
