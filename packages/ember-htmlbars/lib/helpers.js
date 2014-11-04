@@ -39,7 +39,7 @@ function bindHelper(params, options, env) {
     // TODO: is this needed?
     // options.helperName = 'bind';
     // bind.call(options.context, property, options, false, exists);
-    throw "not implemented";
+    throw new Error("not implemented");
   } else {
     simpleBind(params, options, env);
   }
