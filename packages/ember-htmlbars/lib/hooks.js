@@ -67,8 +67,8 @@ export function lookupHelper(name, env) {
 }
 
 function attribute(element, params, options) {
-  var name = params[0],
-      value = params[1];
+  var name = params[0];
+  var value = params[1];
 
   value.subscribe(function(lazyValue) {
     element.setAttribute(name, lazyValue.value());
@@ -82,11 +82,13 @@ function concat(params, options) {
     return readArray(params).join('');
   });
 
-  params.forEach(function(param) {
+  for (var i = 0, l = params.length; i < l; i++) {
+    var param = params[i];
+
     if (param && param.isStream) {
       param.subscribe(stream.notifyAll, stream);
     }
-  });
+  }
 
   return stream;
 }
