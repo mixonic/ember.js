@@ -10,45 +10,47 @@ function appendView(view) {
   run(function() { view.appendTo('#qunit-fixture'); });
 }
 
-QUnit.module("ember-htmlbars: basic/text_node_test", {
-  teardown: function(){
-    if (view) {
-      run(view, view.destroy);
+if (Ember.FEATURES.isEnabled('ember-htmlbars')) {
+  QUnit.module("ember-htmlbars: basic/text_node_test", {
+    teardown: function(){
+      if (view) {
+        run(view, view.destroy);
+      }
     }
-  }
-});
-
-test("property is output", function() {
-  view = EmberView.create({
-    context: {name: 'erik'},
-    template: compile("ohai {{name}}")
   });
-  appendView(view);
 
-  equalInnerHTML(view.element, 'ohai erik', "property is output");
-});
+  test("property is output", function() {
+    view = EmberView.create({
+      context: {name: 'erik'},
+      template: compile("ohai {{name}}")
+    });
+    appendView(view);
 
-test("path is output", function() {
-  view = EmberView.create({
-    context: {name: {firstName: 'erik'}},
-    template: compile("ohai {{name.firstName}}")
+    equalInnerHTML(view.element, 'ohai erik', "property is output");
   });
-  appendView(view);
 
-  equalInnerHTML(view.element, 'ohai erik', "path is output");
-});
+  test("path is output", function() {
+    view = EmberView.create({
+      context: {name: {firstName: 'erik'}},
+      template: compile("ohai {{name.firstName}}")
+    });
+    appendView(view);
 
-test("changed property updates", function() {
-  var context = EmberObject.create({name: 'erik'});
-  view = EmberView.create({
-    context: context,
-    template: compile("ohai {{name}}")
+    equalInnerHTML(view.element, 'ohai erik', "path is output");
   });
-  appendView(view);
 
-  equalInnerHTML(view.element, 'ohai erik', "precond - original property is output");
+  test("changed property updates", function() {
+    var context = EmberObject.create({name: 'erik'});
+    view = EmberView.create({
+      context: context,
+      template: compile("ohai {{name}}")
+    });
+    appendView(view);
 
-  run(context, context.set, 'name', 'mmun');
+    equalInnerHTML(view.element, 'ohai erik', "precond - original property is output");
 
-  equalInnerHTML(view.element, 'ohai mmun', "new property is output");
-});
+    run(context, context.set, 'name', 'mmun');
+
+    equalInnerHTML(view.element, 'ohai mmun', "new property is output");
+  });
+}
