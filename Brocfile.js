@@ -86,8 +86,8 @@ function defeatureifyConfig(opts) {
 /*
   Returns a tree picked from `packages/#{packageName}/lib` and then move `main.js` to `/#{packageName}.js`.
  */
-function vendoredPackage(packageName, options) {
-  if (!options) { options = {}; }
+function vendoredPackage(packageName, _options) {
+  var options = _options || {};
 
   var libPath = options.libPath || 'packages/' + packageName + '/lib';
   var mainFile = options.mainFile || 'main.js';
