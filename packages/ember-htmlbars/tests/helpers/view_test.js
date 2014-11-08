@@ -5,7 +5,6 @@ import run from "ember-metal/run_loop";
 import jQuery from "ember-views/system/jquery";
 import { compile } from "htmlbars-compiler/compiler";
 
-
 var view, originalLookup;
 
 var container = {
@@ -19,7 +18,7 @@ function viewClass(options) {
 
 if (Ember.FEATURES.isEnabled('ember-htmlbars')) {
 
-QUnit.module("HTMLBars {{#view}} helper", {
+QUnit.module("ember-htmlbars: {{#view}} helper", {
   setup: function() {
     originalLookup = Ember.lookup;
   },

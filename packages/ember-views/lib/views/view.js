@@ -800,9 +800,23 @@ var View = CoreView.extend({
     return layout || get(this, 'defaultLayout');
   }).property('layoutName'),
 
-  _yield: function(context, options) {
+  _yield: function(context, options, morph) {
     var template = get(this, 'template');
-    if (template) { template(context, options); }
+    var result;
+    if (template) {
+      if (Ember.FEATURES.isEnabled('ember-htmlbars')) {
+        if (template.length === 3) {
+          result = template(this, options, morph.contextualElement);
+        } else {
+          result = template(context, options);
+        }
+      } else {
+        result = template(context, options);
+      }
+    }
+    if (morph) {
+      morph.update(result);
+    }
   },
 
   templateForName: function(name, type) {
