@@ -4,7 +4,7 @@ import { equalHTML } from "./helpers";
 
 if (Ember.FEATURES.isEnabled('ember-htmlbars')) {
 
-  QUnit.module("ember-htmlbars");
+  QUnit.module("ember-htmlbars: main");
 
   test("HTMLBars is present and can be executed", function() {
     var template = compile("ohai");
