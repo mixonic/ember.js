@@ -355,8 +355,7 @@ export var ViewHelper = EmberObject.create({
 export function viewHelper(params, options, env) {
   Ember.assert("The view helper only takes a single argument", params.length <= 2);
 
-  var view = env.data.view;
-  var container = view.container || view._keywords.view.value().container;
+  var container = this.container || this._keywords.view.value().container;
   var viewClass;
 
   // If no path is provided, treat path param as options

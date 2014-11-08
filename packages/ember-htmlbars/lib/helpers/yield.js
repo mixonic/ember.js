@@ -91,8 +91,9 @@ import { get } from "ember-metal/property_get";
   @return {String} HTML string
 */
 export function yieldHelper(params, options, env) {
-  var view = env.data.view;
+  var view = this;
 
+  // Yea gods
   while (view && !get(view, 'layout')) {
     if (view._contextView) {
       view = view._contextView;
