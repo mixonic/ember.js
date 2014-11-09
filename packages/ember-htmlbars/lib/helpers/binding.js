@@ -19,11 +19,6 @@ function exists(value) {
 // Binds a property into the DOM. This will create a hook in DOM that the
 // KVO system will look for and update if the property changes.
 function bind(property, options, env, preserveContext, shouldDisplay, valueNormalizer, childProperties, _viewClass) {
-  // we relied on the behavior of calling without
-  // context to mean this === window, but when running
-  // "use strict", it's possible for this to === undefined;
-  var currentContext = this || window;
-
   var valueStream = property.isStream ? property : this.getStream(property);
   var lazyValue;
 
@@ -54,7 +49,7 @@ function bind(property, options, env, preserveContext, shouldDisplay, valueNorma
     displayTemplate: options.render,
     inverseTemplate: options.inverse,
     lazyValue: lazyValue,
-    previousContext: currentContext,
+    previousContext: this.get('context'),
     isEscaped: !options.hash.unescaped,
     templateData: env.data,
     templateHash: options.hash,

@@ -144,35 +144,28 @@ export function withHelper(params, options, env) {
     params.length === 1
   );
 
-  Ember.assert("You must pass a block to the with helper", options.fn);
+  Ember.assert("The {{#with}} helper must be called with a block", options.render);
 
-  var keyword = (options.types[0] === 'keyword') ? params[0].to : undefined;
+  var source, keyword;
+  var preserveContext, context;
+  if (options.types[0] === 'id') {
+    source = params[0];
+    preserveContext = false;
+    context = source.value();
+  } else if (options.types[0] === 'keyword') {
+    source = params[0].stream;
+    keyword = params[0].to;
+    context = this.get('context');
 
-  var bindContext, preserveContext;
-  var helperName = 'with';
-
-  if (false /* unimplemented */) {
     var localizedOptions = o_create(options);
-    localizedOptions.data = o_create(options.data);
 
     localizedOptions.keywords = {};
-    localizedOptions.keywords[keywordName] = this.getStream(contextPath);
+    localizedOptions.keywords[keyword] = source;
+    localizedOptions.hash.keywordName = keyword;
 
-    localizedOptions.hash.keywordName = keywordName;
-
-    bindContext = this;
     options = localizedOptions;
     preserveContext = true;
-  } else {
-    Ember.assert("You must pass exactly one argument to the with helper", params.length === 1);
-    Ember.assert("You must pass a block to the with helper", options.fn && options.fn !== Handlebars.VM.noop);
-
-    helperName += ' ' + contextPath;
-    bindContext = options.contexts[0];
-    preserveContext = false;
   }
 
-  options.helperName = helperName;
-
-  bind.call(bindContext, contextPath, options, env, preserveContext, exists, undefined, undefined, WithView);
+  bind.call(this, source, options, env, preserveContext, exists, undefined, undefined, WithView);
 }

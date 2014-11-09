@@ -7,7 +7,7 @@ import { set } from "ember-metal/property_set";
 import { get } from "ember-metal/property_get";
 import ObjectController from "ember-runtime/controllers/object_controller";
 import Container from "ember-runtime/system/container";
-import { A } from "ember-runtime/system/native_array";
+// import { A } from "ember-runtime/system/native_array";
 import { compile } from "htmlbars-compiler/compiler";
 
 function appendView(view) {
@@ -304,6 +304,7 @@ test("it should wrap context with object controller", function() {
   run(function() { view.destroy(); }); // destroy existing view
 });
 
+/* requires each
 test("it should still have access to original parentController within an {{#each}}", function() {
   var Controller = ObjectController.extend({
     controllerName: computed(function() {
@@ -334,6 +335,7 @@ test("it should still have access to original parentController within an {{#each
 
   run(function() { view.destroy(); }); // destroy existing view
 });
+*/
 
 test("it should wrap keyword with object controller", function() {
   var PersonController = ObjectController.extend({
