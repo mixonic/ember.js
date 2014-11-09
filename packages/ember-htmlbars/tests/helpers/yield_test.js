@@ -1,14 +1,18 @@
 /*jshint newcap:false*/
 import run from "ember-metal/run_loop";
 import EmberView from "ember-views/views/view";
-import {computed} from "ember-metal/computed";
+// import {computed} from "ember-metal/computed";
 import Container from "ember-runtime/system/container";
-import { get } from "ember-metal/property_get";
+// import { get } from "ember-metal/property_get";
 import { set } from "ember-metal/property_set";
-import { A } from "ember-runtime/system/native_array";
+// import { A } from "ember-runtime/system/native_array";
 import Component from "ember-views/views/component";
 import EmberError from "ember-metal/error";
 import { compile } from "htmlbars-compiler/compiler";
+import {
+  helper,
+  default as helpers
+} from "ember-htmlbars/helpers";
 
 var view, container;
 
@@ -330,7 +334,6 @@ test("yield should work for views even if _parentView is null", function() {
 
 });
 
-/* needs-helper-registration
 QUnit.module("ember-htmlbars: Component {{yield}}", {
   setup: function() {},
   teardown: function() {
@@ -338,11 +341,27 @@ QUnit.module("ember-htmlbars: Component {{yield}}", {
       if (view) {
         view.destroy();
       }
-      delete EmberHandlebars.helpers['inner-component'];
-      delete EmberHandlebars.helpers['outer-component'];
+      delete helpers['inner-component'];
+      delete helpers['outer-component'];
     });
   }
 });
+
+/* HTMLBars TODO: throws an error
+
+// Error: Assertion Failed: A fragment cannot be pushed into a buffer that contains content
+//     at new Error (native)
+//     at Error.EmberError (http://localhost:5200/ember.js:14521:23)
+//     at Object.Ember.assert (http://localhost:5200/ember.js:3914:15)
+//     at Object._RenderBuffer.push (http://localhost:5200/ember.js:40530:17)
+//     at CoreView.extend.render (http://localhost:5200/ember.js:43748:46)
+//     at EmberRenderer_createElement [as createElement] (http://localhost:5200/ember.js:40886:16)
+//     at EmberRenderer.Renderer_renderTree [as renderTree] (http://localhost:5200/ember.js:10910:24)
+//     at EmberRenderer.scheduledRenderTree (http://localhost:5200/ember.js:10987:16)
+//     at Queue.invoke (http://localhost:5200/ember.js:840:18)
+//     at Object.Queue.flush (http://localhost:5200/ember.js:905:13)
+
+*/
 
 test("yield with nested components (#3220)", function(){
   var count = 0;
@@ -355,13 +374,13 @@ test("yield with nested components (#3220)", function(){
     }
   });
 
-  EmberHandlebars.helper('inner-component', InnerComponent);
+  helper('inner-component', InnerComponent);
 
   var OuterComponent = Component.extend({
     layout: compile("{{#inner-component}}<span>{{yield}}</span>{{/inner-component}}")
   });
 
-  EmberHandlebars.helper('outer-component', OuterComponent);
+  helper('outer-component', OuterComponent);
 
   view = EmberView.create({
     template: compile(
@@ -411,6 +430,5 @@ test("view keyword works inside component yield", function () {
 
   equal(view.$('div > p').text(), "hello", "view keyword inside component yield block should refer to the correct view");
 });
-*/
 
 }
