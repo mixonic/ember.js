@@ -352,7 +352,7 @@ export var ViewHelper = EmberObject.create({
   @param {Hash} options
   @return {String} HTML string
 */
-export function viewHelper(params, options, env) {
+export default function viewHelper(params, options, env) {
   Ember.assert("The view helper only takes a single argument", params.length <= 2);
 
   var container = this.container || this._keywords.view.value().container;
