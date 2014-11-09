@@ -147,10 +147,11 @@ export function withHelper(params, options, env) {
   Ember.assert("You must pass a block to the with helper", options.fn);
 
   var keyword = (options.types[0] === 'keyword') ? params[0].to : undefined;
-  
+
   var bindContext, preserveContext;
   var helperName = 'with';
 
+  if (false /* unimplemented */) {
     var localizedOptions = o_create(options);
     localizedOptions.data = o_create(options.data);
 

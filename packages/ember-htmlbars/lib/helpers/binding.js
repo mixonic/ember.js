@@ -19,14 +19,12 @@ function exists(value) {
 // Binds a property into the DOM. This will create a hook in DOM that the
 // KVO system will look for and update if the property changes.
 function bind(property, options, env, preserveContext, shouldDisplay, valueNormalizer, childProperties, _viewClass) {
-  var view = this;
-
   // we relied on the behavior of calling without
   // context to mean this === window, but when running
   // "use strict", it's possible for this to === undefined;
   var currentContext = this || window;
 
-  var valueStream = view.getStream(property);
+  var valueStream = property.isStream ? property : this.getStream(property);
   var lazyValue;
 
   if (childProperties) {
@@ -49,10 +47,11 @@ function bind(property, options, env, preserveContext, shouldDisplay, valueNorma
   // Set up observers for observable objects
   var viewClass = _viewClass || _HandlebarsBoundView;
   var viewOptions = {
+    _morph: options.morph,
     preserveContext: preserveContext,
     shouldDisplayFunc: shouldDisplay,
     valueNormalizerFunc: valueNormalizer,
-    displayTemplate: options.fn,
+    displayTemplate: options.render,
     inverseTemplate: options.inverse,
     lazyValue: lazyValue,
     previousContext: currentContext,
@@ -69,28 +68,27 @@ function bind(property, options, env, preserveContext, shouldDisplay, valueNorma
   // Create the view that will wrap the output of this template/property
   // and add it to the nearest view's childViews array.
   // See the documentation of Ember._HandlebarsBoundView for more.
-  var bindView = view.createChildView(viewClass, viewOptions);
+  var bindView = this.createChildView(viewClass, viewOptions);
 
-  view.appendChild(bindView);
+  this.appendChild(bindView);
 
-  lazyValue.subscribe(view._wrapAsScheduled(function() {
+  lazyValue.subscribe(this._wrapAsScheduled(function() {
     run.scheduleOnce('render', bindView, 'rerenderIfNeeded');
   }));
 }
 
 function simpleBind(params, options, env) {
-  var parentView = env.data.view;
   var lazyValue = params[0];
 
   var view = new SimpleHandlebarsView(
     lazyValue, options.escaped
   );
 
-  view._parentView = parentView;
+  view._parentView = this;
   view._morph = options.morph;
-  parentView.appendChild(view);
+  this.appendChild(view);
 
-  lazyValue.subscribe(parentView._wrapAsScheduled(function() {
+  lazyValue.subscribe(this._wrapAsScheduled(function() {
     run.scheduleOnce('render', view, 'rerender');
   }));
 }
@@ -127,7 +125,7 @@ function bindHelper(params, options, env) {
     options.helperName = 'bind';
     bind.call(this, property, options, env, false, exists);
   } else {
-    simpleBind(params, options, env);
+    simpleBind.call(this, params, options, env);
   }
 }
 

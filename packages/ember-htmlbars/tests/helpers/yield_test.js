@@ -1,14 +1,18 @@
 /*jshint newcap:false*/
 import run from "ember-metal/run_loop";
 import EmberView from "ember-views/views/view";
-import { computed } from "ember-metal/computed";
+// import { computed } from "ember-metal/computed";
 import Container from "ember-runtime/system/container";
-import { get } from "ember-metal/property_get";
+// import { get } from "ember-metal/property_get";
 import { set } from "ember-metal/property_set";
-import { A } from "ember-runtime/system/native_array";
+// import { A } from "ember-runtime/system/native_array";
 import Component from "ember-views/views/component";
 import EmberError from "ember-metal/error";
 import { compile } from "htmlbars-compiler/compiler";
+import {
+  helper,
+  default as helpers
+} from "ember-htmlbars/helpers";
 
 var view, container;
 
@@ -148,7 +152,7 @@ test("yield uses the outer context", function() {
   equal(view.$('div p:contains(inner) + p:contains(outer)').length, 1, "Yield points at the right context");
 });
 
-/* NOPE
+/* requires with helper
 test("yield inside a conditional uses the outer context", function() {
   var component = Component.extend({
     boundText: "inner",
@@ -170,7 +174,7 @@ test("yield inside a conditional uses the outer context", function() {
 });
 */
 
-/* NOPE
+/* requires with helper
 test("outer keyword doesn't mask inner component property", function () {
   var component = Component.extend({
     item: "inner",
@@ -190,7 +194,7 @@ test("outer keyword doesn't mask inner component property", function () {
 });
 */
 
-/* NOPE
+/* requires with helper
 test("inner keyword doesn't mask yield property", function() {
   var component = Component.extend({
     boundText: "inner",
@@ -210,7 +214,7 @@ test("inner keyword doesn't mask yield property", function() {
 });
 */
 
-/* NOPE
+/* requires with helper
 test("can bind a keyword to a component and use it in yield", function() {
   var component = Component.extend({
     content: null,
@@ -236,7 +240,7 @@ test("can bind a keyword to a component and use it in yield", function() {
 });
 */
 
-/* NOPE
+/* requires with helper
 test("yield uses the layout context for non component", function() {
   view = EmberView.create({
     controller: {
@@ -330,7 +334,6 @@ test("yield should work for views even if _parentView is null", function() {
 
 });
 
-/* needs-helper-registration
 QUnit.module("ember-htmlbars: Component {{yield}}", {
   setup: function() {},
   teardown: function() {
@@ -338,8 +341,8 @@ QUnit.module("ember-htmlbars: Component {{yield}}", {
       if (view) {
         view.destroy();
       }
-      delete EmberHandlebars.helpers['inner-component'];
-      delete EmberHandlebars.helpers['outer-component'];
+      delete helpers['inner-component'];
+      delete helpers['outer-component'];
     });
   }
 });
@@ -348,20 +351,20 @@ test("yield with nested components (#3220)", function(){
   var count = 0;
   var InnerComponent = Component.extend({
     layout: compile("{{yield}}"),
-    _yield: function (context, options) {
+    _yield: function (context, options, morph) {
       count++;
       if (count > 1) throw new EmberError('is looping');
-      return this._super(context, options);
+      return this._super(context, options, morph);
     }
   });
 
-  EmberHandlebars.helper('inner-component', InnerComponent);
+  helper('inner-component', InnerComponent);
 
   var OuterComponent = Component.extend({
     layout: compile("{{#inner-component}}<span>{{yield}}</span>{{/inner-component}}")
   });
 
-  EmberHandlebars.helper('outer-component', OuterComponent);
+  helper('outer-component', OuterComponent);
 
   view = EmberView.create({
     template: compile(
@@ -379,12 +382,12 @@ test("yield with nested components (#3220)", function(){
 test("yield works inside a conditional in a component that has Ember._Metamorph mixed in", function() {
   var component = Component.extend(Ember._Metamorph, {
     item: "inner",
-    layout: Ember.Handlebars.compile("<p>{{item}}</p>{{#if item}}<p>{{yield}}</p>{{/if}}")
+    layout: compile("<p>{{item}}</p>{{#if item}}<p>{{yield}}</p>{{/if}}")
   });
 
   view = Ember.View.create({
     controller: { item: "outer", component: component },
-    template: Ember.Handlebars.compile('{{#view component}}{{item}}{{/view}}')
+    template: compile('{{#view component}}{{item}}{{/view}}')
   });
 
   run(function() {
@@ -411,6 +414,5 @@ test("view keyword works inside component yield", function () {
 
   equal(view.$('div > p').text(), "hello", "view keyword inside component yield block should refer to the correct view");
 });
-*/
 
 }
