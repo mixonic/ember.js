@@ -1,7 +1,7 @@
 /*jshint newcap:false*/
 import run from "ember-metal/run_loop";
 import EmberView from "ember-views/views/view";
-import {computed} from "ember-metal/computed";
+import { computed } from "ember-metal/computed";
 import Container from "ember-runtime/system/container";
 import { get } from "ember-metal/property_get";
 import { set } from "ember-metal/property_set";

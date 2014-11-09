@@ -2,10 +2,19 @@ import Stream from "ember-metal/streams/stream";
 import {readArray} from "ember-metal/streams/read";
 
 function streamifyArgs(view, params, options, env) {
-  // Convert ID params to streams
-  for (var i = 0, l = params.length; i < l; i++) {
-    if (options.types[i] === 'id') {
-      params[i] = view.getStream(params[i]);
+  if (params.length === 3 && params[1] === "as") {
+    params.splice(0, 3, {
+      from: params[0],
+      to: params[2],
+      stream: view.getStream(params[0])
+    });
+    options.types.splice(0, 3, 'keyword');
+  } else {
+    // Convert ID params to streams
+    for (var i = 0, l = params.length; i < l; i++) {
+      if (options.types[i] === 'id') {
+        params[i] = view.getStream(params[i]);
+      }
     }
   }
 

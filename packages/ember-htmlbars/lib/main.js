@@ -1,9 +1,10 @@
 import { content, element, subexpr, lookupHelper } from "ember-htmlbars/hooks";
 import { DOMHelper } from "morph";
 
-import { bindHelper } from "ember-htmlbars/helpers";
+import { bindHelper } from "ember-htmlbars/helpers/binding";
 import { viewHelper } from "ember-htmlbars/helpers/view";
 import { yieldHelper } from "ember-htmlbars/helpers/yield";
+import { withHelper } from "ember-htmlbars/helpers/with";
 
 export var defaultEnv = {
   dom: new DOMHelper(),
@@ -17,8 +18,10 @@ export var defaultEnv = {
 
   helpers: {
     bindHelper: bindHelper,
+    bind: bindHelper,
     view: viewHelper,
-    'yield': yieldHelper
+    'yield': yieldHelper,
+    'with': withHelper
   }
 };
 
