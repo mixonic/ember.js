@@ -15,6 +15,11 @@ function ClassNode(stream, renderable) {
   this.update();
 }
 
+ClassNode.prototype.reset = function update(){
+  this.isDirty = false;
+  this.stream.unsubscribe(this.update, this);
+};
+
 ClassNode.prototype.update = function update(){
   var value = this.stream.value();
   if (value !== this.currentValue) {
@@ -43,6 +48,13 @@ function QuotedClassAttrNode(element, attrName, attrValue, dom) {
 
   this.renderIfNeeded();
 }
+
+QuotedClassAttrNode.prototype.reset = function reset(){
+  for (var i=0,l=this.classNodes.length;i<l;i++) {
+    this.classNodes[i].reset();
+  }
+  this.isDirty = false;
+};
 
 QuotedClassAttrNode.prototype.renderIfNeeded = function renderIfNeeded(){
   this.isDirty = true;

@@ -40,6 +40,7 @@ var CoreView = EmberObject.extend(Evented, ActionHandler, {
     this._super();
     this._transitionTo('preRender');
     this._isVisible = get(this, 'isVisible');
+    this._childNodes = [];
   },
 
   /**

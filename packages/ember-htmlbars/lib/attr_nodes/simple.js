@@ -27,6 +27,11 @@ SimpleAttrNode.prototype.init = function init(element, attrName, simpleAttrValue
   }
 };
 
+SimpleAttrNode.prototype.reset = function reset(){
+  this.attrValue.unsubscribe(this.renderIfNeeded, this);
+  this.isDirty = false;
+};
+
 SimpleAttrNode.prototype.renderIfNeeded = function renderIfNeeded(){
   this.isDirty = true;
   run.schedule('render', this, this.scheduledRenderIfNeeded);

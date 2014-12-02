@@ -147,7 +147,7 @@ function bindAttrHelper(params, hash, options, env) {
   var classBindings = hash['class'];
   if (classBindings != null) {
     var attrValue = streamifyClassBindings(view, classBindings);
-    new QuotedClassAttrNode(element, 'class', attrValue, env.dom);
+    this._childNodes.push(new QuotedClassAttrNode(element, 'class', attrValue, env.dom));
     delete hash['class'];
   }
 
@@ -167,7 +167,7 @@ function bindAttrHelper(params, hash, options, env) {
       );
       lazyValue = view.getStream(path);
     }
-    new LegacyBindAttrNode(element, attr, lazyValue, env.dom);
+    this._childNodes.push(new LegacyBindAttrNode(element, attr, lazyValue, env.dom));
   }
 }
 

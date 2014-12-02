@@ -20,7 +20,7 @@ export default function attribute(element, attrName, quoted, view, attrValue, op
 
   if (isAllowed) {
     var AttrNode = attrNodeTypeFor(attrName, element, quoted);
-    new AttrNode(element, attrName, attrValue, env.dom);
+    view._childNodes.push(new AttrNode(element, attrName, attrValue, env.dom));
   } else {
     throw new EmberError('Bound attributes are not yet supported in Ember.js');
   }

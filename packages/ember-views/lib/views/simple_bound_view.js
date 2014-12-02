@@ -38,11 +38,11 @@ function SimpleBoundView(lazyValue, isEscaped) {
   this._parentView = null;
   this.buffer = null;
   this._morph = null;
+  this.isVirtual = true;
+  this.isView = true;
 }
 
 SimpleBoundView.prototype = {
-  isVirtual: true,
-  isView: true,
 
   destroy: function () {
     if (this.updateId) {

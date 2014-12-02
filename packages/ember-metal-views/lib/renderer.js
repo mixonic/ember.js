@@ -247,6 +247,14 @@ function Renderer_beforeRemove(view) {
   if (view._elementInserted) {
     this.willRemoveElement(view);
   }
+  if (view._childNodes) {
+    var childNodesLength = view._childNodes.length;
+    if (childNodesLength > 0) {
+      for (var i=0,l=childNodesLength;i<l;i++) {
+        view._childNodes[i].reset();
+      }
+    }
+  }
 }
 
 function Renderer_afterRemove(view, shouldDestroy) {
