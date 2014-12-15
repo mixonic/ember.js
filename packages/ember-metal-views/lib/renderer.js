@@ -56,11 +56,6 @@ function Renderer_renderTree(_view, _parentView, _insertAt) {
     if (!contextualElement && parent && parent._childViewsMorph) {
       contextualElement = parent._childViewsMorph.contextualElement;
     }
-    if (!contextualElement && view._didCreateElementWithoutMorph) {
-      // This code path is only used by createElement and rerender when createElement
-      // was previously called on a view.
-      contextualElement = document.body;
-    }
     Ember.assert("Required contextualElement for view "+_view+" is missing", contextualElement);
     element = this.createElement(view, contextualElement);
 

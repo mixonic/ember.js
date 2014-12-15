@@ -268,7 +268,7 @@ test("Providing a binding with a space in it asserts", function() {
   });
 
   expectAssertion(function() {
-    view.createElement();
+    Ember.run(view, view.createElement);
   }, /classNameBindings must not have spaces in them/i);
 });
 

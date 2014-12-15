@@ -1168,13 +1168,15 @@ var View = CoreView.extend({
       // Set up an observer on the context. If the property changes, toggle the
       // class name.
       var observer = this._wrapAsScheduled(function() {
+        Ember.assert("Attributes cannot be updated on a view element unattached to the dom", this._morph);
+        var dom = this._morph.domHelper;
+
         // Get the current value of the property
-        elem = this.$();
         newClass = read(boundBinding);
 
         // If we had previously added a class to the element, remove it.
         if (oldClass) {
-          elem.removeClass(oldClass);
+          dom.removeClasses(this.element, [oldClass]);
           // Also remove from classNames so that if the view gets rerendered,
           // the class doesn't get added back to the DOM.
           classNames.removeObject(oldClass);
@@ -1183,7 +1185,7 @@ var View = CoreView.extend({
         // If necessary, add a new class. Make sure we keep track of it so
         // it can be removed in the future.
         if (newClass) {
-          elem.addClass(newClass);
+          dom.addClasses(this.element, [newClass]);
           oldClass = newClass;
         } else {
           oldClass = null;
@@ -1502,8 +1504,8 @@ var View = CoreView.extend({
   createElement: function() {
     if (this.element) { return this; }
 
-    this._didCreateElementWithoutMorph = true;
-    this.constructor.renderer.renderTree(this);
+    var wrapper = document.createElement('div');
+    this.constructor.renderer.appendTo(this, wrapper);
 
     return this;
   },
