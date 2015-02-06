@@ -17,7 +17,17 @@ import {
   observer,
   beforeObserver
 } from "ember-metal/mixin";
+import { compactConcat } from "ember-metal/streams/utils";
+
+import AttrNode from "ember-views/attr_nodes/attr_node";
+
 import { deprecateProperty } from "ember-metal/deprecate_property";
+
+import {
+  streamifyClassNameBinding,
+  streamifyClassNameBindingArray
+} from "ember-views/streams/class_name_binding";
+
 import {
   propertyWillChange,
   propertyDidChange
@@ -898,21 +908,6 @@ var View = CoreView.extend(
     return this.currentState.rerender(this);
   },
 
-  /**
-    Given a property name, returns a dasherized version of that
-    property name if the property evaluates to a non-falsy value.
-
-    For example, if the view has property `isUrgent` that evaluates to true,
-    passing `isUrgent` to this method will return `"is-urgent"`.
-
-    @method _classStringForProperty
-    @param property
-    @private
-  */
-  _classStringForProperty: function(parsedPath) {
-    return View._classStringForValue(parsedPath.path, parsedPath.stream.value(), parsedPath.className, parsedPath.falsyClassName);
-  },
-
   // ..........................................................
   // ELEMENT SUPPORT
   //
@@ -1171,17 +1166,30 @@ var View = CoreView.extend(
   parentViewDidChange: K,
 
   applyAttributesToBuffer: function(buffer) {
-    // Creates observers for all registered class name and attribute bindings,
-    // then adds them to the element.
+    var classStringParts = [];
 
-    this._applyClassNameBindings();
+    if (this.classNames.length === 1) {
+      classStringParts.push(this.classNames[0]);
+    } else if (this.classNames.length > 1) {
+      classStringParts.push(this.classNames.join(' '));
+    }
+
+    if (this.classNameBindings.length === 1) {
+      classStringParts.push(streamifyClassNameBinding(this, this.classNameBindings[0], '_view.'));
+    } else if (this.classNameBindings.length > 1) {
+      classStringParts.push(streamifyClassNameBindingArray(this, this.classNameBindings, '_view.'));
+    }
+
+    if (classStringParts.length > 0) {
+      var attrNode = new AttrNode('class', compactConcat(classStringParts, ' '));
+      this.appendAttr(attrNode);
+    }
 
     // Pass the render buffer so the method can apply attributes directly.
     // This isn't needed for class name bindings because they use the
     // existing classNames infrastructure.
     this._applyAttributeBindings(buffer);
 
-    buffer.setClasses(this.classNames);
     buffer.id(this.elementId);
 
     var role = get(this, 'ariaRole');

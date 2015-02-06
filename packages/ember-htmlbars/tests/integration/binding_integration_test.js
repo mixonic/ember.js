@@ -95,11 +95,13 @@ QUnit.test('should cleanup bound properties on rerender', function() {
 
   runAppend(view);
 
+  var childViewsLength = view._childViews.length;
+
   equal(view.$().text(), 'wycats', 'rendered binding');
 
   run(view, 'rerender');
 
-  equal(view._childViews.length, 1);
+  equal(view._childViews.length, childViewsLength);
 });
 
 QUnit.test("should update bound values after view's parent is removed and then re-appended", function() {
