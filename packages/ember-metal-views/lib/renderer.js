@@ -95,6 +95,17 @@ function Renderer_renderTree(_view, _parentView, _refMorph) {
       }
     }
 
+    children = view._attrBindingNodes;
+    if (children) {
+      for (i=children.length-1;i>=0;i--) {
+        child = children[i];
+        index = total++;
+        views[index] = child;
+        queue[length++] = index;
+        view = child;
+      }
+    }
+
     index = queue[--length];
     view = views[index];
 
@@ -212,6 +223,13 @@ function Renderer_remove(_view, shouldDestroy, reset) {
     childViews = view._childViews;
     if (childViews) {
       for (i=0,l=childViews.length; i<l; i++) {
+        queue.push(childViews[i]);
+      }
+    }
+
+    childViews = view._attrBindingNodes;
+    if (childViews) {
+      for (i=childViews.length-1;i>=0;i--) {
         queue.push(childViews[i]);
       }
     }

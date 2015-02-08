@@ -40,18 +40,11 @@ merge(inDOM, {
     }
   },
 
-  appendAttr: function(view, attrNode) {
-    var _childViews = view._childViews;
-
-    if (!_childViews.length) { _childViews = view._childViews = _childViews.slice(); }
-    _childViews.push(attrNode);
+  appendAttrBindingNode: function(view, attrNode) {
+    view._attrBindingNodes.push(attrNode);
 
     attrNode._parentView = view;
     view.renderer.appendAttrTo(attrNode, view.element, attrNode.attrName);
-
-    view.propertyDidChange('childViews');
-
-    return attrNode;
   }
 
 });

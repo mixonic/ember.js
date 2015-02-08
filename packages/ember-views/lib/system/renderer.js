@@ -130,6 +130,7 @@ Renderer.prototype.willDestroyElement = function (view) {
     if (view._willDestroyElement) {
       view._willDestroyElement();
     }
+
     if (view.trigger) {
       view.trigger('willDestroyElement');
       view.trigger('willClearRender');
