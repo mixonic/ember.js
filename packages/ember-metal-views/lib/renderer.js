@@ -44,6 +44,7 @@ function Renderer_renderTree(_view, _parentView, _refMorph) {
   var view = _view;
   var children, i, child;
   while (length) {
+    console.log(view);
     elements[level] = element;
     if (!view._morph) {
       // ensure props we add are in same order
@@ -85,17 +86,6 @@ function Renderer_renderTree(_view, _parentView, _refMorph) {
     queue[length++] = index;
     // enqueue children
     children = this.childViews(view);
-    if (children) {
-      for (i=children.length-1;i>=0;i--) {
-        child = children[i];
-        index = total++;
-        views[index] = child;
-        queue[length++] = index;
-        view = child;
-      }
-    }
-
-    children = view._attrBindingNodes;
     if (children) {
       for (i=children.length-1;i>=0;i--) {
         child = children[i];
@@ -243,6 +233,13 @@ function Renderer_remove(_view, shouldDestroy, reset) {
     childViews = view._childViews;
     if (childViews) {
       for (i=0,l=childViews.length; i<l; i++) {
+        destroyQueue.push(childViews[i]);
+      }
+    }
+
+    childViews = view._attrBindingNodes;
+    if (childViews) {
+      for (i=childViews.length-1;i>=0;i--) {
         destroyQueue.push(childViews[i]);
       }
     }
