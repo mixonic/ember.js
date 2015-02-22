@@ -1,6 +1,8 @@
 import run from "ember-metal/run_loop";
 
+import View from "ember-views/views/view";
 import ContainerView from "ember-views/views/container_view";
+import compile from "ember-template-compiler/system/compile";
 
 QUnit.module("Ember.View - controller property");
 
@@ -46,5 +48,39 @@ test("controller property should be inherited from nearest ancestor with control
     parent.destroy();
     child.destroy();
     grandchild.destroy();
+  });
+});
+
+test("controller property changing should be compatible with child virtual views", function() {
+  var child = View.create();
+  var parent = ContainerView.createWithMixins({
+    layout: compile('<div {{bind-attr baz="whut"}}></div>'),
+    addChildView: function(){
+      this.pushObject(this.createChildView(child));
+    }
+  });
+  run(parent, 'appendTo', '#qunit-fixture');
+  run(parent, 'addChildView');
+
+  var newParentController = {};
+  var parentController = {};
+
+  run(function() {
+    parent.set('controller', parentController);
+  });
+
+  strictEqual(parent.get('controller'), parentController, 'precond - parent has controller');
+  strictEqual(child.get('controller'), parentController, 'precond - child has controller');
+
+  run(function() {
+    parent.set('controller', newParentController);
+  });
+
+  strictEqual(parent.get('controller'), newParentController, 'parent has new controller');
+  strictEqual(child.get('controller'), newParentController, 'child has new controller');
+
+  run(function() {
+    parent.destroy();
+    child.destroy();
   });
 });
