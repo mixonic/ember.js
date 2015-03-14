@@ -1237,7 +1237,6 @@ var View = CoreView.extend(
     // existing classNames infrastructure.
     this._applyAttributeBindings(buffer);
 
-    buffer.setClasses(this.classNames);
     buffer.id(this.elementId);
 
     var role = get(this, 'ariaRole');
@@ -1306,6 +1305,8 @@ var View = CoreView.extend(
 
     this._super.apply(this, arguments);
 
+    this._attrBindingNodes = [];
+
     if (!this._viewRegistry) {
       this._viewRegistry = View.views;
     }
@@ -1315,8 +1316,8 @@ var View = CoreView.extend(
     this[property.name] = property.descriptor.value;
   },
 
-  appendAttr: function(node) {
-    return this.currentState.appendAttr(this, node);
+  appendAttrBindingNode: function(node) {
+    return this.currentState.appendAttrBindingNode(this, node);
   },
 
   /**

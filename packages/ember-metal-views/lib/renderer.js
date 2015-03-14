@@ -217,6 +217,13 @@ function Renderer_remove(_view, shouldDestroy, reset) {
     }
   }
 
+  childViews = view._attrBindingNodes;
+  if (childViews) {
+    for (i=childViews.length-1;i>=0;i--) {
+      queue.push(childViews[i]);
+    }
+  }
+
   for (idx=0; idx<destroyQueue.length; idx++) {
     view = destroyQueue[idx];
 
@@ -227,6 +234,13 @@ function Renderer_remove(_view, shouldDestroy, reset) {
       for (i=0,l=childViews.length; i<l; i++) {
         destroyQueue.push(childViews[i]);
       }
+    }
+  }
+
+  childViews = view._attrBindingNodes;
+  if (childViews) {
+    for (i=childViews.length-1;i>=0;i--) {
+      destroyQueue.push(childViews[i]);
     }
   }
 
