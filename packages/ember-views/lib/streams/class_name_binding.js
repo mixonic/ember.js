@@ -1,8 +1,11 @@
 import {
   chain,
-  read
+  read,
+  compactConcat,
+  isStream
 } from "ember-metal/streams/utils";
 import { get } from "ember-metal/property_get";
+import { map } from 'ember-metal/enumerable_utils';
 import { dasherize } from "ember-runtime/system/string";
 import {
   isArray
@@ -118,6 +121,9 @@ export function classStringForValue(path, val, className, falsyClassName) {
 }
 
 export function streamifyClassNameBinding(view, classNameBinding, prefix) {
+  if (isStream(classNameBinding)) {
+    return classNameBinding;
+  }
   prefix = prefix || '';
   Ember.assert("classNameBindings must not have spaces in them. Multiple class name bindings can be provided as elements of an array, e.g. ['foo', ':bar']", classNameBinding.indexOf(' ') === -1);
   var parsedPath = parsePropertyPath(classNameBinding);
@@ -139,4 +145,12 @@ export function streamifyClassNameBinding(view, classNameBinding, prefix) {
       );
     });
   }
+}
+
+export function streamifyClassNameBindingArray(view, arrayOfClassNameBindings, prefix) {
+  var boundClassNameBindings = map(arrayOfClassNameBindings, function(classNameBinding) {
+    return streamifyClassNameBinding(view, classNameBinding, prefix);
+  });
+  var concatenatedClassNames = compactConcat(boundClassNameBindings, ' ');
+  return concatenatedClassNames;
 }

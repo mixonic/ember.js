@@ -187,6 +187,53 @@ export function concat(array, separator) {
 }
 
 /**
+ Compact an array, replacing any streams with their values.
+
+ @private
+ @for Ember.stream
+ @function compactArray
+ @param {Array} array The array to read values from
+ @return {Array} a new array of the same length with the values of read stream
+                 and non-stream objects mapped from their original positions
+                 except those which are falsy.
+ */
+export function compactArray(array) {
+  var length = array.length;
+  var ret = [];
+  var val;
+  for (var i = 0; i < length; i++) {
+    val = read(array[i]);
+    if (val !== null) {
+      ret[i] = val;
+    }
+  }
+  return ret;
+}
+
+export function compactConcat(array, separator) {
+  // TODO: Create subclass ConcatStream < Stream. Defer
+  // subscribing to streams until the value() is called.
+  var l = array.length;
+  var hasStream = scanArray(array);
+  var i;
+  if (hasStream) {
+    var stream;
+
+    stream = new Stream(function() {
+      return compactArray(array).join(separator);
+    });
+
+    for (i = 0, l=array.length; i < l; i++) {
+      subscribe(array[i], stream.notify, stream);
+    }
+
+    return stream;
+  } else {
+    return compactArray(array).join(separator);
+  }
+}
+
+/**
  Generate a new stream by providing a source stream and a function that can
  be used to transform the stream's value. In the case of a non-stream object,
  returns the result of the function.

@@ -10,13 +10,9 @@ import AttrNode from "ember-views/attr_nodes/attr_node";
 import LegacyBindAttrNode from "ember-views/attr_nodes/legacy_bind";
 import keys from "ember-metal/keys";
 import helpers from "ember-htmlbars/helpers";
-import { map } from 'ember-metal/enumerable_utils';
+import { isStream } from "ember-metal/streams/utils";
 import {
-  isStream,
-  concat
-} from "ember-metal/streams/utils";
-import {
-  streamifyClassNameBinding
+  streamifyClassNameBindingArray
 } from "ember-views/streams/class_name_binding";
 
 /**
@@ -153,7 +149,8 @@ function bindAttrHelper(params, hash, options, env) {
   var classNameBindings = hash['class'];
   if (classNameBindings !== null && classNameBindings !== undefined) {
     if (!isStream(classNameBindings)) {
-      classNameBindings = applyClassNameBindings(classNameBindings, view);
+      var arrayOfClassNameBindings = classNameBindings.split(' ');
+      classNameBindings = streamifyClassNameBindingArray(view, arrayOfClassNameBindings);
     }
 
     var classView = new AttrNode('class', classNameBindings);
@@ -198,15 +195,6 @@ function bindAttrHelper(params, hash, options, env) {
 
     view.appendChild(attrView);
   }
-}
-
-function applyClassNameBindings(classNameBindings, view) {
-  var arrayOfClassNameBindings = classNameBindings.split(' ');
-  var boundClassNameBindings = map(arrayOfClassNameBindings, function(classNameBinding) {
-    return streamifyClassNameBinding(view, classNameBinding);
-  });
-  var concatenatedClassNames = concat(boundClassNameBindings, ' ');
-  return concatenatedClassNames;
 }
 
 /**
