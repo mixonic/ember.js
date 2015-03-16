@@ -2151,15 +2151,15 @@ QUnit.test("Router adds a single entry to history when synchrinously redirected"
 
   function setHistory(obj, path) {
     obj.set('history', { state: { path: path } });
-  };
+  }
 
   // Create new implementation that extends HistoryLocation
   // and set current location to rootURL + '/posts'
   HistoryTestLocation = Ember.HistoryLocation.extend({
     initState() {
-      setHistory(this, '');
+      setHistory(this, '/cat');
       this.set('location', {
-        pathname: '',
+        pathname: '/cat',
         href: 'http://localhost/'
       });
     },
@@ -2182,9 +2182,15 @@ QUnit.test("Router adds a single entry to history when synchrinously redirected"
   });
 
   Router.map(function() {
-    this.route("cat", {}, function(){
+    this.route("cat", {}, function() {
       this.route('tail');
     });
+  });
+
+  App.ApplicationRoute = Ember.Route.extend({
+    activate() {
+      console.log('activate app route');
+    }
   });
 
   App.CatRoute = Ember.Route.extend({
@@ -2192,7 +2198,8 @@ QUnit.test("Router adds a single entry to history when synchrinously redirected"
   });
 
   App.CatIndexRoute = Ember.Route.extend({
-    redirect: function(){
+    redirect() {
+      console.log('redireting!');
       this.transitionTo('cat.tail');
     }
   });
@@ -2200,9 +2207,6 @@ QUnit.test("Router adds a single entry to history when synchrinously redirected"
   bootApplication();
 
   equal(pushedPaths.length, 1, "One entry is added to history");
-});
-
-QUnit.test("Router adds a single entry to history when synchrinously redirected", function(){
 });
 
 QUnit.test("The rootURL is passed properly to the location implementation", function() {
