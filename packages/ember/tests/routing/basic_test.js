@@ -2144,6 +2144,92 @@ QUnit.test("Router accounts for rootURL on page load when using history location
   ok(postsTemplateRendered, "Posts route successfully stripped from rootURL");
 });
 
+QUnit.test("Router adds a single entry to history when synchrinously redirected", function() {
+  var HistoryTestLocation;
+  var replacedPaths = [];
+  var pushedPaths = [];
+
+  function setHistory(obj, path) {
+    obj.set('history', { state: { path: path } });
+  };
+
+  // Create new implementation that extends HistoryLocation
+  // and set current location to rootURL + '/posts'
+  HistoryTestLocation = Ember.HistoryLocation.extend({
+    initState() {
+      setHistory(this, '');
+      this.set('location', {
+        pathname: '',
+        href: 'http://localhost/'
+      });
+    },
+
+    replaceState(path) {
+      replacedPaths.push(path);
+      setHistory(this, path);
+    },
+
+    pushState(path) {
+      pushedPaths.push(path);
+      setHistory(this, path);
+    }
+  });
+
+  registry.register('location:historyTest', HistoryTestLocation);
+
+  Router.reopen({
+    location: 'historyTest'
+  });
+
+  Router.map(function() {
+    this.route("cat", {}, function(){
+      this.route('tail');
+    });
+  });
+
+  App.CatRoute = Ember.Route.extend({
+    model() {}
+  });
+
+  App.CatIndexRoute = Ember.Route.extend({
+    redirect: function(){
+      this.transitionTo('cat.tail');
+    }
+  });
+
+  bootApplication();
+
+  equal(pushedPaths.length, 1, "One entry is added to history");
+});
+
+QUnit.test("Router adds a single entry to history when synchrinously redirected", function(){
+});
+
+QUnit.test("The rootURL is passed properly to the location implementation", function() {
+  expect(1);
+  var rootURL = "/blahzorz";
+  var HistoryTestLocation;
+
+  HistoryTestLocation = Ember.HistoryLocation.extend({
+    rootURL: 'this is not the URL you are looking for',
+    initState() {
+      equal(this.get('rootURL'), rootURL);
+    }
+  });
+
+  registry.register('location:history-test', HistoryTestLocation);
+
+  Router.reopen({
+    location: 'history-test',
+    rootURL: rootURL,
+    // if we transition in this test we will receive failures
+    // if the tests are run from a static file
+    _doURLTransition() { }
+  });
+
+  bootApplication();
+});
+
 QUnit.test("The rootURL is passed properly to the location implementation", function() {
   expect(1);
   var rootURL = "/blahzorz";
