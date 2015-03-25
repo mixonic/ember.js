@@ -920,23 +920,58 @@ QUnit.test("The {{link-to}} helper is active when a resource is active", functio
 
 });
 
-QUnit.test("The {{link-to}} helper is active after a slow router transition", function() {
+QUnit.test("The {{link-to}} helper is active after a slow router transition", function(assert) {
+  var done = assert.async();
   Router.map(function() {
     this.resource("about", function() {
       this.route("item");
     });
   });
 
-
-
-  Ember.TEMPLATES.about = compile("<div id='about'>{{#link-to 'about' id='about-link'}}About{{/link-to}} {{#link-to 'about.item' id='item-link'}}Item{{/link-to}} {{outlet}}</div>");
+  Ember.TEMPLATES.about = compile("<div id='about'>{{#link-to 'about.index' tagName='li' id='about-link'}}{{link-to 'About' 'about.index'}}{{/link-to}} {{#link-to 'about.item' tagName='li' id='item-link'}}{{link-to 'Item' 'about.item'}}{{/link-to}} {{outlet}}</div>");
   Ember.TEMPLATES['about/item'] = compile(" ");
   Ember.TEMPLATES['about/index'] = compile(" ");
 
-  App.AboutRoute = Ember.Route.extend({
+  let callbacks = [
+    function(){
+      equal(Ember.$('#about-link.active', '#qunit-fixture').length, 1, "The about resource link is active");
+      equal(Ember.$('#item-link.active', '#qunit-fixture').length, 0, "The item route link is inactive");
+      Ember.run(router, 'handleURL', '/about/item');
+    },
+    function(){
+      equal(Ember.$('#about-link.active', '#qunit-fixture').length, 0, "The about resource link is active");
+      equal(Ember.$('#item-link.active', '#qunit-fixture').length, 1, "The item route link is active");
+      Ember.run(router, 'handleURL', '/about');
+    },
+    function(){
+      equal(Ember.$('#about-link.active', '#qunit-fixture').length, 1, "The about resource link is active");
+      equal(Ember.$('#item-link.active', '#qunit-fixture').length, 0, "The item route link is inactive");
+      done();
+    },
+  ];
+
+  App.AboutIndexRoute = Ember.Route.extend({
     model: function() {
       return new Ember.RSVP.Promise(function(resolve) {
-        setTimeout(resolve, 2);
+        setTimeout(function(){
+          Ember.run(null, resolve);
+          setTimeout(function(){
+            callbacks.shift()();
+          }, 2);
+        }, 2);
+      });
+    }
+  });
+
+  App.AboutItemRoute = Ember.Route.extend({
+    model: function() {
+      return new Ember.RSVP.Promise(function(resolve) {
+        setTimeout(function(){
+          Ember.run(null, resolve);
+          setTimeout(function(){
+            callbacks.shift()();
+          }, 2);
+        }, 2);
       });
     }
   });
@@ -945,14 +980,12 @@ QUnit.test("The {{link-to}} helper is active after a slow router transition", fu
 
   Ember.run(router, 'handleURL', '/about');
 
-  equal(Ember.$('#about-link.active', '#qunit-fixture').length, 1, "The about resource link is active");
-  equal(Ember.$('#item-link.active', '#qunit-fixture').length, 0, "The item route link is inactive");
-
+  /*
   Ember.run(router, 'handleURL', '/about/item');
 
   equal(Ember.$('#about-link.active', '#qunit-fixture').length, 1, "The about resource link is active");
   equal(Ember.$('#item-link.active', '#qunit-fixture').length, 1, "The item route link is active");
-
+ */
 });
 
 QUnit.test("The {{link-to}} helper works in an #each'd array of string route names", function() {
