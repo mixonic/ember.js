@@ -85,7 +85,7 @@ EmberRenderer.prototype.destroyView = function destroyView(view) {
 };
 
 EmberRenderer.prototype.childViews = function childViews(view) {
-  return view._childViews;
+  return (view._attrNodes || []).concat(view._childViews || []);
 };
 
 Renderer.prototype.willCreateElement = function (view) {
