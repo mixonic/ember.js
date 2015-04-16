@@ -6,6 +6,7 @@ import {
   subscribers
 } from "ember-metal/instrumentation";
 import buildComponentTemplate from "ember-views/system/build-component-template";
+import renderViewWithBuffer from "ember-views/system/render-view-with-buffer";
 //import { deprecation } from "ember-views/compat/attrs-proxy";
 
 function Renderer(_helper) {
@@ -17,18 +18,23 @@ Renderer.prototype.renderTopLevelView =
     view.ownerView = renderNode.emberView = view;
     view.renderNode = renderNode;
 
-    var layout = get(view, 'layout');
-    var template = get(view, 'template');
+    if (view.render) {
+      debugger;
+      renderViewWithBuffer(view, this._dom);
+    } else {
+      var layout = get(view, 'layout');
+      var template = get(view, 'template');
 
-    var componentInfo = { component: view, layout: layout };
+      var componentInfo = { component: view, layout: layout };
 
-    var block = buildComponentTemplate(componentInfo, {}, {
-      self: view,
-      template: template && template.raw
-    }).block;
+      var block = buildComponentTemplate(componentInfo, {}, {
+        self: view,
+        template: template && template.raw
+      }).block;
 
-    view.renderBlock(block, renderNode);
-    view.lastResult = renderNode.lastResult;
+      view.renderBlock(block, renderNode);
+      view.lastResult = renderNode.lastResult;
+    }
 
     this.dispatchLifecycleHooks(view.env);
   };

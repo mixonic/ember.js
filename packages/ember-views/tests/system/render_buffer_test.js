@@ -1,6 +1,9 @@
 import jQuery from "ember-views/system/jquery";
 import RenderBuffer from "ember-views/system/render_buffer";
 import DOMHelper from "dom-helper";
+import compile from "ember-template-compiler/system/compile";
+import defaultEnv from "ember-htmlbars/env";
+import merge from "ember-metal/merge";
 
 var svgNamespace = "http://www.w3.org/2000/svg";
 var xhtmlNamespace = "http://www.w3.org/1999/xhtml";
@@ -347,3 +350,21 @@ if ('namespaceURI' in document.createElement('div')) {
   });
 
 }
+
+QUnit.module("RenderBuffer#template");
+
+QUnit.test("generates a template from strings", function() {
+  var buffer = createRenderBuffer('div', document.body);
+  buffer.generateElement();
+
+  buffer.push('a');
+  buffer.push('b');
+
+  var template = buffer.template();
+  var compiledTemplate = compile("ab");
+  debugger;
+  var ret = compiledTemplate.render({}, merge({dom: domHelper}, defaultEnv), {
+    contextualElement: document.body
+  });
+  debugger;
+});

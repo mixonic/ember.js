@@ -538,6 +538,41 @@ RenderBuffer.prototype = {
     return this._element;
   },
 
+  template() {
+
+    var content = this.innerContent();
+    // No content means a text node buffer, with the content
+    // in _element. Ember._BoundView is an example.
+    if (content === null) {
+      content = this._element;
+    }
+
+    var element;
+    var contextualElement = this.innerContextualElement(content);
+    this.dom.detectNamespace(contextualElement);
+
+    if (!this._element) {
+      this._element = this.dom.createDocumentFragment();
+    }
+
+    if (content.nodeType) {
+      this._element.appendChild(content);
+    } else {
+      var frag = this.dom.parseHTML(content, contextualElement);
+      this._element.appendChild(frag);
+    }
+
+    return {
+      arity: 0,
+      isHTMLBars: true,
+      isMethod: false,
+      isTop: true,
+      createdElement: true,
+      revision: 'Generated'
+    };
+
+  },
+
   /**
     Generates the HTML content for this buffer.
 

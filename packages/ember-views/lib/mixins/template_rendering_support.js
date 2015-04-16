@@ -26,6 +26,7 @@ var TemplateRenderingSupport = Mixin.create({
   */
   render(buffer) {
     // TODO: Legacy string render function support
+    throw new Error('Unimplemented default render');
   },
 
   renderBlock(block, renderNode) {

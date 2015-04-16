@@ -32,7 +32,7 @@ QUnit.module("Metamorph views", {
   }
 });
 
-QUnit.skip("a Metamorph view is not a view's parentView", function() {
+QUnit.test("a Metamorph view is not a view's parentView", function() {
   childView = EmberView.create({
     render(buffer) {
       buffer.push("<p>Bye bros</p>");
@@ -41,12 +41,14 @@ QUnit.skip("a Metamorph view is not a view's parentView", function() {
 
   metamorphView = _MetamorphView.create({
     render(buffer) {
+      alert('oh snap');
       buffer.push("<h2>Meta</h2>");
       this.appendChild(childView);
     }
   });
 
   run(function() {
+    debugger;
     view.appendTo("#qunit-fixture");
   });
 

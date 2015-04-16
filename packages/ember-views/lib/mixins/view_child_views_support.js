@@ -122,7 +122,13 @@ var ViewChildViewsSupport = Mixin.create({
 
   linkChild(instance) {
     instance.container = this.container;
-    set(instance, 'parentView', this);
+    var parentView;
+    if (false || this.isVirtual) {
+      parentView = this.get('parentView');
+    } else {
+      parentView = this;
+    }
+    set(instance, 'parentView', parentView);
     instance.trigger('parentViewDidChange');
     instance.ownerView = this.ownerView;
   },
