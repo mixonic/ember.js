@@ -251,7 +251,7 @@ QUnit.skip("should replace DOM representation if rerender() is called after elem
   equal(view.$().text(), "Do not taunt happy fun ball", "rerenders DOM element when rerender() is called");
 });
 
-QUnit.skip("should destroy DOM representation when destroyElement is called", function() {
+QUnit.test("should destroy DOM representation when destroyElement is called", function() {
   run(function() {
     view = EmberView.create({
       template: compile("Don't fear the reaper")
@@ -287,7 +287,7 @@ QUnit.test("should destroy DOM representation when destroy is called", function(
   ok(jQuery('#warning').length === 0, "destroys element when destroy() is called");
 });
 
-QUnit.skip("should throw an exception if trying to append an element that is already in DOM", function() {
+QUnit.test("should throw an exception if trying to append an element that is already in DOM", function() {
   run(function() {
     view = EmberView.create({
       template: compile('Broseidon, King of the Brocean')
