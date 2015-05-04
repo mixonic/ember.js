@@ -2,12 +2,15 @@ import merge from "ember-metal/merge";
 import Ember from "ember-metal/core";
 import buildComponentTemplate from "ember-views/system/build-component-template";
 import { get } from "ember-metal/property_get";
-import { set } from "ember-metal/property_set";
+import { set, trySet } from "ember-metal/property_set";
 import setProperties from "ember-metal/set_properties";
 import View from "ember-views/views/view";
 import { MUTABLE_CELL } from "ember-views/compat/attrs-proxy";
+import { MUTABLE_REFERENCE } from "ember-htmlbars/keywords/mut";
 import getCellOrValue from "ember-htmlbars/hooks/get-cell-or-value";
 import SafeString from "htmlbars-util/safe-string";
+import { addObserver } from "ember-metal/observer";
+import o_create from "ember-metal/platform/create";
 
 // In theory this should come through the env, but it should
 // be safe to import this until we make the hook system public
@@ -94,6 +97,7 @@ ComponentNode.prototype.render = function(env, attrs, visitor) {
 
   if (component) {
     var snapshot = takeSnapshot(attrs);
+    attachDependenciesForMut(component, attrs);
     env.renderer.setAttrs(this.component, snapshot);
     env.renderer.willCreateElement(component);
     env.renderer.willRender(component);
@@ -197,6 +201,36 @@ export function createOrUpdateComponent(component, options, renderNode, env, att
   renderNode.emberView = component;
   return component;
 }
+
+function attachDependencyForMut(stream, obj, key) {
+  var onNotify = function(stream) {
+    _suspendObserver(obj, key, null, didChange, function() {
+      set(obj, key, stream.value());
+    });
+  };
+
+  var didChange = function() {
+    stream.setValue(get(obj, key), onNotify);
+  };
+
+  set(obj, key, stream.value());
+
+  if (obj._streamBindingSubscriptions === undefined) {
+    obj._streamBindingSubscriptions = o_create(null);
+  }
+
+  obj._streamBindingSubscriptions[key] = onNotify;
+}
+
+function attachDependenciesForMut(component, attrs) {
+  var mutRef, observable;
+  for (var attr in attrs) {
+    mutRef = attrs[attr];
+    if (mutRef[MUTABLE_REFERENCE] && attr in component) {
+      attachDependencyForMut(mutRef, component, attr);
+    }
+  }
+};
 
 function shadowedAttrs(target, attrs) {
   let shadowed = {};
