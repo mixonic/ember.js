@@ -44,6 +44,7 @@ export function findHelper(name, view, env) {
   }
 
   var helperName = 'helper:' + name;
+  console.log(helperName);
   helper = container.lookup(helperName);
   if (!helper) {
     var componentLookup = container.lookup('component-lookup:main');
@@ -57,7 +58,7 @@ export function findHelper(name, view, env) {
     }
   }
 
-  if (helper && !helper.isHTMLBars) {
+  if (helper && !helper.isHTMLBars && !helper.isHelper) {
     helper = new HandlebarsCompatibleHelper(helper);
     container._registry.unregister(helperName);
     container._registry.register(helperName, helper);

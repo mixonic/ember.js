@@ -1,12 +1,18 @@
 import Ember from 'ember-metal/core'; // Ember.assert
 import getValue from "ember-htmlbars/hooks/get-value";
 
-
-
 export default function invokeHelper(morph, env, scope, visitor, _params, _hash, helper, templates, context) {
   var params, hash;
 
-  if (typeof helper === 'function') {
+  if (helper.isHelper) {
+    params = getArrayValues(_params);
+    hash = getHashValues(_hash);
+    var helperStream = helper.getStream();
+    helperStream.subscribe(function() {
+      morph.setContent(helperStream.value());
+    });
+    return { value: helperStream.value() };
+  } else if (typeof helper === 'function') {
     params = getArrayValues(_params);
     hash = getHashValues(_hash);
     return { value: helper.call(context, params, hash, templates) };
