@@ -1,6 +1,7 @@
 import "ember";
 
 import EmberHandlebars from "ember-htmlbars/compat";
+import HandlebarsCompatibleHelper from "ember-htmlbars/compat/helper";
 
 var compile, helpers, makeBoundHelper;
 compile = EmberHandlebars.compile;
@@ -56,13 +57,13 @@ var boot = function(callback) {
 };
 
 QUnit.test("Unbound dashed helpers registered on the container can be late-invoked", function() {
+  Ember.TEMPLATES.application = compile("<div id='wrapper'>{{x-borf}} {{x-borf 'YES'}}</div>");
+  let helper = new HandlebarsCompatibleHelper((val) => {
+    return arguments.length > 1 ? val : "BORF";
+  });
 
-  Ember.TEMPLATES.application = compile("<div id='wrapper'>{{x-borf}} {{x-borf YES}}</div>");
-
-  boot(function() {
-    registry.register('helper:x-borf', function(val) {
-      return arguments.length > 1 ? val : "BORF";
-    });
+  boot(() => {
+    registry.register('helper:x-borf', helper);
   });
 
   equal(Ember.$('#wrapper').text(), "BORF YES", "The helper was invoked from the container");
