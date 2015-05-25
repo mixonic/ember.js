@@ -55,14 +55,12 @@ QUnit.test('dashed helper is resolved from container', function() {
 QUnit.test('dashed helper can recompute a new value', function() {
   var count = 0;
   var helper;
-  // var didCreateHelper = false;
+  var didCreateHelper = false;
   var HelloWorld = Helper.extend({
     init() {
       this._super(...arguments);
-      // This is run once for isHelper hook, but then not used. Should
-      // be FIXME.
-      // ok(!didCreateHelper, 'helper was created once');
-      // didCreateHelper = true;
+       ok(!didCreateHelper, 'helper was created once');
+       didCreateHelper = true;
       helper = this;
     },
     compute() {
