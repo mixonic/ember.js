@@ -172,3 +172,28 @@ QUnit.test('dashed helper receives params, hash', function() {
   equal(params[1], 'rich', 'second argument is rich');
   equal(hash.last, 'sam', 'hash.last argument is sam');
 });
+
+QUnit.test('dashed helper usable in subexpressions', function() {
+  var params, hash;
+  var JoinWords = Helper.extend({
+    compute(params) {
+      return params.join(' ');
+    }
+  });
+  registry.register('helper:join-words', JoinWords);
+  component = Component.extend({
+    container,
+    name: 'bob',
+    layout: compile(
+      `{{join-words "Who"
+                   (join-words "overcomes" "by")
+                   "force"
+                   (join-words (join-words "hath overcome but" "half"))
+                   (join-words "his" (join-words "foe"))}}`)
+  }).create();
+
+  runAppend(component);
+
+  equal(component.$().text(),
+    'Who overcomes by force hath overcome but half his foe');
+});
