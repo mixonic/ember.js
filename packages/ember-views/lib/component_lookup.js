@@ -1,14 +1,10 @@
 import Ember from 'ember-metal/core';
 import EmberObject from "ember-runtime/system/object";
-import { ISNT_HELPER_CACHE } from "ember-htmlbars/system/lookup-helper";
+import { CONTAINS_DASH_CACHE } from "ember-htmlbars/system/lookup-helper";
 
 export default EmberObject.extend({
   invalidName(name) {
-    var invalidName = ISNT_HELPER_CACHE.get(name);
-
-    if (invalidName) {
-      Ember.assert(`You cannot use '${name}' as a component name. Component names must contain a hyphen.`);
-    }
+    Ember.assert(`You cannot use '${name}' as a component name. Component names must contain a hyphen.`, CONTAINS_DASH_CACHE.get(name));
   },
 
   lookupFactory(name, container) {
@@ -37,18 +33,14 @@ export default EmberObject.extend({
   },
 
   componentFor(name, container) {
-    if (this.invalidName(name)) {
-      return;
-    }
+    this.invalidName(name);
 
     var fullName = 'component:' + name;
     return container.lookupFactory(fullName);
   },
 
   layoutFor(name, container) {
-    if (this.invalidName(name)) {
-      return;
-    }
+    this.invalidName(name);
 
     var templateFullName = 'template:components/' + name;
     return container.lookup(templateFullName);

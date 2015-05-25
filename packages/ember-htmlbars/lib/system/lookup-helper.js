@@ -41,27 +41,16 @@ export function findHelper(name, view, env) {
   if (validateLazyHelperName(name, container, env.hooks.keywords)) {
     var helperName = 'helper:' + name;
 
-    helper = container.lookup(helperName);
-
-    if (helper && !helper.isHTMLBars && !helper.isHelper) {
-      helper = new HandlebarsCompatibleHelper(helper);
-      container._registry.unregister(helperName);
-      container._registry.register(helperName, helper);
-    }
-
-    if (!helper) {
-      var componentLookup = container.lookup('component-lookup:main');
-      Ember.assert("Could not find 'component-lookup:main' on the provided container," +
-                   " which is necessary for performing component lookups", componentLookup);
-
-      var Component = componentLookup.lookupFactory(name, container);
-      if (Component) {
-        helper = makeViewHelper(Component);
+    if (container._registry.has(helperName)) {
+      helper = container.lookup(helperName);
+      if (helper && !helper.isHTMLBars && !helper.isHelper) {
+        helper = new HandlebarsCompatibleHelper(helper);
+        container._registry.unregister(helperName);
         container._registry.register(helperName, helper);
       }
+      return helper;
     }
 
-    return helper;
   }
 }
 

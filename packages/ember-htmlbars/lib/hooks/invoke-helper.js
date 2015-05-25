@@ -5,9 +5,10 @@ export default function invokeHelper(morph, env, scope, visitor, _params, _hash,
   var params, hash;
 
   if (helper.isHelper) {
+    Ember.assert("makeBoundHelper generated helpers do not support use with blocks", !templates.template.meta);
     params = getArrayValues(_params);
     hash = getHashValues(_hash);
-    var helperStream = helper.getStream();
+    var helperStream = helper.getStream(params, hash);
     helperStream.subscribe(function() {
       morph.setContent(helperStream.value());
     });

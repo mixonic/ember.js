@@ -11,15 +11,6 @@ export default function hasHelperHook(env, scope, helperName) {
     if (container._registry.has(containerName)) {
       return true;
     }
-
-    var componentLookup = container.lookup('component-lookup:main');
-    Ember.assert("Could not find 'component-lookup:main' on the provided container," +
-                 " which is necessary for performing component lookups", componentLookup);
-
-    if (container._registry.has('component:' + path) ||
-        container._registry.has('template:components/' + path)) {
-      return true;
-    }
   }
 
   return false;

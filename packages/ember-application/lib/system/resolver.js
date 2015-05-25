@@ -15,6 +15,7 @@ import EmberObject from 'ember-runtime/system/object';
 import Namespace from 'ember-runtime/system/namespace';
 import helpers from 'ember-htmlbars/helpers';
 import validateType from 'ember-application/utils/validate-type';
+import HandlebarsCompatibleHelper from "ember-htmlbars/compat/helper";
 
 export var Resolver = EmberObject.extend({
   /**
@@ -362,7 +363,11 @@ export default EmberObject.extend({
     @method resolveHelper
   */
   resolveHelper(parsedName) {
-    return this.resolveOther(parsedName) || helpers[parsedName.fullNameWithoutType];
+    var resolved = this.resolveOther(parsedName) || helpers[parsedName.fullNameWithoutType];
+    if (resolved && !resolved.isHelper && typeof resolved === 'function') {
+      resolved = new HandlebarsCompatibleHelper(helper);
+    }
+    return resolved;
   },
   /**
     Look up the specified object (from parsedName) on the appropriate

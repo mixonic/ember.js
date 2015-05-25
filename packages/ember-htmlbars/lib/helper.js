@@ -33,6 +33,7 @@ Helper.reopenClass({
   isHelperFactory: true,
   build(helperFn) {
     return {
+      isHelperFactory: true,
       create() {
         return {
           isHelper: true,
