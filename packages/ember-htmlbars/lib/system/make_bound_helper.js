@@ -4,7 +4,6 @@
 */
 
 import Helper from "ember-htmlbars/helper";
-import { readHash, readArray } from "ember-metal/streams/utils";
 
 /**
   Create a bound helper. Accepts a function that receives the ordered and hash parameters

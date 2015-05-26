@@ -174,7 +174,6 @@ QUnit.test('dashed helper receives params, hash', function() {
 });
 
 QUnit.test('dashed helper usable in subexpressions', function() {
-  var params, hash;
   var JoinWords = Helper.extend({
     compute(params) {
       return params.join(' ');
@@ -198,8 +197,7 @@ QUnit.test('dashed helper usable in subexpressions', function() {
 });
 
 QUnit.test('dashed helper not usable with a block', function() {
-  var params, hash;
-  var SomeHelper = Helper.build(function(){});
+  var SomeHelper = Helper.build(function() {});
   registry.register('helper:some-helper', SomeHelper);
   component = Component.extend({
     container,

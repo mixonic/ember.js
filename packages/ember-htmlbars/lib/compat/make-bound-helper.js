@@ -65,7 +65,7 @@ export default function makeBoundHelper(fn, ...dependentKeys) {
     },
 
     isHelperFactory: true,
-    create() { return this },
+    create() { return this; },
     reopenClass() {}
   };
 }

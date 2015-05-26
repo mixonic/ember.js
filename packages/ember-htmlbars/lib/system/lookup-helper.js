@@ -5,8 +5,6 @@
 
 import Ember from "ember-metal/core";
 import Cache from "ember-metal/cache";
-import makeViewHelper from "ember-htmlbars/system/make-view-helper";
-import HandlebarsCompatibleHelper from "ember-htmlbars/compat/helper";
 
 export var CONTAINS_DASH_CACHE = new Cache(1000, function(key) {
   return key.indexOf('-') !== -1;
@@ -14,7 +12,7 @@ export var CONTAINS_DASH_CACHE = new Cache(1000, function(key) {
 
 export function validateLazyHelperName(helperName, container, keywords) {
   return container && CONTAINS_DASH_CACHE.get(helperName) && !(helperName in keywords);
-};
+}
 
 /**
   Used to lookup/resolve handlebars helpers. The lookup order is:

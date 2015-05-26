@@ -20,7 +20,7 @@ export default function makeViewHelper(ViewClass) {
     isHTMLBars: true,
     viewClass: ViewClass,
     isHelperFactory: true,
-    create() { return this },
+    create() { return this; },
     reopenClass() {}
   };
 }

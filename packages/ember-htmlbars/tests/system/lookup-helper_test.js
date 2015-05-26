@@ -1,7 +1,6 @@
 import lookupHelper, { findHelper } from "ember-htmlbars/system/lookup-helper";
 import ComponentLookup from "ember-views/component_lookup";
 import Registry from "container/registry";
-import Component from "ember-views/views/component";
 import Helper from "ember-htmlbars/helper";
 
 function generateEnv(helpers, container) {
@@ -108,6 +107,6 @@ QUnit.test('fails with a useful error when resolving a function', function() {
   view.container._registry.register('helper:some-name', someName);
 
   expectAssertion(function() {
-    var actual = lookupHelper('some-name', view, env);
+    lookupHelper('some-name', view, env);
   }, /The factory for "some-name" is not an Ember helper/);
 });
