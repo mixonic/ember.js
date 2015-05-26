@@ -183,7 +183,6 @@ QUnit.test('dashed helper usable in subexpressions', function() {
   registry.register('helper:join-words', JoinWords);
   component = Component.extend({
     container,
-    name: 'bob',
     layout: compile(
       `{{join-words "Who"
                    (join-words "overcomes" "by")
@@ -196,4 +195,18 @@ QUnit.test('dashed helper usable in subexpressions', function() {
 
   equal(component.$().text(),
     'Who overcomes by force hath overcome but half his foe');
+});
+
+QUnit.test('dashed helper not usable with a block', function() {
+  var params, hash;
+  var SomeHelper = Helper.build(function(){});
+  registry.register('helper:some-helper', SomeHelper);
+  component = Component.extend({
+    container,
+    layout: compile(`{{#some-helper}}{{/some-helper}}`)
+  }).create();
+
+  expectAssertion(function() {
+    runAppend(component);
+  }, /Helpers may not be used in the block form/);
 });

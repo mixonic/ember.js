@@ -5,7 +5,7 @@ export default function invokeHelper(morph, env, scope, visitor, _params, _hash,
   var params, hash;
 
   if (helper.isHelper) {
-    Ember.assert("makeBoundHelper generated helpers do not support use with blocks", !templates.template.meta);
+    Ember.assert("Helpers may not be used in the block form, for example {{#my-helper}}{{/my-helper}}. Please use a component, or alternatively use the helper in combination with a built-in Ember helper, for example {{#if (my-helper)}}{{/if}}.", !templates.template.meta);
     params = getArrayValues(_params);
     hash = getHashValues(_hash);
     var helperStream = helper.getStream(params, hash);

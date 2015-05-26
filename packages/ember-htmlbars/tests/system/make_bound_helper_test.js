@@ -192,7 +192,7 @@ QUnit.test("bound helpers should not be invoked with blocks", function() {
 
   expectAssertion(function() {
     runAppend(view);
-  }, /makeBoundHelper generated helpers do not support use with blocks/i);
+  }, /Helpers may not be used in the block form/);
 });
 
 QUnit.test("shouldn't treat raw numbers as bound paths", function() {
