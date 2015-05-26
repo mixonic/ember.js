@@ -122,3 +122,24 @@ QUnit.test("Undashed helpers registered on the container can not (presently) be 
     });
   }, /A helper named 'omg' could not be found/);
 });
+
+QUnit.test("Helpers can receive injections", function() {
+  Ember.TEMPLATES.application = compile("<div id='wrapper'>{{full-name}}</div>");
+
+  var serviceCalled = false;
+  boot(function() {
+    registry.register('service:name-builder', Ember.Service.extend({
+      build() {
+        serviceCalled = true;
+      }
+    }));
+    registry.register('helper:full-name', Ember.Helper.extend({
+      nameBuilder: Ember.inject.service('name-builder'),
+      compute() {
+        this.get('nameBuilder').build();
+      }
+    }));
+  });
+
+  ok(serviceCalled, 'service was injected, method called');
+});
