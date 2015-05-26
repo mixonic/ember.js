@@ -33,25 +33,20 @@ export function validateLazyHelperName(helperName, container, keywords) {
 */
 export function findHelper(name, view, env) {
   var helper = env.helpers[name];
-  if (helper) {
-    return helper;
-  }
 
-  var container = env.container;
-  if (validateLazyHelperName(name, container, env.hooks.keywords)) {
-    var helperName = 'helper:' + name;
-
-    if (container._registry.has(helperName)) {
-      helper = container.lookup(helperName);
-      if (helper && !helper.isHTMLBars && !helper.isHelper) {
-        helper = new HandlebarsCompatibleHelper(helper);
-        container._registry.unregister(helperName);
-        container._registry.register(helperName, helper);
+  if (!helper) {
+    var container = env.container;
+    if (validateLazyHelperName(name, container, env.hooks.keywords)) {
+      var helperName = 'helper:' + name;
+      if (container._registry.has(helperName)) {
+        var _helper;
+        Ember.assert(`The factory for "${name}" is not an Ember helper. Please use Ember.Helper.build to wrap helper functions.`, (_helper = container._registry.resolve(helperName)) && _helper && _helper.isHelperFactory);
+        helper = container.lookup(helperName);
       }
-      return helper;
     }
-
   }
+
+  return helper;
 }
 
 export default function lookupHelper(name, view, env) {

@@ -95,3 +95,19 @@ QUnit.test('looks up a shorthand helper in the container', function() {
 
   ok(called, 'HTMLBars compatible wrapper is wraping the provided function');
 });
+
+QUnit.test('fails with a useful error when resolving a function', function() {
+  expect(1);
+  var container = generateContainer();
+  var env = generateEnv(null, container);
+  var view = {
+    container: container
+  };
+
+  function someName() {}
+  view.container._registry.register('helper:some-name', someName);
+
+  expectAssertion(function() {
+    var actual = lookupHelper('some-name', view, env);
+  }, /The factory for "some-name" is not an Ember helper/);
+});

@@ -108,12 +108,8 @@ function HandlebarsCompatibleHelper(fn) {
 
 HandlebarsCompatibleHelper.prototype = {
   preprocessArguments() { },
-  create() {
-    return this;
-  },
-  extend() {
-    return this;
-  },
+  isHelperFactory: true,
+  create() { return this; },
   reopenClass() {}
 };
 

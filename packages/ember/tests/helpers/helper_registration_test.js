@@ -58,7 +58,7 @@ var boot = function(callback) {
 
 QUnit.test("Unbound dashed helpers registered on the container can be late-invoked", function() {
   Ember.TEMPLATES.application = compile("<div id='wrapper'>{{x-borf}} {{x-borf 'YES'}}</div>");
-  let helper = new HandlebarsCompatibleHelper((val) => {
+  let helper = new HandlebarsCompatibleHelper(function(val) {
     return arguments.length > 1 ? val : "BORF";
   });
 
