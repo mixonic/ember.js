@@ -1,5 +1,23 @@
 import Ember from 'ember-metal/core'; // Ember.assert
+import merge from "ember-metal/merge";
 import getValue from "ember-htmlbars/hooks/get-value";
+import Stream from "ember-metal/streams/stream";
+import create from "ember-metal/platform/create";
+
+function HelperStream(helper, params, hash, label) {
+  this.init(label);
+  this.helper = helper;
+  this.params = params;
+  this.hash = hash;
+}
+
+HelperStream.prototype = create(Stream.prototype);
+
+merge(HelperStream.prototype, {
+  compute() {
+    return this.helper.compute(this.params, this.hash);
+  }
+});
 
 export default function invokeHelper(morph, env, scope, visitor, _params, _hash, helper, templates, context) {
   var params, hash;
@@ -8,7 +26,8 @@ export default function invokeHelper(morph, env, scope, visitor, _params, _hash,
     Ember.assert("Helpers may not be used in the block form, for example {{#my-helper}}{{/my-helper}}. Please use a component, or alternatively use the helper in combination with a built-in Ember helper, for example {{#if (my-helper)}}{{/if}}.", !templates.template.meta);
     params = getArrayValues(_params);
     hash = getHashValues(_hash);
-    var helperStream = helper.getStream(params, hash);
+    var helperStream = new HelperStream(helper, params, hash);
+    helper._stream = helperStream;
     helperStream.subscribe(function() {
       morph.setContent(helperStream.value());
     });
