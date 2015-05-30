@@ -7,6 +7,8 @@ var Helper = Object.extend({
   }
 });
 
+// Ember.Helper.build(function(params, hash) {
+// });
 Helper.reopenClass({
   isHelperFactory: true,
   build(helperFn) {

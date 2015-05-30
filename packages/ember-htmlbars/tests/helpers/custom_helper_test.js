@@ -208,3 +208,26 @@ QUnit.test('dashed helper not usable with a block', function() {
     runAppend(component);
   }, /Helpers may not be used in the block form/);
 });
+
+QUnit.test('dashed helper is torn down', function() {
+  var destroyCalled = 0;
+  var SomeHelper = Helper.extend({
+    destroy() {
+      destroyCalled++;
+      this._super.apply(this, arguments);
+    },
+    compute() {
+      return 'must define a compute';
+    }
+  });
+  registry.register('helper:some-helper', SomeHelper);
+  component = Component.extend({
+    container,
+    layout: compile(`{{some-helper}}`)
+  }).create();
+
+  runAppend(component);
+  runDestroy(component);
+
+  equal(destroyCalled, 1, 'destroy called once');
+});
