@@ -113,11 +113,12 @@ QUnit.test("the default resolver resolves container-registered helpers", functio
   application.register('helper:shorthand', shorthandHelper);
   application.register('helper:complete', helper);
 
-  let lookedUpShorthandHelper = locator.lookup('helper:shorthand');
-  ok(lookedUpShorthandHelper.isHelper, 'shorthand helper isHelper');
+  let lookedUpShorthandHelper = locator.lookupFactory('helper:shorthand');
+  ok(lookedUpShorthandHelper.isHelperInstance, 'shorthand helper isHelper');
 
-  let lookedUpHelper = locator.lookup('helper:complete');
-  ok(helper.detectInstance(lookedUpHelper), "looked up complete helper is instantiated");
+  let lookedUpHelper = locator.lookupFactory('helper:complete');
+  ok(lookedUpHelper.isHelperFactory, 'complete helper is factory');
+  ok(helper.detect(lookedUpHelper), "looked up complete helper");
 });
 
 QUnit.test("the default resolver resolves helpers on the namespace", function() {

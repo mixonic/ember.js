@@ -69,7 +69,7 @@ QUnit.test('does a lookup in the container if the name contains a dash (and help
 
   var actual = lookupHelper('some-name', view, env);
 
-  ok(someName.detectInstance(actual), 'helper is an instance of the helper class');
+  ok(someName.detect(actual), 'helper is an instance of the helper class');
 });
 
 QUnit.test('looks up a shorthand helper in the container', function() {
@@ -88,7 +88,7 @@ QUnit.test('looks up a shorthand helper in the container', function() {
 
   var actual = lookupHelper('some-name', view, env);
 
-  ok(actual.isHelper, 'is a helper');
+  ok(actual.isHelperInstance, 'is a helper');
 
   actual.compute([], {});
 

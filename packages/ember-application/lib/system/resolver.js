@@ -364,7 +364,7 @@ export default EmberObject.extend({
   */
   resolveHelper(parsedName) {
     var resolved = this.resolveOther(parsedName) || helpers[parsedName.fullNameWithoutType];
-    if (resolved && !resolved.isHelperFactory && typeof resolved === 'function') {
+    if (resolved && !resolved.isHelperFactory && !resolved.isHelperInstance && !resolved.isHTMLBars && typeof resolved === 'function') {
       resolved = new HandlebarsCompatibleHelper(resolved);
     }
     return resolved;

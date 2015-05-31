@@ -38,8 +38,8 @@ export function findHelper(name, view, env) {
       var helperName = 'helper:' + name;
       if (container._registry.has(helperName)) {
         var _helper;
-        Ember.assert(`The factory for "${name}" is not an Ember helper. Please use Ember.Helper.build to wrap helper functions.`, (_helper = container._registry.resolve(helperName)) && _helper && _helper.isHelperFactory);
-        helper = container.lookup(helperName);
+        Ember.assert(`The factory for "${name}" is not an Ember helper. Please use Ember.Helper.build to wrap helper functions.`, (_helper = container._registry.resolve(helperName)) && _helper && (_helper.isHelperFactory || _helper.isHelperInstance || _helper.isHTMLBars));
+        helper = container.lookupFactory(helperName);
       }
     }
   }

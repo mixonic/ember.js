@@ -13,13 +13,8 @@ Helper.reopenClass({
   isHelperFactory: true,
   build(helperFn) {
     return {
-      isHelperFactory: true,
-      create() {
-        return {
-          isHelper: true,
-          compute: helperFn
-        };
-      }
+      isHelperInstance: true,
+      compute: helperFn
     };
   }
 });

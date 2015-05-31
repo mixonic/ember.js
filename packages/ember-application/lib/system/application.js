@@ -1002,7 +1002,6 @@ Application.reopenClass({
     registry.optionsForType('component', { singleton: false });
     registry.optionsForType('view', { singleton: false });
     registry.optionsForType('template', { instantiate: false });
-    registry.optionsForType('helper', { singleton: false });
 
     registry.register('application:main', namespace, { instantiate: false });
 
