@@ -274,3 +274,36 @@ QUnit.test('dashed helper used in subexpression can recompute', function() {
   equal(component.$().text(),
     'Who believes his force hath overcome but half his foe');
 });
+
+QUnit.test('dashed helper used in subexpression is destroyed', function() {
+  var didCallDestroy = false;
+  var DynamicSegment = Helper.extend({
+    phrase: 'overcomes by',
+    compute() {
+      return this.phrase;
+    },
+    destroy() {
+      didCallDestroy = true;
+      this._super(...arguments);
+    }
+  });
+  var JoinWords = Helper.build(function(params) {
+    return params.join(' ');
+  });
+  registry.register('helper:dynamic-segment', DynamicSegment);
+  registry.register('helper:join-words', JoinWords);
+  component = Component.extend({
+    container,
+    layout: compile(
+      `{{join-words "Who"
+                   (dynamic-segment)
+                   "force"
+                   (join-words (join-words "hath overcome but" "half"))
+                   (join-words "his" (join-words "foe"))}}`)
+  }).create();
+
+  runAppend(component);
+  runDestroy(component);
+
+  ok(didCallDestroy, 'destroy was called');
+});
