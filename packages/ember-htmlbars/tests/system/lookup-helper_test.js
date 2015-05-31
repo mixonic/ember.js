@@ -15,7 +15,6 @@ function generateContainer() {
   var registry = new Registry();
   var container = registry.container();
 
-  registry.optionsForType('helper', { singleton: false });
   registry.register('component-lookup:main', ComponentLookup);
 
   return container;

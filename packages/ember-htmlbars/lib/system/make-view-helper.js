@@ -18,7 +18,6 @@ export default function makeViewHelper(ViewClass) {
   return {
     isLegacyViewHelper: true,
     isHTMLBars: true,
-    viewClass: ViewClass,
-    reopenClass() {}
+    viewClass: ViewClass
   };
 }

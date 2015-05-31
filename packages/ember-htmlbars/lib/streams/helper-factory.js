@@ -20,7 +20,6 @@ merge(HelperFactoryStream.prototype, {
     if (!this.helper) {
       this.helper = this.helperFactory.create({ _stream: this });
     }
-    // FIXME: when a factory is present, use create
     return this.helper.compute(getArrayValues(this.params), getHashValues(this.hash));
   },
   destroy() {

@@ -1,5 +1,6 @@
 import Object from "ember-runtime/system/object";
 
+// Ember.Helper.extend({ compute(params, hash) {} });
 var Helper = Object.extend({
   isHelper: true,
   recompute() {
@@ -7,8 +8,7 @@ var Helper = Object.extend({
   }
 });
 
-// Ember.Helper.build(function(params, hash) {
-// });
+// Ember.Helper.build(function(params, hash) {});
 Helper.reopenClass({
   isHelperFactory: true,
   build(helperFn) {

@@ -18,7 +18,6 @@ QUnit.module("ember-htmlbars: compat - Ember.Handlebars.get", {
     registry = new Registry();
     container = registry.container();
     registry.optionsForType('template', { instantiate: false });
-    registry.optionsForType('helper', { singleton: false });
     registry.register('view:toplevel', EmberView.extend());
   },
 

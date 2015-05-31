@@ -12,15 +12,9 @@ export default function invokeHelper(morph, env, scope, visitor, params, hash, h
   }
 
   var helperStream = buildHelperStream(helper, params, hash, templates, env, scope, context);
-  // FIXME this is obviously insane.
-  if (morph) {
-    helperStream.subscribe(function() {
-      morph.setContent(helperStream.value());
-    });
-    morph.addDestruction(helperStream);
-    return { value: helperStream.value() };
-  } else {
-    // FIXME when is this hit?
-    return helperStream;
-  }
+  helperStream.subscribe(function() {
+    morph.setContent(helperStream.value());
+  });
+  morph.addDestruction(helperStream);
+  return { value: helperStream.value() };
 }

@@ -62,8 +62,6 @@ export default function makeBoundHelper(fn, ...dependentKeys) {
 
       args.push({ hash: readHash(hash) , templates, data: { properties } });
       return fn.apply(undefined, args);
-    },
-
-    reopenClass() {}
+    }
   };
 }

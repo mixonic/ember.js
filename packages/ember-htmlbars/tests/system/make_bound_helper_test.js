@@ -21,7 +21,6 @@ QUnit.module("ember-htmlbars: makeBoundHelper", {
   setup() {
     registry = new Registry();
     container = registry.container();
-    registry.optionsForType('helper', { singleton: false });
   },
 
   teardown() {
