@@ -12,9 +12,6 @@ export default function invokeHelper(morph, env, scope, visitor, params, hash, h
   }
 
   var helperStream = buildHelperStream(helper, params, hash, templates, env, scope, context);
-  helperStream.subscribe(function() {
-    morph.setContent(helperStream.value());
-  });
   morph.addDestruction(helperStream);
-  return { value: helperStream.value() };
+  return { link: true, value: helperStream };
 }
