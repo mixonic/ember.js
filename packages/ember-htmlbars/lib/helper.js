@@ -5,6 +5,7 @@ var Helper = Object.extend({
   isHelper: true,
   recompute() {
     this._stream.notify();
+    this._view.rerender();
   }
 });
 

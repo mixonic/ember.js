@@ -6,11 +6,12 @@ import {
   getHashValues
 } from "ember-htmlbars/streams/utils";
 
-export default function HelperFactoryStream(helperFactory, params, hash, label) {
+export default function HelperFactoryStream(helperFactory, params, hash, view, label) {
   this.init(label);
   this.helperFactory = helperFactory;
   this.params = params;
   this.hash = hash;
+  this.view = view;
 }
 
 HelperFactoryStream.prototype = create(Stream.prototype);
@@ -18,7 +19,7 @@ HelperFactoryStream.prototype = create(Stream.prototype);
 merge(HelperFactoryStream.prototype, {
   compute() {
     if (!this.helper) {
-      this.helper = this.helperFactory.create({ _stream: this });
+      this.helper = this.helperFactory.create({ _stream: this, _view: this.view });
     }
     return this.helper.compute(getArrayValues(this.params), getHashValues(this.hash));
   },
