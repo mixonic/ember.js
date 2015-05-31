@@ -16,7 +16,6 @@ function commonSetup() {
   registry.optionsForType('component', { singleton: false });
   registry.optionsForType('view', { singleton: false });
   registry.optionsForType('template', { instantiate: false });
-  registry.optionsForType('helper', { singleton: false });
   registry.register('component-lookup:main', ComponentLookup);
 }
 
