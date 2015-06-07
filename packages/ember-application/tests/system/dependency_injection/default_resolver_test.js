@@ -107,7 +107,7 @@ QUnit.test("the default resolver resolves helpers", function() {
 });
 
 QUnit.test("the default resolver resolves container-registered helpers", function() {
-  let shorthandHelper = Helper.build(function() {});
+  let shorthandHelper = Helper.helper(function() {});
   let helper = Helper.extend();
 
   application.register('helper:shorthand', shorthandHelper);
@@ -122,7 +122,7 @@ QUnit.test("the default resolver resolves container-registered helpers", functio
 });
 
 QUnit.test("the default resolver resolves helpers on the namespace", function() {
-  let ShorthandHelper = Helper.build(function() {});
+  let ShorthandHelper = Helper.helper(function() {});
   let CompleteHelper = Helper.extend();
   let LegacyBareFunctionHelper = function() {};
   let LegacyHandlebarsBoundHelper = makeHandlebarsBoundHelper(function() {});

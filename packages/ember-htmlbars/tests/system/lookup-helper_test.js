@@ -83,7 +83,7 @@ QUnit.test('looks up a shorthand helper in the container', function() {
   function someName() {
     called = true;
   }
-  view.container._registry.register('helper:some-name', Helper.build(someName));
+  view.container._registry.register('helper:some-name', Helper.helper(someName));
 
   var actual = lookupHelper('some-name', view, env);
 

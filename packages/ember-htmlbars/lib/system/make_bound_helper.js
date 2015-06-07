@@ -49,5 +49,5 @@ import Helper from "ember-htmlbars/helper";
   @since 1.10.0
 */
 export default function makeBoundHelper(fn) {
-  return Helper.build(fn);
+  return Helper.helper(fn);
 }
