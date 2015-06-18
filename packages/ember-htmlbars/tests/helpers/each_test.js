@@ -3,6 +3,8 @@ import Ember from "ember-metal/core"; // Ember.lookup;
 import EmberObject from "ember-runtime/system/object";
 import run from "ember-metal/run_loop";
 import EmberView from "ember-views/views/view";
+import ComponentLookup from 'ember-views/component_lookup';
+import EmberComponent from "ember-views/views/component";
 import LegacyEachView from "ember-views/views/legacy_each_view";
 import { computed } from "ember-metal/computed";
 import ArrayController from "ember-runtime/controllers/array_controller";
@@ -95,6 +97,8 @@ QUnit.module("the #each helper [DEPRECATED]", {
     registry = new Registry();
     container = registry.container();
 
+    registry.optionsForType('template', { instantiate: false });
+    registry.register('component-lookup:main', ComponentLookup);
     registry.register('view:toplevel', EmberView.extend());
     registry.register('view:-legacy-each', LegacyEachView);
 
@@ -874,6 +878,61 @@ QUnit.test("single-arg each will iterate over controller if present [DEPRECATED]
   }, eachDeprecation);
 
   equal(view.$().text(), "AdamSteve");
+});
+QUnit.test("non-iterated bindings are bound", function() {
+  runDestroy(view);
+
+  view = EmberComponent.create({
+    items: A([{ name: "Adam" }, { name: "Steve" }]),
+    nonIterated: 'Weeps',
+    layout: compile('{{#each items as |item|}}{{item.name}}{{nonIterated}}{{/each}}'),
+    container: container
+  });
+
+  runAppend(view);
+
+  equal(view.$().text(), "AdamWeepsSteveWeeps");
+  run(view, view.set, 'nonIterated', 'Rejoices');
+  equal(view.$().text(), "AdamRejoicesSteveRejoices");
+});
+
+QUnit.test("non-iterated bindings trigger rerenders", function() {
+  runDestroy(view);
+
+  registry.register('template:components/rerender-this', compile('{{name}}{{nonIterated}}'));
+
+  view = EmberComponent.create({
+    items: A([{ name: "Adam" }, { name: "Steve" }]),
+    nonIterated: 'Weeps',
+    layout: compile('{{#each items as |item|}}{{rerender-this name=item.name nonIterated=nonIterated}}{{/each}}'),
+    container: container
+  });
+
+  runAppend(view);
+
+  equal(view.$().text(), "AdamWeepsSteveWeeps");
+  run(view, view.set, 'nonIterated', 'Rejoices');
+  equal(view.$().text(), "AdamRejoicesSteveRejoices");
+});
+
+QUnit.test("non-iterated bindings trigger rerenders after new list", function() {
+  runDestroy(view);
+
+  registry.register('template:components/rerender-this', compile('{{name}}{{nonIterated}}'));
+
+  view = EmberComponent.create({
+    items: [],
+    nonIterated: 'Weeps',
+    layout: compile('{{#each items as |item|}}{{rerender-this name=item.name nonIterated=nonIterated}}{{/each}}'),
+    container: container
+  });
+
+  runAppend(view);
+
+  run(view, view.set, 'items', A([{ name: "Adam" }, { name: "Steve" }]));
+  equal(view.$().text(), "AdamWeepsSteveWeeps");
+  run(view, view.set, 'nonIterated', 'Rejoices');
+  equal(view.$().text(), "AdamRejoicesSteveRejoices");
 });
 
 function testEachWithItem(moduleName, useBlockParams) {
