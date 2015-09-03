@@ -3,6 +3,7 @@
   @submodule ember-templates
   @public
 */
+import Ember from 'ember-metal/core';
 import { keyword } from 'htmlbars-runtime/hooks';
 
 /**
@@ -53,11 +54,16 @@ import { keyword } from 'htmlbars-runtime/hooks';
   @public
 */
 export default function(morph, env, scope, params, hash, template, inverse, visitor) {
-  if (morph) {
+  if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
+    if (morph) {
+      keyword('@element_component', morph, env, scope, params, hash, template, inverse, visitor);
+      return true;
+    }
+
+    return true; // Until we have implemented the contextual component
+  } else {
     keyword('@element_component', morph, env, scope, params, hash, template, inverse, visitor);
     return true;
   }
-
-  return true; // Until we have implemented the contextual component
 }
 
