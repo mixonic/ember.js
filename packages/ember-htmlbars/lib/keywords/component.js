@@ -5,6 +5,7 @@
 */
 import Ember from 'ember-metal/core';
 import { keyword } from 'htmlbars-runtime/hooks';
+import closureComponent from 'ember-htmlbars/keywords/closure-component';
 
 /**
   The `{{component}}` helper lets you add instances of `Ember.Component` to a
@@ -59,8 +60,7 @@ export default function(morph, env, scope, params, hash, template, inverse, visi
       keyword('@element_component', morph, env, scope, params, hash, template, inverse, visitor);
       return true;
     }
-
-    return true; // Until we have implemented the contextual component
+    return closureComponent(params, hash);
   } else {
     keyword('@element_component', morph, env, scope, params, hash, template, inverse, visitor);
     return true;
