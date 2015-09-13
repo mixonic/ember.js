@@ -67,7 +67,7 @@ function render(morph, env, scope, [path, ...params], hash, template, inverse, v
 
 function mergeParams(...paramsArray) {
   let mergedParams = [];
-  for (let i=0; i<paramsArray.length; i++) {
+  for (let i = 0; i < paramsArray.length; i++) {
     mergedParams.splice(mergedParams.length, 0, ...paramsArray[i]);
   }
   return mergedParams;
