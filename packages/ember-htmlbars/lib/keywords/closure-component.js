@@ -3,50 +3,56 @@
 @submodule ember-templates
 */
 
-import { symbol } from 'ember-metals/utils';
-import Stream from 'ember-metal/streams/stream';
-import { isStream, read, readArray, readHash } from 'ember-metal/streams/utils';
+import { symbol } from 'ember-metal/utils';
+import BasicStream from 'ember-metal/streams/stream';
+import {
+  read,
+  readArray,
+  readHash
+} from 'ember-metal/streams/utils';
+import { labelForSubexpr } from 'ember-htmlbars/hooks/subexpr';
 
-export let COMPONENT_REFERENCE = symbol('COMPONENT_REFERENCE');
+export const COMPONENT_REFERENCE = symbol('COMPONENT_REFERENCE');
+export const COMPONENT_CELL = symbol('COMPONENT_CELL');
+export const COMPONENT_PATH = symbol('COMPONENT_PATH');
+export const COMPONENT_PARAMS = symbol('COMPONENT_PARAMS');
+export const COMPONENT_HASH = symbol('COMPONENT_HASH');
 
-export let COMPONENT_CELL = symbol('COMPONENT_CELL');
-
-let ComponentStream = Stream.extend({
-  init(componentPath, params, hash) {
-    this.componentPath = componentPath;
-    this.params = params;
-    this.hash = hash;
-
-    if (isStream(componentPath)) {
-      this.label = `(component ${componentPath.label})`;
-    } else {
-      this.label = `(component "${componentPath}")`;
-    }
-
-    this.addDependency(componentPath);
-
-    params.forEach(item => this.addDependency(item));
-
-    Object.keys(hash).forEach(key => this.addDependency(hash[key]));
+let ClosureComponentStream = BasicStream.extend({
+  init(path, params, hash) {
+    this._path = path;
+    this._params = params;
+    this._hash = hash;
+    this.label = labelForSubexpr([path, ...params], hash, 'component');
+    this[COMPONENT_REFERENCE] = true;
   },
-
-  cell() {
-    let componentPath = read(this.componentPath);
-    let params = readArray(this.params);
-    let hash = readHash(this.hash);
-    let val = {
-      componentPath,
-      params,
-      hash,
-      [COMPONENT_CELL]: true
-    };
-
-    return val;
+  compute() {
+    return createClosureComponentCell(this._path, this._params, this._hash);
   }
-
 });
 
-export default function closureComponent(morph, env, scope, [componentPath, ...params], hash, template, inverse) {
-  // This assumes is being called with morph being null
-  return new ComponentStream(componentPath, params, hash);
+export default function closureComponent([path, ...params], hash) {
+  let s = new ClosureComponentStream(path, params, hash);
+
+  s.addDependency(path);
+
+  // FIXME: If the stream invalidates on every params or hash change, then
+  // the {{component helper will be forces to rerender the whole component
+  // each time. Instead, these dependencies should not be required and the
+  // element component keyword should add the params and hash as dependencies
+  params.forEach(item => s.addDependency(item));
+  Object.keys(hash).forEach(key => s.addDependency(hash[key]));
+
+  return s;
 }
+
+function createClosureComponentCell(componentPath, params, hash) {
+  let val = {
+    [COMPONENT_PATH]: read(componentPath),
+    [COMPONENT_PARAMS]: params,
+    [COMPONENT_HASH]: hash,
+    [COMPONENT_CELL]: true
+  };
+
+  return val;
+};

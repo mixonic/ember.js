@@ -1,9 +1,19 @@
 import assign from 'ember-metal/assign';
+import {
+  COMPONENT_REFERENCE,
+  COMPONENT_CELL,
+  COMPONENT_PATH,
+  COMPONENT_PARAMS,
+  COMPONENT_HASH,
+} from  './closure-component';
 
 export default {
   setupState(lastState, env, scope, params, hash) {
-    let componentPath = env.hooks.getValue(params[0]);
-    return assign({}, lastState, { componentPath, isComponentHelper: true });
+    let componentPath = getComponentPath(params[0], env);
+    return assign({}, lastState, {
+      componentPath,
+      isComponentHelper: true
+    });
   },
 
   render(morph, ...rest) {
@@ -24,8 +34,24 @@ export default {
   rerender: render
 };
 
+function getComponentPath(param, env) {
+  let componentName =  env.hooks.getValue(param);
+  if (componentName[COMPONENT_CELL]) {
+    componentName = componentName[COMPONENT_PATH];
+  }
+  return componentName;
+}
+
 function render(morph, env, scope, params, hash, template, inverse, visitor) {
-  let componentPath = morph.getState().componentPath;
+  let {
+    componentPath
+  } = morph.getState();
+
+  if (params[0] && params[0][COMPONENT_REFERENCE]) {
+    let closureComponent = env.hooks.getValue(params[0]);
+    params = mergeParams([componentPath], closureComponent[COMPONENT_PARAMS], params.slice(1));
+    hash = mergeHash(closureComponent[COMPONENT_HASH], hash);
+  }
 
   // If the value passed to the {{component}} helper is undefined or null,
   // don't create a new ComponentNode.
@@ -33,5 +59,21 @@ function render(morph, env, scope, params, hash, template, inverse, visitor) {
     return;
   }
 
-  env.hooks.component(morph, env, scope, componentPath, params, hash, { default: template, inverse }, visitor);
+  let templates = { default: template, inverse };
+  env.hooks.component(
+    morph, env, scope, componentPath,
+    params, hash, templates, visitor
+  );
+}
+
+function mergeParams(...paramsArray) {
+  let mergedParams = [];
+  for (let i=0; i<paramsArray.length; i++) {
+    mergedParams.splice(mergedParams.length, 0, ...paramsArray[i]);
+  }
+  return mergedParams;
+}
+
+function mergeHash(...hashArray) {
+  return assign({}, ...hashArray);
 }
