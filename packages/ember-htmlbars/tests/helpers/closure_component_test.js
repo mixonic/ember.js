@@ -1,3 +1,4 @@
+import Ember from 'ember-metal/core';
 import Registry from 'container/registry';
 import { runAppend, runDestroy } from 'ember-runtime/tests/utils';
 import ComponentLookup from 'ember-views/component_lookup';

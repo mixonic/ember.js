@@ -1,7 +1,6 @@
 import assign from 'ember-metal/assign';
 import {
   COMPONENT_REFERENCE,
-  COMPONENT_CELL,
   COMPONENT_PATH,
   COMPONENT_PARAMS,
   COMPONENT_HASH,
@@ -35,21 +34,21 @@ export default {
 };
 
 function getComponentPath(param, env) {
-  let componentName =  env.hooks.getValue(param);
-  if (componentName[COMPONENT_CELL]) {
-    componentName = componentName[COMPONENT_PATH];
+  let path = env.hooks.getValue(param);
+  if (param[COMPONENT_REFERENCE]) {
+    path = path[COMPONENT_PATH];
   }
-  return componentName;
+  return path;
 }
 
-function render(morph, env, scope, params, hash, template, inverse, visitor) {
+function render(morph, env, scope, [path, ...params], hash, template, inverse, visitor) {
   let {
     componentPath
   } = morph.getState();
 
-  if (params[0] && params[0][COMPONENT_REFERENCE]) {
-    let closureComponent = env.hooks.getValue(params[0]);
-    params = mergeParams([componentPath], closureComponent[COMPONENT_PARAMS], params.slice(1));
+  if (path && path[COMPONENT_REFERENCE]) {
+    let closureComponent = env.hooks.getValue(path);
+    params = mergeParams(closureComponent[COMPONENT_PARAMS], params);
     hash = mergeHash(closureComponent[COMPONENT_HASH], hash);
   }
 

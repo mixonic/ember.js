@@ -119,9 +119,6 @@ function extractPositionalParams(renderNode, component, params, attrs) {
 }
 
 function processPositionalParams(renderNode, positionalParams, params, attrs) {
-  // if the component is rendered via {{component}} helper, the first
-  // element of `params` is the name of the component, so we need to
-  // skip that when the positional parameters are constructed
   const isNamed = typeof positionalParams === 'string';
 
   if (isNamed) {
@@ -132,10 +129,8 @@ function processPositionalParams(renderNode, positionalParams, params, attrs) {
 }
 
 function processNamedPositionalParameters(renderNode, positionalParams, params, attrs) {
-  const paramsStartIndex = renderNode.getState().isComponentHelper ? 1 : 0;
-
   for (let i = 0; i < positionalParams.length; i++) {
-    let param = params[paramsStartIndex + i];
+    let param = params[i];
 
     assert(`You cannot specify both a positional param (at position ${i}) and the hash argument \`${positionalParams[i]}\`.`,
            !(positionalParams[i] in attrs));
@@ -149,15 +144,13 @@ function processRestPositionalParameters(renderNode, positionalParamsName, param
   assert(`You cannot specify positional parameters and the hash argument \`${positionalParamsName}\`.`,
          !(positionalParamsName in attrs));
 
-  const paramsStartIndex = renderNode.getState().isComponentHelper ? 1 : 0;
-
   let paramsStream = new Stream(() => {
-    return readArray(params.slice(paramsStartIndex));
+    return readArray(params.slice(0));
   }, 'params');
 
   attrs[positionalParamsName] = paramsStream;
 
-  for (let i = paramsStartIndex; i < params.length; i++) {
+  for (let i = 0; i < params.length; i++) {
     let param = params[i];
     paramsStream.addDependency(param);
   }

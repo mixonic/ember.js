@@ -5,11 +5,7 @@
 
 import { symbol } from 'ember-metal/utils';
 import BasicStream from 'ember-metal/streams/stream';
-import {
-  read,
-  readArray,
-  readHash
-} from 'ember-metal/streams/utils';
+import { read } from 'ember-metal/streams/utils';
 import { labelForSubexpr } from 'ember-htmlbars/hooks/subexpr';
 
 export const COMPONENT_REFERENCE = symbol('COMPONENT_REFERENCE');
@@ -55,4 +51,4 @@ function createClosureComponentCell(componentPath, params, hash) {
   };
 
   return val;
-};
+}
