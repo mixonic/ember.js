@@ -45,13 +45,21 @@ export default function closureComponent([path, ...params], hash) {
 
 function createClosureComponentCell(originalComponentPath, params, hash) {
   let componentPath = read(originalComponentPath);
+  let val;
 
-  let val = {
-    [COMPONENT_PATH]: componentPath,
-    [COMPONENT_PARAMS]: params,
-    [COMPONENT_HASH]: hash,
-    [COMPONENT_CELL]: true
-  };
+  if (componentPath && componentPath[COMPONENT_CELL]) {
+    val = {
+      [COMPONENT_PATH]: componentPath[COMPONENT_PATH],
+      [COMPONENT_PARAMS]: []
+    };
+  } else {
+    val = {
+      [COMPONENT_PATH]: componentPath,
+      [COMPONENT_PARAMS]: params,
+      [COMPONENT_HASH]: hash,
+      [COMPONENT_CELL]: true
+    };
+  }
 
   return val;
 }
