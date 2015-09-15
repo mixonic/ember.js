@@ -60,7 +60,7 @@ export default function(morph, env, scope, params, hash, template, inverse, visi
       keyword('@element_component', morph, env, scope, params, hash, template, inverse, visitor);
       return true;
     }
-    return closureComponent(params, hash);
+    return closureComponent(env, params, hash);
   } else {
     keyword('@element_component', morph, env, scope, params, hash, template, inverse, visitor);
     return true;

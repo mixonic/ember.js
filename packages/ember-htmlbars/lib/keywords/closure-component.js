@@ -16,7 +16,8 @@ export const COMPONENT_POSITIONAL_PARAMS = symbol('COMPONENT_POSITIONAL_PARAMS')
 export const COMPONENT_HASH = symbol('COMPONENT_HASH');
 
 let ClosureComponentStream = BasicStream.extend({
-  init(path, params, hash) {
+  init(env, path, params, hash) {
+    this._env = env;
     this._path = path;
     this._params = params;
     this._hash = hash;
@@ -24,12 +25,12 @@ let ClosureComponentStream = BasicStream.extend({
     this[COMPONENT_REFERENCE] = true;
   },
   compute() {
-    return createClosureComponentCell(this._path, this._params, this._hash);
+    return createClosureComponentCell(this._env, this._path, this._params, this._hash);
   }
 });
 
-export default function closureComponent([path, ...params], hash) {
-  let s = new ClosureComponentStream(path, params, hash);
+export default function closureComponent(env, [path, ...params], hash) {
+  let s = new ClosureComponentStream(env, path, params, hash);
 
   s.addDependency(path);
 
@@ -43,7 +44,7 @@ export default function closureComponent([path, ...params], hash) {
   return s;
 }
 
-function createClosureComponentCell(originalComponentPath, params, hash) {
+function createClosureComponentCell(env, originalComponentPath, params, hash) {
   let componentPath = read(originalComponentPath);
   let val;
 

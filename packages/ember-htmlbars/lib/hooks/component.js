@@ -101,6 +101,7 @@ export default function componentHook(renderNode, env, scope, _tagName, params, 
     // Invoking a component from the outside (either via <foo-bar> angle brackets
     // or {{foo-bar}} legacy curlies).
 
+    console.log(`HASH TO CNM`, attrs);
     var manager = ComponentNodeManager.create(renderNode, env, {
       tagName,
       params,
