@@ -131,4 +131,52 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
     equal(component.$().text(), `Hodi`,
           'greeting is bound');
   });
+
+  QUnit.test('nested components overwrites named positional parameters', function() {
+    let LookedUp = Component.extend();
+    LookedUp.reopenClass({
+      positionalParams: ['name', 'age']
+    });
+    registry.register(
+      'component:-looked-up',
+      LookedUp
+    );
+    registry.register(
+      'template:components/-looked-up',
+      compile(`{{name}} {{age}}`)
+    );
+
+    let template = compile(
+      `{{component
+          (component (component "-looked-up" "Sergio" 28)
+                     "Marvin" 21)
+          "Hodari"}}`
+    );
+    component = Component.extend({ container, template }).create();
+
+    runAppend(component);
+    equal(component.$().text(), 'Hodari 21', '-looked-up component rendered');
+  });
+
+  QUnit.test('nested components overwrites hash parameters', function() {
+    registry.register(
+      'template:components/-looked-up',
+      compile(`{{greeting}} {{name}} {{age}}`)
+    );
+
+    let template = compile(
+      `{{component (component (component "-looked-up"
+                                  greeting="Hola" name="Dolores" age=33)
+                              greeting="Hej" name="Sigmundur")
+                    greeting=greeting}}`
+    );
+    component = Component.extend({ container, template, greeting: 'Hodi' }).create();
+
+    runAppend(component);
+
+    equal(component.$().text(), 'Hodi Sigmundur 33', '-looked-up component rendered');
+  });
+
+  // Avoid assertions
+  // Add tests for bound properties
 }

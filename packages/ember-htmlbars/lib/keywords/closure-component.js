@@ -7,6 +7,7 @@ import { symbol } from 'ember-metal/utils';
 import BasicStream from 'ember-metal/streams/stream';
 import { read } from 'ember-metal/streams/utils';
 import { labelForSubexpr } from 'ember-htmlbars/hooks/subexpr';
+import assign from 'ember-metal/assign';
 
 export const COMPONENT_REFERENCE = symbol('COMPONENT_REFERENCE');
 export const COMPONENT_CELL = symbol('COMPONENT_CELL');
@@ -51,7 +52,9 @@ function createClosureComponentCell(env, originalComponentPath, params, hash) {
   if (componentPath && componentPath[COMPONENT_CELL]) {
     val = {
       [COMPONENT_PATH]: componentPath[COMPONENT_PATH],
-      [COMPONENT_PARAMS]: []
+      [COMPONENT_PARAMS]: mergeParams(componentPath[COMPONENT_PARAMS], params),
+      [COMPONENT_HASH]: mergeHash(componentPath[COMPONENT_HASH], hash),
+      [COMPONENT_CELL]: true
     };
   } else {
     val = {
@@ -63,4 +66,20 @@ function createClosureComponentCell(env, originalComponentPath, params, hash) {
   }
 
   return val;
+}
+
+export function mergeParams(original, update) {
+  // If update has the same or more items than original, we can just return the
+  // update
+  if (update.length >= original.length) {
+    return update;
+  } else {
+    let result = update.slice(0);
+    result.push(...original.slice(update.length));
+    return result;
+  }
+}
+
+export function mergeHash(original, updates) {
+  return assign(original, updates);
 }

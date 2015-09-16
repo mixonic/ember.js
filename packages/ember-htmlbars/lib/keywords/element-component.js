@@ -4,6 +4,8 @@ import {
   COMPONENT_PATH,
   COMPONENT_PARAMS,
   COMPONENT_HASH,
+  mergeHash,
+  mergeParams
 } from  './closure-component';
 
 export default {
@@ -48,12 +50,8 @@ function render(morph, env, scope, [path, ...params], hash, template, inverse, v
 
   if (path && path[COMPONENT_REFERENCE]) {
     let closureComponent = env.hooks.getValue(path);
-    console.log(`PARAMS`, params, closureComponent[COMPONENT_PARAMS]);
     params = mergeParams(closureComponent[COMPONENT_PARAMS], params);
-    console.log(params);
-    console.log(`HASH`, hash, closureComponent[COMPONENT_HASH]);
     hash = mergeHash(closureComponent[COMPONENT_HASH], hash);
-    console.log(hash);
   }
 
   // If the value passed to the {{component}} helper is undefined or null,
@@ -67,16 +65,4 @@ function render(morph, env, scope, [path, ...params], hash, template, inverse, v
     morph, env, scope, componentPath,
     params, hash, templates, visitor
   );
-}
-
-function mergeParams(...paramsArray) {
-  let mergedParams = [];
-  for (let i = 0; i < paramsArray.length; i++) {
-    mergedParams.splice(mergedParams.length, 0, ...paramsArray[i]);
-  }
-  return mergedParams;
-}
-
-function mergeHash(...hashArray) {
-  return assign({}, ...hashArray);
 }

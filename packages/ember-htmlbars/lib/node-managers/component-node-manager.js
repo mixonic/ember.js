@@ -65,9 +65,7 @@ ComponentNodeManager.create = function ComponentNodeManager_create(renderNode, e
     createOptions._controller = getValue(parentScope.getLocal('controller'));
   }
 
-  console.log(`before extractPositionalParams`, component, params, attrs);
   extractPositionalParams(renderNode, component, params, attrs);
-  console.log(`after extractPositionalParams`, component, params, attrs);
 
   // Instantiate the component
   component = createComponent(component, isAngleBracket, createOptions, renderNode, env, attrs);
