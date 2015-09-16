@@ -179,4 +179,44 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
 
   // Avoid assertions
   // Add tests for bound properties
+  QUnit.test('bound outer named parameters get updated in the right scope', function() {
+    let InnerComponent= Component.extend();
+    InnerComponent.reopenClass({
+      positionalParams: ['comp']
+    });
+    registry.register(
+      'component:-inner-component',
+      InnerComponent
+    );
+    registry.register(
+      'template:components/-inner-component',
+      compile(`{{component comp "Inner"}}`)
+    );
+
+    let LookedUp = Component.extend();
+    LookedUp.reopenClass({
+      positionalParams: ['name', 'age']
+    });
+    registry.register(
+      'component:-looked-up',
+      LookedUp
+    );
+    registry.register(
+      'template:components/-looked-up',
+      compile(`{{name}} {{age}}`)
+    );
+
+    let template = compile(
+      `{{component "-inner-component" (component "-looked-up" outerName outerAge)}}`
+    );
+    component = Component.extend({
+      container,
+      template,
+      outerName: "Outer",
+      outerAge: 28
+    }).create();
+
+    runAppend(component);
+    equal(component.$().text(), 'Inner 28', '-looked-up component rendered');
+  });
 }
