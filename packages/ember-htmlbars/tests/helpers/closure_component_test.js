@@ -180,7 +180,7 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
   // Avoid assertions
   // Add tests for bound properties
   QUnit.test('bound outer named parameters get updated in the right scope', function() {
-    let InnerComponent= Component.extend();
+    let InnerComponent = Component.extend();
     InnerComponent.reopenClass({
       positionalParams: ['comp']
     });
@@ -212,7 +212,7 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
     component = Component.extend({
       container,
       template,
-      outerName: "Outer",
+      outerName: 'Outer',
       outerAge: 28
     }).create();
 
