@@ -68,10 +68,6 @@ function makeCtor() {
       Class.proto(); // prepare prototype...
     }
 
-    if (arguments.length > 0) {
-      initProperties = [arguments[0]];
-    }
-
     this.__defineNonEnumerable(GUID_KEY_PROPERTY);
     var m = meta(this);
     var proto = m.proto;
