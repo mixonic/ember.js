@@ -2,11 +2,11 @@ import assign from 'ember-metal/assign';
 import {
   COMPONENT_CELL,
   COMPONENT_PATH,
-  COMPONENT_PARAMS,
+  COMPONENT_POSITIONAL_PARAMS,
   COMPONENT_HASH,
   mergeHash,
-  mergeParams
 } from  './closure-component';
+import { processPositionalParams } from 'ember-htmlbars/utils/extract-positional-params';
 
 export default {
   setupState(lastState, env, scope, params, hash) {
@@ -52,7 +52,9 @@ function render(morph, env, scope, [path, ...params], hash, template, inverse, v
 
   if (path && path[COMPONENT_CELL]) {
     let closureComponent = env.hooks.getValue(path);
-    params = mergeParams(closureComponent[COMPONENT_PARAMS], params);
+    let positionalParams = closureComponent[COMPONENT_POSITIONAL_PARAMS];
+    processPositionalParams(null, positionalParams, params, hash);
+    params = [];
     hash = mergeHash(closureComponent[COMPONENT_HASH], hash);
   }
 

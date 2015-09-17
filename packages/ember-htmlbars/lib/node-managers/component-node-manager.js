@@ -7,8 +7,7 @@ import { MUTABLE_CELL } from 'ember-views/compat/attrs-proxy';
 import { instrument } from 'ember-htmlbars/system/instrumentation-support';
 import LegacyEmberComponent from 'ember-views/components/component';
 import GlimmerComponent from 'ember-htmlbars/glimmer-component';
-import { Stream } from 'ember-metal/streams/stream';
-import { readArray } from 'ember-metal/streams/utils';
+import extractPositionalParams from 'ember-htmlbars/utils/extract-positional-params';
 import { symbol } from 'ember-metal/utils';
 
 // These symbols will be used to limit link-to's public API surface area.
@@ -110,51 +109,6 @@ ComponentNodeManager.create = function ComponentNodeManager_create(renderNode, e
   return new ComponentNodeManager(component, isAngleBracket, parentScope, renderNode, attrs, results.block, results.createdElement);
 };
 
-function extractPositionalParams(renderNode, component, params, attrs) {
-  let positionalParams = component.positionalParams;
-
-  if (positionalParams) {
-    processPositionalParams(renderNode, positionalParams, params, attrs);
-  }
-}
-
-function processPositionalParams(renderNode, positionalParams, params, attrs) {
-  const isNamed = typeof positionalParams === 'string';
-
-  if (isNamed) {
-    processRestPositionalParameters(renderNode, positionalParams, params, attrs);
-  } else {
-    processNamedPositionalParameters(renderNode, positionalParams, params, attrs);
-  }
-}
-
-function processNamedPositionalParameters(renderNode, positionalParams, params, attrs) {
-  for (let i = 0; i < positionalParams.length; i++) {
-    let param = params[i];
-
-    assert(`You cannot specify both a positional param (at position ${i}) and the hash argument \`${positionalParams[i]}\`.`,
-           !(positionalParams[i] in attrs));
-
-    attrs[positionalParams[i]] = param;
-  }
-}
-
-function processRestPositionalParameters(renderNode, positionalParamsName, params, attrs) {
-  // If there is already an attribute for that variable, do nothing
-  assert(`You cannot specify positional parameters and the hash argument \`${positionalParamsName}\`.`,
-         !(positionalParamsName in attrs));
-
-  let paramsStream = new Stream(() => {
-    return readArray(params.slice(0));
-  }, 'params');
-
-  attrs[positionalParamsName] = paramsStream;
-
-  for (let i = 0; i < params.length; i++) {
-    let param = params[i];
-    paramsStream.addDependency(param);
-  }
-}
 
 function configureTagName(attrs, tagName, component, isAngleBracket, createOptions) {
   if (isAngleBracket) {

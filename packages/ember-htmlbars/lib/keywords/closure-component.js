@@ -8,6 +8,8 @@ import BasicStream from 'ember-metal/streams/stream';
 import { read } from 'ember-metal/streams/utils';
 import { labelForSubexpr } from 'ember-htmlbars/hooks/subexpr';
 import assign from 'ember-metal/assign';
+import { processPositionalParams } from 'ember-htmlbars/utils/extract-positional-params';
+import lookupComponent from 'ember-htmlbars/utils/lookup-component';
 
 export const COMPONENT_REFERENCE = symbol('COMPONENT_REFERENCE');
 export const COMPONENT_CELL = symbol('COMPONENT_CELL');
@@ -50,22 +52,43 @@ function createClosureComponentCell(env, originalComponentPath, params, hash) {
   let val;
 
   if (componentPath && componentPath[COMPONENT_CELL]) {
+    let positionalParams = componentPath[COMPONENT_POSITIONAL_PARAMS];
+    processPositionalParams(null, positionalParams, params, hash);
+
     val = {
       [COMPONENT_PATH]: componentPath[COMPONENT_PATH],
-      [COMPONENT_PARAMS]: mergeParams(componentPath[COMPONENT_PARAMS], params),
+      [COMPONENT_PARAMS]: [],
       [COMPONENT_HASH]: mergeHash(componentPath[COMPONENT_HASH], hash),
+      [COMPONENT_POSITIONAL_PARAMS]: positionalParams,
       [COMPONENT_CELL]: true
     };
   } else {
+    let positionalParams = getPositionalParams(env.container, componentPath);
+    if (positionalParams) {
+      processPositionalParams(null, positionalParams, params, hash);
+    }
     val = {
       [COMPONENT_PATH]: componentPath,
-      [COMPONENT_PARAMS]: params,
+      [COMPONENT_PARAMS]: [],
       [COMPONENT_HASH]: hash,
+      [COMPONENT_POSITIONAL_PARAMS]: positionalParams,
       [COMPONENT_CELL]: true
     };
   }
 
   return val;
+}
+
+function getPositionalParams(container, componentPath) {
+  if (!componentPath) { return []; }
+  let result = lookupComponent(container, componentPath);
+  let component = result.component;
+
+  if (component && component.positionalParams) {
+    return component.positionalParams;
+  } else {
+    return [];
+  }
 }
 
 export function mergeParams(original, update) {

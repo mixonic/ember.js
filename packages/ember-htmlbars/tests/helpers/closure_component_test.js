@@ -86,6 +86,11 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
   });
 
   QUnit.test('updates when component path is bound', function() {
+    let Mandarin = Component.extend();
+    registry.register(
+      'component:-mandarin',
+      Mandarin
+    );
     registry.register(
       'template:components/-mandarin',
       compile(`ni hao`)
@@ -177,8 +182,6 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
     equal(component.$().text(), 'Hodi Sigmundur 33', '-looked-up component rendered');
   });
 
-  // Avoid assertions
-  // Add tests for bound properties
   QUnit.test('bound outer named parameters get updated in the right scope', function() {
     let InnerComponent = Component.extend();
     InnerComponent.reopenClass({
@@ -218,5 +221,92 @@ if (Ember.FEATURES.isEnabled('ember-contextual-components')) {
 
     runAppend(component);
     equal(component.$().text(), 'Inner 28', '-looked-up component rendered');
+  });
+
+  QUnit.test('bound outer hash parameters get updated in the right scope', function() {
+    let InnerComponent = Component.extend();
+    InnerComponent.reopenClass({
+      positionalParams: ['comp']
+    });
+    registry.register(
+      'component:-inner-component',
+      InnerComponent
+    );
+    registry.register(
+      'template:components/-inner-component',
+      compile(`{{component comp name="Inner"}}`)
+    );
+
+    let LookedUp = Component.extend();
+    LookedUp.reopenClass({
+    });
+    registry.register(
+      'component:-looked-up',
+      LookedUp
+    );
+    registry.register(
+      'template:components/-looked-up',
+      compile(`{{name}} {{age}}`)
+    );
+
+    let template = compile(
+      `{{component "-inner-component" (component "-looked-up" name=outerName age=outerAge)}}`
+    );
+    component = Component.extend({
+      container,
+      template,
+      outerName: 'Outer',
+      outerAge: 28
+    }).create();
+
+    runAppend(component);
+    equal(component.$().text(), 'Inner 28', '-looked-up component rendered');
+  });
+
+  QUnit.test('conflicting positional and hash parameters raise and assertion if in the same closure', function() {
+    let LookedUp = Component.extend();
+    LookedUp.reopenClass({
+      positionalParams: ['name']
+    });
+    registry.register(
+      'component:-looked-up',
+      LookedUp
+    );
+    registry.register(
+      'template:components/-looked-up',
+      compile(`{{greeting}} {{name}}`)
+    );
+
+    let template = compile(
+      `{{component (component "-looked-up" "Hodari" name="Sergio") "Hodari" greeting="Hodi"}}`
+    );
+    component = Component.extend({ container, template }).create();
+
+    expectAssertion(function() {
+      runAppend(component);
+    }, `You cannot specify both a positional param (at position 0) and the hash argument \`name\`.`);
+  });
+
+  QUnit.test('conflicting positional and hash parameters does not raise and assertion if in the different closure', function() {
+    let LookedUp = Component.extend();
+    LookedUp.reopenClass({
+      positionalParams: ['name']
+    });
+    registry.register(
+      'component:-looked-up',
+      LookedUp
+    );
+    registry.register(
+      'template:components/-looked-up',
+      compile(`{{greeting}} {{name}}`)
+    );
+
+    let template = compile(
+      `{{component (component "-looked-up" "Hodari") name="Sergio" greeting="Hodi"}}`
+    );
+    component = Component.extend({ container, template }).create();
+
+    runAppend(component);
+    equal(component.$().text(), 'Hodi Sergio', 'component is rendered');
   });
 }
