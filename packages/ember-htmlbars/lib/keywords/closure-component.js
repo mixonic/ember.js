@@ -14,7 +14,6 @@ import lookupComponent from 'ember-htmlbars/utils/lookup-component';
 export const COMPONENT_REFERENCE = symbol('COMPONENT_REFERENCE');
 export const COMPONENT_CELL = symbol('COMPONENT_CELL');
 export const COMPONENT_PATH = symbol('COMPONENT_PATH');
-export const COMPONENT_PARAMS = symbol('COMPONENT_PARAMS');
 export const COMPONENT_POSITIONAL_PARAMS = symbol('COMPONENT_POSITIONAL_PARAMS');
 export const COMPONENT_HASH = symbol('COMPONENT_HASH');
 
@@ -57,7 +56,6 @@ function createClosureComponentCell(env, originalComponentPath, params, hash) {
 
     val = {
       [COMPONENT_PATH]: componentPath[COMPONENT_PATH],
-      [COMPONENT_PARAMS]: [],
       [COMPONENT_HASH]: mergeHash(componentPath[COMPONENT_HASH], hash),
       [COMPONENT_POSITIONAL_PARAMS]: positionalParams,
       [COMPONENT_CELL]: true
@@ -69,7 +67,6 @@ function createClosureComponentCell(env, originalComponentPath, params, hash) {
     }
     val = {
       [COMPONENT_PATH]: componentPath,
-      [COMPONENT_PARAMS]: [],
       [COMPONENT_HASH]: hash,
       [COMPONENT_POSITIONAL_PARAMS]: positionalParams,
       [COMPONENT_CELL]: true
