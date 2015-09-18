@@ -10,10 +10,18 @@
 
    ```handlebars
    {{yield (hash
-      my-button=(component 'awesome-button' value=buttonValue)
-      my-input=(component 'awesome-input' maxlength=inputMaxlength)
+      name='Sarah'
+      title=office
    )}}
    ```
+
+   Would result in an object such as:
+
+   ```js
+   { name: 'Sarah', title: this.get('office') }
+   ```
+
+   Where the `title` is bound to updates of the `office` property.
 
    @method hash
    @for Ember.Templates.helpers
