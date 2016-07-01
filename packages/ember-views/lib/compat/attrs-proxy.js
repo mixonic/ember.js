@@ -1,6 +1,7 @@
 import { Mixin } from 'ember-metal/mixin';
 import symbol from 'ember-metal/symbol';
 import { PROPERTY_DID_CHANGE } from 'ember-metal/property_events';
+import { set } from 'ember-metal/property_set';
 
 export function deprecation(key) {
   return `You tried to look up an attribute directly on the component. This is deprecated. Use attrs.${key} instead.`;
@@ -39,7 +40,11 @@ const AttrsProxyMixin = {
 
   _propagateAttrsToThis(attrs) {
     this._isDispatchingAttrs = true;
-    this.setProperties(attrs);
+    let props = Object.keys(attrs);
+    for (let i = 0; i < props.length; i++) {
+      let propertyName = props[i];
+      set(this, propertyName, attrs[propertyName]);
+    }
     this._isDispatchingAttrs = false;
   }
 };
