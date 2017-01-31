@@ -382,6 +382,7 @@ Engine.reopenClass({
     @private
   */
   buildRegistry(namespace, options = {}) {
+    // Move the deprecation about resolver as a pure function to here
     let registry = new Registry({
       resolver: resolverFor(namespace)
     });
