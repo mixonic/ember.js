@@ -161,6 +161,7 @@ const ApplicationInstance = EngineInstance.extend({
   */
   startRouting() {
     let router = get(this, 'router');
+    debugger;
     router.startRouting();
     this._didSetupRouter = true;
   },

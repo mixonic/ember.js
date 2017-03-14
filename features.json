@@ -9,6 +9,7 @@
     "ember-factory-for": true,
     "ember-no-double-extend": null,
     "ember-routing-router-service": null,
-    "ember-unique-location-history-state": null
+    "ember-unique-location-history-state": null,
+    "glimmer-di": null
   }
 }

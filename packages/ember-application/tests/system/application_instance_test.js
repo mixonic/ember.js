@@ -12,6 +12,7 @@ let application, appInstance;
 QUnit.module('Ember.ApplicationInstance', {
   setup() {
     jQuery('#qunit-fixture').html('<div id=\'one\'><div id=\'one-child\'>HI</div></div><div id=\'two\'>HI</div>');
+    console.log('start');
     application = run(() => Application.create({ rootElement: '#one', router: null }));
   },
 
@@ -25,14 +26,18 @@ QUnit.module('Ember.ApplicationInstance', {
     if (application) {
       run(application, 'destroy');
     }
+
+    console.log('destroy complete');
   }
 });
 
 QUnit.test('an application instance can be created based upon an application', function() {
+  console.log('start test');
   appInstance = run(() => appInstance = ApplicationInstance.create({ application }));
 
   ok(appInstance, 'instance should be created');
   equal(appInstance.application, application, 'application should be set to parent');
+  console.log('test over');
 });
 
 QUnit.test('properties (and aliases) are correctly assigned for accessing the container and registry', function() {

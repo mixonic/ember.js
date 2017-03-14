@@ -13,7 +13,13 @@ import {
   privatize as P
 } from 'container';
 import DAG from 'dag-map';
-import { get, set, assert, deprecate } from 'ember-metal';
+import {
+  get,
+  set,
+  assert,
+  deprecate,
+  isFeatureEnabled
+} from 'ember-metal';
 import DefaultResolver from './resolver';
 import EngineInstance from './engine-instance';
 import { RoutingService } from 'ember-routing';
@@ -53,6 +59,9 @@ const Engine = Namespace.extend(RegistryProxyMixin, {
     this._super(...arguments);
 
     this.buildRegistry();
+    if (isFeatureEnabled('glimmer-di')) {
+      this.buildResolver();
+    }
   },
 
   /**
@@ -100,6 +109,19 @@ const Engine = Namespace.extend(RegistryProxyMixin, {
     let registry = this.__registry__ = this.constructor.buildRegistry(this);
 
     return registry;
+  },
+
+  /**
+    Build and configure the resolver for the current engine.
+
+    @private
+    @method buildResolver
+    @return {Ember.Resolver} the configured resolver
+  */
+  buildResolver() {
+    let resolver = this.__resolver__ = this.constructor.buildResolver(this);
+
+    return resolver;
   },
 
   /**
@@ -382,19 +404,40 @@ Engine.reopenClass({
     @private
   */
   buildRegistry(namespace, options = {}) {
-    // Move the deprecation about resolver as a pure function to here
-    let registry = new Registry({
-      resolver: resolverFor(namespace)
-    });
+    let registry;
+
+    if (isFeatureEnabled('glimmer-di')) {
+      registry = new Registry();
+    } else {
+      registry = new Registry({
+        resolver: this.buildResolver(namespace)
+      });
+    }
 
     registry.set = set;
 
     registry.register('application:main', namespace, { instantiate: false });
 
+    debugger;
     commonSetupRegistry(registry);
     setupEngineRegistry(registry);
 
     return registry;
+  },
+
+  /**
+    Given a namespace fetch or create a resolver instance.
+
+    @private
+    @method buildResolver
+    @param {Ember.Namespace} namespace the namespace to look for classes
+    @return {Ember.Resolver}
+  */
+  buildResolver(namespace) {
+    let ResolverClass = namespace.get('Resolver') || DefaultResolver;
+    return ResolverClass.create({
+      namespace
+    });
   },
 
   /**
@@ -415,30 +458,6 @@ Engine.reopenClass({
   */
   Resolver: null
 });
-
-/**
-  This function defines the default lookup rules for container lookups:
-
-  * templates are looked up on `Ember.TEMPLATES`
-  * other names are looked up on the application after classifying the name.
-    For example, `controller:post` looks up `App.PostController` by default.
-  * if the default lookup fails, look for registered classes on the container
-
-  This allows the application to register default injections in the container
-  that could be overridden by the normal naming convention.
-
-  @private
-  @method resolverFor
-  @param {Ember.Namespace} namespace the namespace to look for classes
-  @return {*} the resolved value for a given lookup
-*/
-function resolverFor(namespace) {
-  let ResolverClass = namespace.get('Resolver') || DefaultResolver;
-
-  return ResolverClass.create({
-    namespace
-  });
-}
 
 function buildInitializerMethod(bucketName, humanName) {
   return function(initializer) {

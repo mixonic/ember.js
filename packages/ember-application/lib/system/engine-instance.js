@@ -10,8 +10,19 @@ import {
   RegistryProxyMixin,
   RSVP
 } from 'ember-runtime';
-import { Error as EmberError, assert, run } from 'ember-metal';
-import { Registry, FACTORY_FOR, LOOKUP_FACTORY, privatize as P } from 'container';
+import {
+  Error as EmberError,
+  assert,
+  run,
+  isFeatureEnabled
+} from 'ember-metal';
+import {
+  Container,
+  Registry,
+  FACTORY_FOR,
+  LOOKUP_FACTORY,
+  privatize as P
+} from 'container';
 import { getEngineParent, setEngineParent } from './engine-parent';
 
 /**
@@ -53,7 +64,11 @@ const EngineInstance = EmberObject.extend(RegistryProxyMixin, ContainerProxyMixi
     });
 
     // Create a per-instance container from the instance's registry
-    this.__container__ = registry.container({ owner: this });
+    if (isFeatureEnabled('glimmer-di')) {
+      this.__container__ = new Container(registry, base.__resolver);
+    } else {
+      this.__container__ = registry.container({ owner: this });
+    }
 
     this._booted = false;
   },
@@ -94,6 +109,7 @@ const EngineInstance = EmberObject.extend(RegistryProxyMixin, ContainerProxyMixi
     @private
   */
   _bootSync(options) {
+    debugger;
     if (this._booted) { return this; }
 
     assert('An engine instance\'s parent must be set via `setEngineParent(engine, parent)` prior to calling `engine.boot()`.', getEngineParent(this));
@@ -110,6 +126,7 @@ const EngineInstance = EmberObject.extend(RegistryProxyMixin, ContainerProxyMixi
   },
 
   setupRegistry(options = this.__container__.lookup('-environment:main')) {
+    debugger;
     this.constructor.setupRegistry(this.__registry__, options);
   },
 
@@ -190,6 +207,7 @@ const EngineInstance = EmberObject.extend(RegistryProxyMixin, ContainerProxyMixi
       `renderer:-${env.isInteractive ? 'dom' : 'inert'}`
     ];
 
+    debugger;
     singletons.forEach(key => this.register(key, parent.lookup(key), { instantiate: false }));
 
     this.inject('view', '_environment', '-environment:main');

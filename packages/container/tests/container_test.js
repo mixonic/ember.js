@@ -5,6 +5,8 @@ import { Registry } from '../index';
 import { factory } from 'internal-test-helpers';
 import { LOOKUP_FACTORY, FACTORY_FOR } from 'container';
 
+if (!isFeatureEnabled('glimmer-di')) {
+
 let originalModelInjections;
 
 QUnit.module('Container', {
@@ -784,4 +786,6 @@ if (isFeatureEnabled('ember-factory-for')) {
 
     assert.equal(instrance.ajax, 'fetch');
   });
+}
+
 }

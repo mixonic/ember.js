@@ -1,7 +1,6 @@
 import { dictionary, EmptyObject, assign, intern } from 'ember-utils';
 import { assert, deprecate } from 'ember-metal';
 import Container from './container';
-import GlimmerRegistry from '@glimmer/di';
 
 const VALID_FULL_NAME_REGEXP = /^[^:]+:[^:]+$/;
 
@@ -43,8 +42,6 @@ export default function Registry(options) {
 
   this._options               = dictionary(null);
   this._typeOptions           = dictionary(null);
-
-  this._glimmerRegistry = new GlimmerRegistry();
 }
 
 Registry.prototype = {

@@ -1,5 +1,8 @@
 import { Registry } from '../index';
 import { factory } from 'internal-test-helpers';
+import { isFeatureEnabled } from 'ember-metal';
+
+if (!isFeatureEnabled('glimmer-di')) {
 
 QUnit.module('Registry');
 
@@ -748,3 +751,5 @@ QUnit.test('has uses expandLocalLookup', function(assert) {
 
   assert.deepEqual(['foo:qux/bar'], resolvedFullNames);
 });
+
+}
