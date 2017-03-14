@@ -1,4 +1,9 @@
-import { Registry, FACTORY_FOR, LOOKUP_FACTORY } from 'container';
+import {
+  Container,
+  Registry,
+  FACTORY_FOR,
+  LOOKUP_FACTORY
+} from 'container';
 import { Router } from 'ember-routing';
 import {
   Application,
@@ -10,6 +15,7 @@ import {
   ContainerProxyMixin,
   Object as EmberObject
 } from 'ember-runtime';
+import { setOwner } from 'ember-utils';
 
 export default function buildOwner(options = {}) {
   let ownerOptions = options.ownerOptions || {};
@@ -33,9 +39,14 @@ export default function buildOwner(options = {}) {
     });
   }
 
-  let namespace = EmberObject.create({
-    Resolver: { create() { return resolver; } }
-  });
+  let namespace;
+  if (isFeatureEnabled('glimmer-di')) {
+    namespace = EmberObject.create();
+  } else {
+    namespace = EmberObject.create({
+      Resolver: { create() { return resolver; } }
+    });
+  }
 
   let fallbackRegistry = Application.buildRegistry(namespace);
   fallbackRegistry.register('router:main', Router);
@@ -51,7 +62,18 @@ export default function buildOwner(options = {}) {
     __container__: null
   }, ownerOptions);
 
-  let container = registry.container({ owner: owner });
+  let container;
+  if (isFeatureEnabled('glimmer-di')) {
+    container = new Container(registry);
+    container.defaultInjections = (specifier) => {
+      let injections = {};
+      setOwner(injections, owner);
+      return injections;
+    };
+  } else {
+    container = registry.container({ owner });
+  }
+
   owner.__container__ = container;
 
   return owner;

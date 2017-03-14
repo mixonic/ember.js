@@ -36,10 +36,9 @@ import { pendingRequests } from '../test/pending_requests';
 */
 export default function wait(app, value) {
   return new RSVP.Promise(function(resolve) {
-    let router = app.__container__.lookup('router:main');
-
     // Every 10ms, poll for the async thing to have finished
     let watcher = setInterval(() => {
+      let router = app.__container__.lookup('router:main');
       // 1. If the router is loading, keep polling
       let routerIsLoading = router.router && !!router.router.activeTransition;
       if (routerIsLoading) { return; }

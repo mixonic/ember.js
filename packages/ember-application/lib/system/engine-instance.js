@@ -3,7 +3,10 @@
 @submodule ember-application
 */
 
-import { guidFor } from 'ember-utils';
+import {
+  guidFor,
+  setOwner
+} from 'ember-utils';
 import {
   Object as EmberObject,
   ContainerProxyMixin,
@@ -23,7 +26,6 @@ import {
   LOOKUP_FACTORY,
   privatize as P
 } from 'container';
-import { setOwner } from 'ember-utils';
 import { getEngineParent, setEngineParent } from './engine-parent';
 
 /**

@@ -75,7 +75,12 @@ export default class Environment extends GlimmerEnvironment {
         return new CurlyComponentDefinition(name, componentFactory, layout);
       }
     }, ({ name, source, owner }) => {
-      let expandedName = source && owner._resolveLocalLookupName(name, source) || name;
+      let expandedName;
+      if (isFeatureEnabled('glimmer-di')) {
+        expandedName = name;
+      } else {
+        expandedName = source && owner._resolveLocalLookupName(name, source) || name;
+      }
       let ownerGuid = guidFor(owner);
 
       return ownerGuid + '|' + expandedName;

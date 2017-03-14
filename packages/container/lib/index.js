@@ -27,13 +27,37 @@ class EmberGlimmerRegistry extends GlimmerRegistry {
       this.registerOption(name, key, options[key]);
     }
   }
+  getOptionsForType(type) {
+    return this.registeredOptions(type);
+  }
+  getTypeInjections(type) {
+    return this.registeredInjections(type);
+  }
+  getInjections(type) {
+    return this.registeredInjections(type);
+  }
   injection(type, property, fullName) {
     this.registerInjection(type, property, fullName);
+  }
+  resolve() {
+    return this.registration(...arguments);
+  }
+  has() {
+    return !!this.registration(...arguments);
+  }
+}
+
+class EmberGlimmerContainer extends GlimmerContainer {
+  lookupFactory() {
+    let factory = this.factoryFor(...arguments);
+    if (factory) {
+      return factory.class;
+    }
   }
 }
 
 const Registry = isFeatureEnabled('glimmer-di') ? EmberGlimmerRegistry : EmberRegistry;
-const Container = isFeatureEnabled('glimmer-di') ? GlimmerContainer : EmberContainer;
+const Container = isFeatureEnabled('glimmer-di') ? EmberGlimmerContainer : EmberContainer;
 const FACTORY_FOR = isFeatureEnabled('glimmer-di') ? 'factoryFor' : EMBER_FACTORY_FOR;
 
 export {

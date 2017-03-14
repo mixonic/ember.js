@@ -84,6 +84,8 @@ const ApplicationInstance = EngineInstance.extend({
     // appended to the rootElement, in the case of apps, to the fixture harness
     // in tests, or rendered to a string in the case of FastBoot.
     this.register('-application-instance:main', this, { instantiate: false });
+
+    this.register('router:main', this.Router || Router);
   },
 
   /**
@@ -296,7 +298,6 @@ ApplicationInstance.reopenClass({
 
     registry.register('-environment:main', options.toEnvironment(), { instantiate: false });
     registry.register('service:-document', options.document, { instantiate: false });
-    registry.register('router:main', this.Router || Router);
 
     this._super(registry, options);
   }

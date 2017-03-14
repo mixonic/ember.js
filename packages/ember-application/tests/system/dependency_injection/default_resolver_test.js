@@ -24,6 +24,8 @@ import {
 } from 'ember-glimmer';
 import { compile } from 'ember-template-compiler';
 
+if (!isFeatureEnabled('glimmer-di')) {
+
 let registry, locator, application, originalLookup, originalInfo;
 
 QUnit.module('Ember.Application Dependency Injection - default resolver', {
@@ -316,3 +318,5 @@ QUnit.test('knownForType is not required to be present on the resolver', functio
 
   ok(true, 'does not error');
 });
+
+}
