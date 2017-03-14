@@ -40,7 +40,7 @@ QUnit.module('Ember.Application', {
     originalWarn = getDebugFunction('warn');
 
     jQuery('#qunit-fixture').html('<div id=\'one\'><div id=\'one-child\'>HI</div></div><div id=\'two\'>HI</div>');
-    application = run(() => { debugger; return Application.create({ rootElement: '#one', router: null })});
+    application = run(() => Application.create({ rootElement: '#one', router: null }));
   },
 
   teardown() {

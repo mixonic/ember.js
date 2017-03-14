@@ -12,6 +12,7 @@ import {
 import { environment } from 'ember-environment';
 import { jQuery } from 'ember-views';
 import EngineInstance from './engine-instance';
+import { Router } from 'ember-routing';
 
 let BootOptions;
 
@@ -161,7 +162,6 @@ const ApplicationInstance = EngineInstance.extend({
   */
   startRouting() {
     let router = get(this, 'router');
-    debugger;
     router.startRouting();
     this._didSetupRouter = true;
   },
@@ -296,6 +296,7 @@ ApplicationInstance.reopenClass({
 
     registry.register('-environment:main', options.toEnvironment(), { instantiate: false });
     registry.register('service:-document', options.document, { instantiate: false });
+    registry.register('router:main', this.Router || Router);
 
     this._super(registry, options);
   }

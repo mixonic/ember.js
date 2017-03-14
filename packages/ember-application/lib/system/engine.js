@@ -418,7 +418,6 @@ Engine.reopenClass({
 
     registry.register('application:main', namespace, { instantiate: false });
 
-    debugger;
     commonSetupRegistry(registry);
     setupEngineRegistry(registry);
 

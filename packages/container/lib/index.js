@@ -11,7 +11,7 @@ import { default as EmberRegistry, privatize } from './registry';
 import {
   default as EmberContainer,
   buildFakeContainerWithDeprecations,
-  FACTORY_FOR,
+  FACTORY_FOR as EMBER_FACTORY_FOR,
   LOOKUP_FACTORY
 } from './container';
 
@@ -34,15 +34,16 @@ class EmberGlimmerRegistry extends GlimmerRegistry {
 
 const Registry = isFeatureEnabled('glimmer-di') ? EmberGlimmerRegistry : EmberRegistry;
 const Container = isFeatureEnabled('glimmer-di') ? GlimmerContainer : EmberContainer;
+const FACTORY_FOR = isFeatureEnabled('glimmer-di') ? 'factoryFor' : EMBER_FACTORY_FOR;
 
 export {
   Registry,
-  Container
+  Container,
+  FACTORY_FOR
 };
 
 export {
   privatize,
   buildFakeContainerWithDeprecations,
-  FACTORY_FOR,
   LOOKUP_FACTORY
 };
