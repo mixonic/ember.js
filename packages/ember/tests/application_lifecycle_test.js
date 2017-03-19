@@ -1,20 +1,18 @@
 import { Application } from 'ember-application';
 import { Route, controllerFor } from 'ember-routing';
 import { run } from 'ember-metal';
-import {
-  Component,
-  setTemplates,
-  getTemplates
-} from 'ember-glimmer';
+import { Component } from 'ember-glimmer';
 import { jQuery } from 'ember-views';
 import { compile } from 'ember-template-compiler';
+import Resolver from 'internal-test-helpers/test-resolver';
 
-let App, TEMPLATES, appInstance, router;
+let App, appInstance, resolver;
 
 function setupApp(klass) {
   run(function() {
     App = klass.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
     App.Router = App.Router.extend({
@@ -24,24 +22,23 @@ function setupApp(klass) {
     App.deferReadiness();
 
     appInstance = App.__deprecatedInstance__;
+
+    resolver = Resolver.lastInstance;
   });
 }
 
 QUnit.module('Application Lifecycle', {
   setup() {
-    TEMPLATES = getTemplates();
     setupApp(Application.extend());
   },
 
   teardown() {
-    router = null;
     run(App, 'destroy');
-    setTemplates({});
   }
 });
 
 function handleURL(path) {
-  router = appInstance.lookup('router:main');
+  let router = appInstance.lookup('router:main');
   return run(function() {
     return router.handleURL(path).then(function(value) {
       ok(true, 'url: `' + path + '` was handled');
@@ -58,22 +55,22 @@ QUnit.test('Resetting the application allows controller properties to be set whe
     this.route('home', { path: '/' });
   });
 
-  App.HomeRoute = Route.extend({
+  resolver.add('route:home', Route.extend({
     setupController() {
       this.controllerFor('home').set('selectedMenuItem', 'home');
     },
     deactivate() {
       this.controllerFor('home').set('selectedMenuItem', null);
     }
-  });
-  App.ApplicationRoute = Route.extend({
+  }));
+  resolver.add('route:application', Route.extend({
     setupController() {
       this.controllerFor('application').set('selectedMenuItem', 'home');
     },
     deactivate() {
       this.controllerFor('application').set('selectedMenuItem', null);
     }
-  });
+  }));
 
   appInstance.lookup('router:main');
 
@@ -95,22 +92,22 @@ QUnit.test('Destroying the application resets the router before the appInstance 
     this.route('home', { path: '/' });
   });
 
-  App.HomeRoute = Route.extend({
+  resolver.add('route:home', Route.extend({
     setupController() {
       this.controllerFor('home').set('selectedMenuItem', 'home');
     },
     deactivate() {
       this.controllerFor('home').set('selectedMenuItem', null);
     }
-  });
-  App.ApplicationRoute = Route.extend({
+  }));
+  resolver.add('route:application', Route.extend({
     setupController() {
       this.controllerFor('application').set('selectedMenuItem', 'home');
     },
     deactivate() {
       this.controllerFor('application').set('selectedMenuItem', null);
     }
-  });
+  }));
 
   appInstance.lookup('router:main');
 
@@ -132,12 +129,10 @@ QUnit.test('Destroying a route after the router does create an undestroyed `topl
     this.route('home', { path: '/' });
   });
 
-  setTemplates({
-    index: compile('Index!'),
-    application: compile('Application! {{outlet}}')
-  });
+  resolver.addTemplate('index', 'Index');
+  resolver.addTemplate('application', 'Application! {{outlet}}');
 
-  App.IndexRoute = Route.extend();
+  resolver.add('route:index', Route.extend());
   run(App, 'advanceReadiness');
 
   handleURL('/');
@@ -173,21 +168,21 @@ QUnit.test('initializers can augment an applications customEvents hash', functio
 
   setupApp(ApplicationSubclass);
 
-  App.FooBarComponent = Component.extend({
+  resolver.add('component:foo-bar', Component.extend({
     wowza() {
       assert.ok(true, 'fired the event!');
     }
-  });
+  }));
 
-  TEMPLATES['application'] = compile(`{{foo-bar}}`);
-  TEMPLATES['components/foo-bar'] = compile(`<div id='wowza-thingy'></div>`);
+  resolver.addTemplate('application', `{{foo-bar}}`);
+  resolver.addTemplate('components/foo-bar', `<div id='wowza-thingy'></div>`);
 
   run(App, 'advanceReadiness');
 
   run(() => jQuery('#wowza-thingy').trigger('wowza'));
 });
 
-QUnit.test('instanceInitializers can augment an the customEvents hash', function(assert) {
+QUnit.test('instanceInitializers can augment the customEvents hash', function(assert) {
   assert.expect(1);
 
   run(App, 'destroy');
@@ -205,14 +200,14 @@ QUnit.test('instanceInitializers can augment an the customEvents hash', function
 
   setupApp(ApplicationSubclass);
 
-  App.FooBarComponent = Component.extend({
+  resolver.add('component:foo-bar', Component.extend({
     jerky() {
       assert.ok(true, 'fired the event!');
     }
-  });
+  }));
 
-  TEMPLATES['application'] = compile(`{{foo-bar}}`);
-  TEMPLATES['components/foo-bar'] = compile(`<div id='herky-thingy'></div>`);
+  resolver.addTemplate('application', `{{foo-bar}}`);
+  resolver.addTemplate('components/foo-bar', `<div id='herky-thingy'></div>`);
 
   run(App, 'advanceReadiness');
 

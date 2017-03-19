@@ -576,7 +576,9 @@ const Application = Engine.extend({
   _bootSync() {
     if (this._booted) { return; }
 
-
+    if (!this.resolveRegistration('router:main') && this.Router) {
+      this.register('router:main', this.Router);
+    }
 
     // Even though this returns synchronously, we still need to make sure the
     // boot promise exists for book-keeping purposes: if anything went wrong in

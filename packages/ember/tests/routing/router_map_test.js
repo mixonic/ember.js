@@ -1,14 +1,12 @@
 import { run } from 'ember-metal';
-import { compile } from 'ember-template-compiler';
 import { Application } from 'ember-application';
 import { Router } from 'ember-routing';
 import { jQuery } from 'ember-views';
-import { setTemplates, setTemplate } from 'ember-glimmer';
+import Resolver from 'internal-test-helpers/test-resolver';
 
-let router, App, container;
+let router, App, resolver;
 
 function bootApplication() {
-  router = container.lookup('router:main');
   run(App, 'advanceReadiness');
 }
 
@@ -27,10 +25,11 @@ function handleURL(path) {
 QUnit.module('Router.map', {
   setup() {
     run(() => {
-      App = Application.create({
+      App = Application.extend({
         name: 'App',
-        rootElement: '#qunit-fixture'
-      });
+        rootElement: '#qunit-fixture',
+        Resolver
+      }).create();
 
       App.deferReadiness();
 
@@ -38,7 +37,14 @@ QUnit.module('Router.map', {
         location: 'none'
       });
 
-      container = App.__container__;
+      App.instanceInitializer({
+        name: 'fetchRouter',
+        initialize(appInstance) {
+          router = appInstance.lookup('router:main');
+        }
+      });
+
+      resolver = Resolver.lastInstance;
     });
   },
 
@@ -46,8 +52,6 @@ QUnit.module('Router.map', {
     run(() => {
       App.destroy();
       App = null;
-
-      setTemplates({});
     });
   }
 });
@@ -65,8 +69,8 @@ QUnit.test('Router.map returns an Ember Router class', function () {
 QUnit.test('Router.map can be called multiple times', function () {
   expect(4);
 
-  setTemplate('hello', compile('Hello!'));
-  setTemplate('goodbye', compile('Goodbye!'));
+  resolver.addTemplate('hello', 'Hello!');
+  resolver.addTemplate('goodbye', 'Goodbye!');
 
   App.Router.map(function() {
     this.route('hello');

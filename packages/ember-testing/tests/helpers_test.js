@@ -7,18 +7,14 @@ import {
 import { run } from 'ember-metal';
 import { isFeatureEnabled } from 'ember-debug';
 import { jQuery } from 'ember-views';
-import {
-  Component,
-  setTemplates,
-  setTemplate
-} from 'ember-glimmer';
+import { Component } from 'ember-glimmer';
+import Resolver from 'internal-test-helpers/test-resolver';
 
 import Test from '../test';
 import '../helpers';  // ensure that the helpers are loaded
 import '../initializers'; // ensure the initializer is setup
 import setupForTesting from '../setup_for_testing';
 import { Application as EmberApplication } from 'ember-application';
-import { compile } from 'ember-template-compiler';
 
 import {
   pendingRequests,
@@ -34,8 +30,8 @@ import {
   unregisterWaiter
 } from '../test/waiters';
 
-var App;
-var originalAdapter = getAdapter();
+let App, resolver;
+let originalAdapter = getAdapter();
 
 function cleanup() {
   // Teardown setupForTesting
@@ -55,8 +51,6 @@ function cleanup() {
     App.removeTestHelpers();
     App = null;
   }
-
-  setTemplates({});
 }
 
 function assertHelpers(application, helperContainer, expected) {
@@ -97,7 +91,11 @@ function currentURL(app) {
 
 function setupApp() {
   run(function() {
-    App = EmberApplication.create();
+    App = EmberApplication.create({
+      Resolver
+    });
+
+    resolver = Resolver.lastInstance;
     App.setupForTesting();
 
     App.injectTestHelpers();
@@ -354,7 +352,7 @@ QUnit.test('`click` triggers appropriate events in order', function() {
 
   var click, wait, events;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
     classNames: 'index-wrapper',
 
     didInsertElement() {
@@ -362,9 +360,9 @@ QUnit.test('`click` triggers appropriate events in order', function() {
         events.push(e.type);
       });
     }
-  });
+  }));
 
-  App.XCheckboxComponent = Component.extend({
+  resolver.add('component:x-checkbox', Component.extend({
     tagName: 'input',
     attributeBindings: ['type'],
     type: 'checkbox',
@@ -374,9 +372,9 @@ QUnit.test('`click` triggers appropriate events in order', function() {
     change() {
       events.push('change:' + this.get('checked'));
     }
-  });
+  }));
 
-  setTemplate('index', compile('{{#index-wrapper}}{{input type="text"}} {{x-checkbox type="checkbox"}} {{textarea}} <div contenteditable="true"> </div>{{/index-wrapper}}'));
+  resolver.addTemplate('index', '{{#index-wrapper}}{{input type="text"}} {{x-checkbox type="checkbox"}} {{textarea}} <div contenteditable="true"> </div>{{/index-wrapper}}');
 
   run(App, App.advanceReadiness);
 
@@ -427,7 +425,7 @@ QUnit.test('`click` triggers native events with simulated X/Y coordinates', func
 
   var click, wait, events;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
     classNames: 'index-wrapper',
 
     didInsertElement() {
@@ -436,10 +434,10 @@ QUnit.test('`click` triggers native events with simulated X/Y coordinates', func
       this.element.addEventListener('mouseup', pushEvent);
       this.element.addEventListener('click', pushEvent);
     }
-  });
+  }));
 
 
-  setTemplate('index', compile('{{#index-wrapper}}some text{{/index-wrapper}}'));
+  resolver.addTemplate('index', '{{#index-wrapper}}some text{{/index-wrapper}}');
 
   run(App, App.advanceReadiness);
 
@@ -465,16 +463,16 @@ QUnit.test('`triggerEvent` with mouseenter triggers native events with simulated
 
   var triggerEvent, wait, evt;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
     classNames: 'index-wrapper',
 
     didInsertElement() {
       this.element.addEventListener('mouseenter', e => evt = e);
     }
-  });
+  }));
 
 
-  setTemplate('index', compile('{{#index-wrapper}}some text{{/index-wrapper}}'));
+  resolver.addTemplate('index', '{{#index-wrapper}}some text{{/index-wrapper}}');
 
   run(App, App.advanceReadiness);
 
@@ -554,16 +552,16 @@ QUnit.test('`triggerEvent accepts an optional options hash without context', fun
 
   var triggerEvent, wait, event;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
     didInsertElement() {
       this.$('.input').on('keydown change', function(e) {
         event = e;
       });
     }
-  });
+  }));
 
-  setTemplate('index', compile('{{index-wrapper}}'));
-  setTemplate('components/index-wrapper', compile('{{input type="text" id="scope" class="input"}}'));
+  resolver.addTemplate('index', '{{index-wrapper}}');
+  resolver.addTemplate('components/index-wrapper', '{{input type="text" id="scope" class="input"}}');
 
   run(App, App.advanceReadiness);
 
@@ -584,17 +582,17 @@ QUnit.test('`triggerEvent can limit searching for a selector to a scope', functi
 
   var triggerEvent, wait, event;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
 
     didInsertElement() {
       this.$('.input').on('blur change', function(e) {
         event = e;
       });
     }
-  });
+  }));
 
-  setTemplate('components/index-wrapper', compile('{{input type="text" id="outside-scope" class="input"}}<div id="limited">{{input type="text" id="inside-scope" class="input"}}</div>'));
-  setTemplate('index', compile('{{index-wrapper}}'));
+  resolver.addTemplate('components/index-wrapper', '{{input type="text" id="outside-scope" class="input"}}<div id="limited">{{input type="text" id="inside-scope" class="input"}}</div>');
+  resolver.addTemplate('index', '{{index-wrapper}}');
 
   run(App, App.advanceReadiness);
 
@@ -614,16 +612,16 @@ QUnit.test('`triggerEvent` can be used to trigger arbitrary events', function() 
 
   var triggerEvent, wait, event;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
     didInsertElement() {
       this.$('#foo').on('blur change', function(e) {
         event = e;
       });
     }
-  });
+  }));
 
-  setTemplate('components/index-wrapper',  compile('{{input type="text" id="foo"}}'));
-  setTemplate('index', compile('{{index-wrapper}}'));
+  resolver.addTemplate('components/index-wrapper', '{{input type="text" id="foo"}}');
+  resolver.addTemplate('index', '{{index-wrapper}}');
 
   run(App, App.advanceReadiness);
 
@@ -642,7 +640,7 @@ QUnit.test('`fillIn` takes context into consideration', function() {
   expect(2);
   var fillIn, find, visit, andThen;
 
-  setTemplate('index', compile('<div id="parent">{{input type="text" id="first" class="current"}}</div>{{input type="text" id="second" class="current"}}'));
+  resolver.addTemplate('index', '<div id="parent">{{input type="text" id="first" class="current"}}</div>{{input type="text" id="second" class="current"}}');
 
   run(App, App.advanceReadiness);
 
@@ -664,15 +662,15 @@ QUnit.test('`fillIn` focuses on the element', function() {
   expect(2);
   var fillIn, find, visit, andThen, wait;
 
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     actions: {
       wasFocused() {
         ok(true, 'focusIn event was triggered');
       }
     }
-  });
+  }));
 
-  setTemplate('index', compile('<div id="parent">{{input type="text" id="first" focus-in="wasFocused"}}</div>'));
+  resolver.addTemplate('index', '<div id="parent">{{input type="text" id="first" focus-in="wasFocused"}}</div>');
 
   run(App, App.advanceReadiness);
 
@@ -696,7 +694,7 @@ QUnit.test('`fillIn` fires `input` and `change` events in the proper order', fun
 
   var fillIn, visit, andThen, wait;
   var events = [];
-  App.IndexController = Controller.extend({
+  resolver.add('controller:index', Controller.extend({
     actions: {
       oninputHandler(e) {
         events.push(e.type);
@@ -705,9 +703,9 @@ QUnit.test('`fillIn` fires `input` and `change` events in the proper order', fun
         events.push(e.type);
       }
     }
-  });
+  }));
 
-  setTemplate('index', compile('<input type="text" id="first" oninput={{action "oninputHandler"}} onchange={{action "onchangeHandler"}}>'));
+  resolver.addTemplate('index', '<input type="text" id="first" oninput={{action "oninputHandler"}} onchange={{action "onchangeHandler"}}>');
 
   run(App, App.advanceReadiness);
 
@@ -728,7 +726,7 @@ QUnit.test('`fillIn` fires `input` and `change` events in the proper order', fun
 QUnit.test('`fillIn` only sets the value in the first matched element', function() {
   let fillIn, find, visit, andThen, wait;
 
-  setTemplate('index', compile('<input type="text" id="first" class="in-test"><input type="text" id="second" class="in-test">'));
+  resolver.addTemplate('index', '<input type="text" id="first" class="in-test"><input type="text" id="second" class="in-test">');
   run(App, App.advanceReadiness);
 
   fillIn = App.testHelpers.fillIn;
@@ -752,16 +750,16 @@ QUnit.test('`triggerEvent accepts an optional options hash and context', functio
 
   var triggerEvent, wait, event;
 
-  App.IndexWrapperComponent = Component.extend({
+  resolver.add('component:index-wrapper', Component.extend({
     didInsertElement() {
       this.$('.input').on('keydown change', function(e) {
         event = e;
       });
     }
-  });
+  }));
 
-  setTemplate('components/index-wrapper', compile('{{input type="text" id="outside-scope" class="input"}}<div id="limited">{{input type="text" id="inside-scope" class="input"}}</div>'));
-  setTemplate('index', compile('{{index-wrapper}}'));
+  resolver.addTemplate('components/index-wrapper', '{{input type="text" id="outside-scope" class="input"}}<div id="limited">{{input type="text" id="inside-scope" class="input"}}</div>');
+  resolver.addTemplate('index', '{{index-wrapper}}');
 
   run(App, App.advanceReadiness);
 
@@ -937,7 +935,10 @@ QUnit.module('ember-testing async router', {
     cleanup();
 
     run(function() {
-      App = EmberApplication.create();
+      App = EmberApplication.create({
+        Resolver
+      });
+      let resolver = Resolver.lastInstance;
       App.Router = Router.extend({
         location: 'none'
       });
@@ -949,20 +950,19 @@ QUnit.module('ember-testing async router', {
         });
       });
 
-      App.UserRoute = Route.extend({
+      resolver.add('route:user', Route.extend({
         model() {
           return resolveLater();
         }
-      });
+      }));
 
-      App.UserProfileRoute = Route.extend({
+      resolver.add('route:user.profile', Route.extend({
         beforeModel() {
-          var self = this;
-          return resolveLater().then(function() {
-            self.transitionTo('user.edit');
+          return resolveLater().then(() => {
+            this.transitionTo('user.edit');
           });
         }
-      });
+      }));
 
       // Emulates a long-running unscheduled async operation.
       function resolveLater() {
