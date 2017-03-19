@@ -1,5 +1,15 @@
+import { isFeatureEnabled } from 'ember-metal';
+
 export function verifyRegistration(owner, fullName) {
   ok(owner.resolveRegistration(fullName), `has registration: ${fullName}`);
+}
+
+function normalize(registry, fullName) {
+  if (isFeatureEnabled('glimmer-di')) {
+    return fullName;
+  } else {
+    return registry.normalize(fullName);
+  }
 }
 
 /* TODO: This uses the registry API directly, should be rewritten to
@@ -11,10 +21,10 @@ export function verifyInjection(owner, fullName, property, injectionName) {
   if (fullName.indexOf(':') === -1) {
     injections = registry.getTypeInjections(fullName);
   } else {
-    injections = registry.getInjections(fullName);
+    injections = registry.getInjections(normalize(registry, fullName));
   }
 
-  let normalizedName = injectionName;
+  let normalizedName = normalize(registry, injectionName);
   let hasInjection = false;
   let injection;
 

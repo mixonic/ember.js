@@ -12,7 +12,6 @@ import {
 import { environment } from 'ember-environment';
 import { jQuery } from 'ember-views';
 import EngineInstance from './engine-instance';
-import { Router } from 'ember-routing';
 
 let BootOptions;
 
@@ -84,8 +83,6 @@ const ApplicationInstance = EngineInstance.extend({
     // appended to the rootElement, in the case of apps, to the fixture harness
     // in tests, or rendered to a string in the case of FastBoot.
     this.register('-application-instance:main', this, { instantiate: false });
-
-    this.register('router:main', this.Router || Router);
   },
 
   /**
@@ -117,6 +114,7 @@ const ApplicationInstance = EngineInstance.extend({
 
     if (options.location) {
       let router = get(this, 'router');
+      console.log('set location on router: ', options.location);
       set(router, 'location', options.location);
     }
 
@@ -152,6 +150,7 @@ const ApplicationInstance = EngineInstance.extend({
     @private
   */
   didCreateRootView(view) {
+    console.log('did create root view', view, this.rootElement);
     view.appendTo(this.rootElement);
   },
 
@@ -165,6 +164,7 @@ const ApplicationInstance = EngineInstance.extend({
   startRouting() {
     let router = get(this, 'router');
     router.startRouting();
+    console.log('did startRouting');
     this._didSetupRouter = true;
   },
 

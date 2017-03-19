@@ -5,7 +5,8 @@ import {
   run,
   libraries,
   getDebugFunction,
-  setDebugFunction
+  setDebugFunction,
+  isFeatureEnabled
 } from 'ember-metal';
 import Application from '../../system/application';
 import DefaultResolver from '../../system/resolver';
@@ -359,6 +360,8 @@ QUnit.test('disable log version of libraries with an ENV var', function() {
   ok(!logged, 'library version logging skipped');
 });
 
+if (!isFeatureEnabled('glimmer-di')) {
+
 QUnit.test('can resolve custom router', function() {
   let CustomRouter = Router.extend();
 
@@ -380,6 +383,8 @@ QUnit.test('can resolve custom router', function() {
 
   ok(app.__container__.lookup('router:main') instanceof CustomRouter, 'application resolved the correct router');
 });
+
+}
 
 QUnit.test('can specify custom router', function() {
   app = run(() => {

@@ -537,6 +537,7 @@ const EmberRouter = EmberObject.extend(Evented, {
     let owner = getOwner(this);
 
     if ('string' === typeof location && owner) {
+      console.log('look up location', location);
       let resolvedLocation = owner.lookup(`location:${location}`);
 
       if ('undefined' !== typeof resolvedLocation) {

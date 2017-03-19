@@ -24,6 +24,10 @@ import {
 } from 'ember-glimmer';
 import { compile } from 'ember-template-compiler';
 
+function detectEqual(first, second, message) {
+  ok(first.detect(second), message);
+}
+
 if (!isFeatureEnabled('glimmer-di')) {
 
 let registry, locator, application, originalLookup, originalInfo;
@@ -83,10 +87,6 @@ QUnit.test('the default resolver looks up templates in Ember.TEMPLATES', functio
 QUnit.test('the default resolver looks up basic name as no prefix', function() {
   ok(Controller.detect(locator.lookup('controller:basic')), 'locator looks up correct controller');
 });
-
-function detectEqual(first, second, message) {
-  ok(first.detect(second), message);
-}
 
 QUnit.test('the default resolver looks up arbitrary types on the namespace', function() {
   application.FooManager = EmberObject.extend({});

@@ -579,7 +579,7 @@ const Application = Engine.extend({
   _bootSync() {
     if (this._booted) { return; }
 
-
+    this.register('router:main', this.Router || Router);
 
     // Even though this returns synchronously, we still need to make sure the
     // boot promise exists for book-keeping purposes: if anything went wrong in
@@ -727,6 +727,7 @@ const Application = Engine.extend({
         // TODO: App.ready() is not called when autoboot is disabled, is this correct?
         this.ready();
 
+        console.log('startRouting');
         instance.startRouting();
       }
 

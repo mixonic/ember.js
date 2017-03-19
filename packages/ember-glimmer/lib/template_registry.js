@@ -12,6 +12,7 @@ export function getTemplates() {
 }
 
 export function getTemplate(name) {
+  console.log('getTemplate', name);
   if (TEMPLATES.hasOwnProperty(name)) {
     return TEMPLATES[name];
   }

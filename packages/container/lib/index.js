@@ -54,6 +54,14 @@ class EmberGlimmerContainer extends GlimmerContainer {
       return factory.class;
     }
   }
+  defaultTeardown(instance) {
+    if (instance.destroy) {
+      instance.destroy();
+    }
+  }
+  destroy() {
+    this.teardown();
+  }
 }
 
 const Registry = isFeatureEnabled('glimmer-di') ? EmberGlimmerRegistry : EmberRegistry;

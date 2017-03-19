@@ -5,6 +5,10 @@ import { Registry } from '../index';
 import { factory } from 'internal-test-helpers';
 import { LOOKUP_FACTORY, FACTORY_FOR } from 'container';
 
+function lookupFactory(name, container, options) {
+  return container[LOOKUP_FACTORY](name, options);
+}
+
 if (!isFeatureEnabled('glimmer-di')) {
 
 let originalModelInjections;
@@ -17,10 +21,6 @@ QUnit.module('Container', {
     ENV.MODEL_FACTORY_INJECTIONS = originalModelInjections;
   }
 });
-
-function lookupFactory(name, container, options) {
-  return container[LOOKUP_FACTORY](name, options);
-}
 
 QUnit.test('A registered factory returns the same instance each time', function() {
   let registry = new Registry();
