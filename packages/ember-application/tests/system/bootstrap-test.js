@@ -16,6 +16,10 @@ QUnit.module('Ember.Application', {
   }
 });
 
+/*
+ * This implicitly tests the default resolver, which looks up templates on
+ * Ember.TEMPLATES (where they are stored during bootstrap).
+ */
 QUnit.test('templates in script tags are extracted at application creation', function(assert) {
   jQuery('#qunit-fixture').html(`
     <div id="app"></div>

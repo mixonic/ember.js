@@ -24,3 +24,15 @@ class Resolver {
 }
 
 export default Resolver;
+
+/*
+ * A resolver with moduleBasedResolver = true handles error and loading
+ * substates differently than a standard resolver.
+ */
+class ModuleBasedResolver extends Resolver {
+  get moduleBasedResolver() {
+    return true;
+  }
+}
+
+export { ModuleBasedResolver }

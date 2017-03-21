@@ -5,16 +5,15 @@ import {
 } from 'ember-metal';
 import { jQuery as $ } from 'ember-views';
 import { Application } from 'ember-application';
-import { compile } from 'ember-template-compiler';
-import { setTemplates, setTemplate } from 'ember-glimmer';
+import Resolver from 'internal-test-helpers/test-resolver';
 
 let App, $fixture;
 
-function setupExample() {
+function setupExample(resolver) {
   // setup templates
-  setTemplate('application', compile('{{outlet}}'));
-  setTemplate('index', compile('<h1>Index</h1>'));
-  setTemplate('posts', compile('<h1>Posts</h1>'));
+  resolver.addTemplate('application', '{{outlet}}');
+  resolver.addTemplate('index', '<h1>Index</h1>');
+  resolver.addTemplate('posts', '<h1>Posts</h1>');
 
   App.Router.map(function() {
     this.route('posts');
@@ -30,7 +29,8 @@ QUnit.module('View Instrumentation', {
   setup() {
     run(() => {
       App = Application.create({
-        rootElement: '#qunit-fixture'
+        rootElement: '#qunit-fixture',
+        Resolver
       });
       App.deferReadiness();
 
@@ -40,14 +40,13 @@ QUnit.module('View Instrumentation', {
     });
 
     $fixture = $('#qunit-fixture');
-    setupExample();
+    setupExample(Resolver.lastInstance);
   },
 
   teardown() {
     reset();
     run(App, 'destroy');
     App = null;
-    setTemplates({});
   }
 });
 

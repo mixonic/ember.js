@@ -5,8 +5,18 @@ import { Controller, RSVP } from 'ember-runtime';
 import { Component } from 'ember-glimmer';
 import { Engine } from 'ember-application';
 import { Route } from 'ember-routing';
+import { ModuleBasedResolver } from 'internal-test-helpers/test-resolver';
 
 moduleFor('Application test: engine rendering', class extends ApplicationTest {
+  constructor() {
+    super();
+    this.resolver = ModuleBasedResolver.lastInstance;
+  }
+  get applicationOptions() {
+    return Object.assign({
+      Resolver: ModuleBasedResolver
+    }, super.applicationOptions);
+  }
   setupAppAndRoutableEngine(hooks = []) {
     let self = this;
 
@@ -366,7 +376,6 @@ moduleFor('Application test: engine rendering', class extends ApplicationTest {
     assert.expect(2);
 
     this.setupAppAndRoutableEngine();
-    this.application.__registry__.resolver.moduleBasedResolver = true;
     this.additionalEngineRegistrations(function() {
       this.register('template:application_error', compile('Error! {{model.message}}'));
       this.register('route:post', Route.extend({
@@ -388,7 +397,6 @@ moduleFor('Application test: engine rendering', class extends ApplicationTest {
     assert.expect(2);
 
     this.setupAppAndRoutableEngine();
-    this.application.__registry__.resolver.moduleBasedResolver = true;
     this.additionalEngineRegistrations(function() {
       this.register('template:error', compile('Error! {{model.message}}'));
       this.register('route:post', Route.extend({
@@ -410,7 +418,6 @@ moduleFor('Application test: engine rendering', class extends ApplicationTest {
     assert.expect(2);
 
     this.setupAppAndRoutableEngine();
-    this.application.__registry__.resolver.moduleBasedResolver = true;
     this.additionalEngineRegistrations(function() {
       this.register('template:post_error', compile('Error! {{model.message}}'));
       this.register('route:post', Route.extend({
@@ -432,7 +439,6 @@ moduleFor('Application test: engine rendering', class extends ApplicationTest {
     assert.expect(2);
 
     this.setupAppAndRoutableEngine();
-    this.application.__registry__.resolver.moduleBasedResolver = true;
     this.additionalEngineRegistrations(function() {
       this.register('template:post.error', compile('Error! {{model.message}}'));
       this.register('route:post.comments', Route.extend({
@@ -456,7 +462,6 @@ moduleFor('Application test: engine rendering', class extends ApplicationTest {
     let resolveLoading;
 
     this.setupAppAndRoutableEngine();
-    this.application.__registry__.resolver.moduleBasedResolver = true;
     this.additionalEngineRegistrations(function() {
       this.register('template:application_loading', compile('Loading'));
       this.register('template:post', compile('Post'));
@@ -523,7 +528,6 @@ moduleFor('Application test: engine rendering', class extends ApplicationTest {
     let resolveLoading;
 
     this.setupAppAndRoutableEngine();
-    this.application.__registry__.resolver.moduleBasedResolver = true;
     this.additionalEngineRegistrations(function() {
       this.register('template:post', compile('{{outlet}}'));
       this.register('template:post.comments', compile('Comments'));

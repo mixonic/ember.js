@@ -8,44 +8,49 @@ import { jQuery } from 'ember-views';
 import Test from '../test';
 import { Route as EmberRoute } from 'ember-routing';
 import { Application as EmberApplication } from 'ember-application';
-import { compile } from 'ember-template-compiler';
-import { setTemplates, setTemplate } from 'ember-glimmer';
+import Resolver from 'internal-test-helpers/test-resolver';
 
-var App, find, visit;
+var App, find, visit, Person;
 var originalAdapter = Test.adapter;
 
 QUnit.module('ember-testing Integration', {
   setup() {
     jQuery('<div id="ember-testing-container"><div id="ember-testing"></div></div>').appendTo('body');
     run(function() {
-      setTemplate('people', compile('<div>{{#each model as |person|}}<div class="name">{{person.firstName}}</div>{{/each}}</div>'));
-      setTemplate('application', compile('{{outlet}}'));
-
       App = EmberApplication.create({
-        rootElement: '#ember-testing'
+        rootElement: '#ember-testing',
+        Resolver
       });
+
+      let resolver = Resolver.lastInstance;
+
+      resolver.addTemplate('people', '<div>{{#each model as |person|}}<div class="name">{{person.firstName}}</div>{{/each}}</div>');
+      resolver.addTemplate('application', '{{outlet}}');
 
       App.Router.map(function() {
         this.route('people', { path: '/' });
       });
 
-      App.PeopleRoute = EmberRoute.extend({
-        model() {
-          return App.Person.find();
-        }
-      });
-
-      App.PeopleController = Controller.extend({});
-
-      App.Person = EmberObject.extend({
+      // Person scoped to this whole module
+      Person = EmberObject.extend({
         firstName: ''
       });
 
-      App.Person.reopenClass({
+      Person.reopenClass({
         find() {
           return emberA();
         }
       });
+
+      resolver.add('model:person', Person);
+
+      resolver.add('route:people', EmberRoute.extend({
+        model() {
+          return Person.find();
+        }
+      }));
+
+      resolver.add('controller:people', Controller.extend({}));
 
       App.setupForTesting();
     });
@@ -62,7 +67,6 @@ QUnit.module('ember-testing Integration', {
 
   teardown() {
     App.removeTestHelpers();
-    setTemplates({});
     jQuery('#ember-testing-container, #ember-testing').remove();
     run(App, App.destroy);
     App = null;
@@ -71,7 +75,7 @@ QUnit.module('ember-testing Integration', {
 });
 
 QUnit.test('template is bound to empty array of people', function() {
-  App.Person.find = function() {
+  Person.find = function() {
     return emberA();
   };
   run(App, 'advanceReadiness');
@@ -82,10 +86,10 @@ QUnit.test('template is bound to empty array of people', function() {
 });
 
 QUnit.test('template is bound to array of 2 people', function() {
-  App.Person.find = function() {
+  Person.find = function() {
     var people = emberA();
-    var first = App.Person.create({ firstName: 'x' });
-    var last = App.Person.create({ firstName: 'y' });
+    var first = Person.create({ firstName: 'x' });
+    var last = Person.create({ firstName: 'y' });
     run(people, people.pushObject, first);
     run(people, people.pushObject, last);
     return people;
@@ -98,7 +102,7 @@ QUnit.test('template is bound to array of 2 people', function() {
 });
 
 QUnit.test('template is again bound to empty array of people', function() {
-  App.Person.find = function() {
+  Person.find = function() {
     return emberA();
   };
   run(App, 'advanceReadiness');
@@ -109,7 +113,7 @@ QUnit.test('template is again bound to empty array of people', function() {
 });
 
 QUnit.test('`visit` can be called without advancedReadiness.', function() {
-  App.Person.find = function() {
+  Person.find = function() {
     return emberA();
   };
 

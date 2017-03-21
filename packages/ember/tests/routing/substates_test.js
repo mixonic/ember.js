@@ -1,12 +1,11 @@
 import { RSVP, Controller } from 'ember-runtime';
 import { Route, NoneLocation } from 'ember-routing';
 import { run } from 'ember-metal';
-import { compile } from 'ember-template-compiler';
-import { Application, Resolver } from 'ember-application';
+import { Application } from 'ember-application';
 import { jQuery } from 'ember-views';
-import { setTemplates, setTemplate } from 'ember-glimmer';
+import { ModuleBasedResolver } from 'internal-test-helpers/test-resolver';
 
-let Router, App, templates, router, container, counter;
+let Router, App, templates, router, container, counter, resolver;
 
 function step(expectedValue, description) {
   equal(counter, expectedValue, 'Step ' + expectedValue + ': ' + description);
@@ -15,7 +14,7 @@ function step(expectedValue, description) {
 
 function bootApplication(startingURL) {
   for (let name in templates) {
-    setTemplate(name, compile(templates[name]));
+    resolver.addTemplate(name, templates[name]);
   }
 
   if (startingURL) {
@@ -37,8 +36,7 @@ QUnit.module('Loading/Error Substates', {
       App = Application.create({
         name: 'App',
         rootElement: '#qunit-fixture',
-        // fake a modules resolver
-        Resolver: Resolver.extend({ moduleBasedResolver: true })
+        Resolver: ModuleBasedResolver
       });
 
       App.deferReadiness();
@@ -46,6 +44,8 @@ QUnit.module('Loading/Error Substates', {
       App.Router.reopen({
         location: 'none'
       });
+
+      resolver = ModuleBasedResolver.lastInstance;
 
       Router = App.Router;
 
@@ -65,8 +65,6 @@ QUnit.module('Loading/Error Substates', {
     run(function() {
       App.destroy();
       App = null;
-
-      setTemplates({});
     });
 
     NoneLocation.reopen({
@@ -83,18 +81,18 @@ QUnit.test('Slow promise from a child route of application enters nested loading
     this.route('bro');
   });
 
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     setupController() {
       step(2, 'ApplicationRoute#setup');
     }
-  });
+  }));
 
-  App.BroRoute = Route.extend({
+  resolver.add('route:bro', Route.extend({
     model() {
       step(1, 'BroRoute#model');
       return broDeferred.promise;
     }
-  });
+  }));
 
   bootApplication('/bro');
 
@@ -121,24 +119,24 @@ QUnit.test('Slow promises waterfall on startup', function() {
 
   templates.grandma = 'GRANDMA {{outlet}}';
   templates.mom = 'MOM {{outlet}}';
-  templates['mom/loading'] = 'MOMLOADING';
-  templates['mom/sally'] = 'SALLY';
+  templates['mom.loading'] = 'MOMLOADING';
+  templates['mom.sally'] = 'SALLY';
 
-  App.GrandmaRoute = Route.extend({
+  resolver.add('route:grandma', Route.extend({
     model() {
       step(1, 'GrandmaRoute#model');
       return grandmaDeferred.promise;
     }
-  });
+  }));
 
-  App.MomRoute = Route.extend({
+  resolver.add('route:mom', Route.extend({
     model() {
       step(2, 'Mom#model');
       return {};
     }
-  });
+  }));
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(3, 'SallyRoute#model');
       return sallyDeferred.promise;
@@ -146,7 +144,7 @@ QUnit.test('Slow promises waterfall on startup', function() {
     setupController() {
       step(4, 'SallyRoute#setupController');
     }
-  });
+  }));
 
   bootApplication('/grandma/mom/sally');
 
@@ -171,14 +169,14 @@ QUnit.test('ApplicationRoute#currentPath reflects loading state path', function(
   });
 
   templates.grandma = 'GRANDMA {{outlet}}';
-  templates['grandma/loading'] = 'GRANDMALOADING';
-  templates['grandma/mom'] = 'MOM';
+  templates['grandma.loading'] = 'GRANDMALOADING';
+  templates['grandma.mom'] = 'MOM';
 
-  App.GrandmaMomRoute = Route.extend({
+  resolver.add('route:grandma.mom', Route.extend({
     model() {
       return momDeferred.promise;
     }
-  });
+  }));
 
   bootApplication('/grandma/mom');
 
@@ -197,17 +195,17 @@ QUnit.test('Slow promises returned from ApplicationRoute#model don\'t enter Load
 
   let appDeferred = RSVP.defer();
 
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     model() {
       return appDeferred.promise;
     }
-  });
+  }));
 
-  App.LoadingRoute = Route.extend({
+  resolver.add('route:loading', Route.extend({
     setupController() {
       ok(false, 'shouldn\'t get here');
     }
-  });
+  }));
 
   bootApplication();
 
@@ -224,13 +222,13 @@ QUnit.test('Don\'t enter loading route unless either route or template defined',
 
   let indexDeferred = RSVP.defer();
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.IndexRoute = Route.extend({
+  resolver.add('route:index', Route.extend({
     model() {
       return indexDeferred.promise;
     }
-  });
+  }));
 
   bootApplication();
 
@@ -248,18 +246,18 @@ QUnit.test('Enter loading route if only LoadingRoute defined', function() {
 
   let indexDeferred = RSVP.defer();
 
-  App.IndexRoute = Route.extend({
+  resolver.add('route:index', Route.extend({
     model() {
       step(1, 'IndexRoute#model');
       return indexDeferred.promise;
     }
-  });
+  }));
 
-  App.LoadingRoute = Route.extend({
+  resolver.add('route:loading', Route.extend({
     setupController() {
       step(2, 'LoadingRoute#setupController');
     }
-  });
+  }));
 
   bootApplication();
 
@@ -284,21 +282,21 @@ QUnit.test('Enter child loading state of pivot route', function() {
     });
   });
 
-  templates['grandma/loading'] = 'GMONEYLOADING';
+  templates['grandma.loading'] = 'GMONEYLOADING';
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     setupController() {
       step(1, 'SallyRoute#setupController');
     }
-  });
+  }));
 
-  App.GrandmaSmellsRoute = Route.extend({
+  resolver.add('route:grandma.smells', Route.extend({
     model() {
       return deferred.promise;
     }
-  });
+  }));
 
   bootApplication('/grandma/mom/sally');
 
@@ -330,27 +328,27 @@ QUnit.test('Loading actions bubble to root, but don\'t enter substates above piv
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     actions: {
       loading(transition, route) {
         ok(true, 'loading action received on ApplicationRoute');
       }
     }
-  });
+  }));
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       return sallyDeferred.promise;
     }
-  });
+  }));
 
-  App.GrandmaSmellsRoute = Route.extend({
+  resolver.add('route:grandma.smells', Route.extend({
     model() {
       return smellsDeferred.promise;
     }
-  });
+  }));
 
   bootApplication('/grandma/mom/sally');
 
@@ -372,7 +370,7 @@ QUnit.test('Default error event moves into nested route', function() {
   expect(6);
 
   templates['grandma'] = 'GRANDMA {{outlet}}';
-  templates['grandma/error'] = 'ERROR: {{model.msg}}';
+  templates['grandma.error'] = 'ERROR: {{model.msg}}';
 
   Router.map(function() {
     this.route('grandma', function() {
@@ -382,9 +380,9 @@ QUnit.test('Default error event moves into nested route', function() {
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -398,7 +396,7 @@ QUnit.test('Default error event moves into nested route', function() {
         return true;
       }
     }
-  });
+  }));
 
   throws(function() {
     bootApplication('/grandma/mom/sally');
@@ -425,10 +423,9 @@ QUnit.test('Error events that aren\'t bubbled don\t throw application assertions
     });
   });
 
-  App.ApplicationController =
-  Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -442,7 +439,7 @@ QUnit.test('Error events that aren\'t bubbled don\t throw application assertions
         return false;
       }
     }
-  });
+  }));
 
   bootApplication('/grandma/mom/sally');
 });
@@ -460,9 +457,9 @@ QUnit.test('Non-bubbled errors that re-throw aren\'t swallowed', function() {
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -476,7 +473,7 @@ QUnit.test('Non-bubbled errors that re-throw aren\'t swallowed', function() {
         throw err;
       }
     }
-  });
+  }));
 
   throws(function() {
     bootApplication('/grandma/mom/sally');
@@ -499,9 +496,9 @@ QUnit.test('Handled errors that re-throw aren\'t swallowed', function() {
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller.application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -521,15 +518,15 @@ QUnit.test('Handled errors that re-throw aren\'t swallowed', function() {
         return false;
       }
     }
-  });
+  }));
 
-  App.MomThisRouteThrowsRoute = Route.extend({
+  resolver.add('route:mom.this-route-throws', Route.extend({
     model() {
       step(3, 'MomThisRouteThrows#model');
 
       throw handledError;
     }
-  });
+  }));
 
   throws(function() {
     bootApplication('/grandma/mom/sally');
@@ -551,9 +548,9 @@ QUnit.test('Handled errors that bubble can be handled at a higher level', functi
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomRoute = Route.extend({
+  resolver.add('route:mom', Route.extend({
     actions: {
       error(err) {
         step(3, 'MomRoute#error');
@@ -561,9 +558,9 @@ QUnit.test('Handled errors that bubble can be handled at a higher level', functi
         equal(err, handledError, 'error handled and rebubbled is handleable at heigher route');
       }
     }
-  });
+  }));
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -581,7 +578,7 @@ QUnit.test('Handled errors that bubble can be handled at a higher level', functi
         return true;
       }
     }
-  });
+  }));
 
   bootApplication('/grandma/mom/sally');
 });
@@ -599,9 +596,9 @@ QUnit.test('errors that are bubbled are thrown at a higher level if not handled'
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -616,7 +613,7 @@ QUnit.test('errors that are bubbled are thrown at a higher level if not handled'
         return true;
       }
     }
-  });
+  }));
 
   throws(
     function() {
@@ -645,9 +642,9 @@ QUnit.test('Handled errors that are thrown through rejection aren\'t swallowed',
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -667,15 +664,15 @@ QUnit.test('Handled errors that are thrown through rejection aren\'t swallowed',
         return false;
       }
     }
-  });
+  }));
 
-  App.MomThisRouteThrowsRoute = Route.extend({
+  resolver.add('route:mom.this-route-throws', Route.extend({
     model() {
       step(3, 'MomThisRouteThrows#model');
 
       return RSVP.reject(handledError);
     }
-  });
+  }));
 
   throws(function() {
     bootApplication('/grandma/mom/sally');
@@ -689,27 +686,27 @@ QUnit.test('Setting a query param during a slow transition should work', functio
     this.route('grandma', { path: '/grandma/:seg' },  function() { });
   });
 
-  templates['grandma/loading'] = 'GMONEYLOADING';
+  templates['grandma.loading'] = 'GMONEYLOADING';
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.IndexRoute = Route.extend({
+  resolver.add('route:index', Route.extend({
     beforeModel: function() {
       this.transitionTo('grandma', 1);
     }
-  });
+  }));
 
-  App.GrandmaRoute = Route.extend({
+  resolver.add('route:grandma', Route.extend({
     queryParams: {
       test: { defaultValue: 1 }
     }
-  });
+  }));
 
-  App.GrandmaIndexRoute = Route.extend({
+  resolver.add('route:grandma.index', Route.extend({
     model() {
       return deferred.promise;
     }
-  });
+  }));
 
   bootApplication('/');
 
@@ -735,18 +732,18 @@ QUnit.test('Slow promises returned from ApplicationRoute#model enter Application
 
   let appDeferred = RSVP.defer();
 
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     model() {
       return appDeferred.promise;
     }
-  });
+  }));
 
   let loadingRouteEntered = false;
-  App.ApplicationLoadingRoute = Route.extend({
+  resolver.add('route:application_loading', Route.extend({
     setupController() {
       loadingRouteEntered = true;
     }
-  });
+  }));
 
   bootApplication();
 
@@ -762,11 +759,11 @@ QUnit.test('Slow promises returned from ApplicationRoute#model enter application
   templates['application_loading'] = '<div id="toplevel-loading">TOPLEVEL LOADING</div>';
 
   let appDeferred = RSVP.defer();
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     model() {
       return appDeferred.promise;
     }
-  });
+  }));
 
   bootApplication();
 
@@ -782,7 +779,7 @@ QUnit.test('Default error event moves into nested route, prioritizing more speci
   expect(6);
 
   templates['grandma'] = 'GRANDMA {{outlet}}';
-  templates['grandma/error'] = 'ERROR: {{model.msg}}';
+  templates['grandma.error'] = 'ERROR: {{model.msg}}';
   templates['mom_error'] = 'MOM ERROR: {{model.msg}}';
 
   Router.map(function() {
@@ -793,9 +790,9 @@ QUnit.test('Default error event moves into nested route, prioritizing more speci
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.MomSallyRoute = Route.extend({
+  resolver.add('route:mom.sally', Route.extend({
     model() {
       step(1, 'MomSallyRoute#model');
 
@@ -809,7 +806,7 @@ QUnit.test('Default error event moves into nested route, prioritizing more speci
         return true;
       }
     }
-  });
+  }));
 
   throws(function() {
     bootApplication('/grandma/mom/sally');
@@ -826,8 +823,8 @@ QUnit.test('Default error event moves into nested route, prioritizing more speci
 QUnit.test('Prioritized substate entry works with preserved-namespace nested routes', function() {
   expect(2);
 
-  templates['foo/bar_loading'] = 'FOOBAR LOADING';
-  templates['foo/bar/index'] = 'YAY';
+  templates['foo.bar_loading'] = 'FOOBAR LOADING';
+  templates['foo.bar.index'] = 'YAY';
 
   Router.map(function() {
     this.route('foo', function() {
@@ -836,14 +833,14 @@ QUnit.test('Prioritized substate entry works with preserved-namespace nested rou
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
   let deferred = RSVP.defer();
-  App.FooBarRoute = Route.extend({
+  resolver.add('route:foo.bar', Route.extend({
     model() {
       return deferred.promise;
     }
-  });
+  }));
 
   bootApplication('/foo/bar');
 
@@ -858,7 +855,7 @@ QUnit.test('Prioritized substate entry works with reset-namespace nested routes'
   expect(2);
 
   templates['bar_loading'] = 'BAR LOADING';
-  templates['bar/index'] = 'YAY';
+  templates['bar.index'] = 'YAY';
 
   Router.map(function() {
     this.route('foo', function() {
@@ -867,14 +864,14 @@ QUnit.test('Prioritized substate entry works with reset-namespace nested routes'
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
   let deferred = RSVP.defer();
-  App.BarRoute = Route.extend({
+  resolver.add('route:bar', Route.extend({
     model() {
       return deferred.promise;
     }
-  });
+  }));
 
   bootApplication('/foo/bar');
 
@@ -888,8 +885,8 @@ QUnit.test('Prioritized substate entry works with reset-namespace nested routes'
 QUnit.test('Prioritized loading substate entry works with preserved-namespace nested routes', function() {
   expect(2);
 
-  templates['foo/bar_loading'] = 'FOOBAR LOADING';
-  templates['foo/bar'] = 'YAY';
+  templates['foo.bar_loading'] = 'FOOBAR LOADING';
+  templates['foo.bar'] = 'YAY';
 
   Router.map(function() {
     this.route('foo', function() {
@@ -897,14 +894,14 @@ QUnit.test('Prioritized loading substate entry works with preserved-namespace ne
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
   let deferred = RSVP.defer();
-  App.FooBarRoute = Route.extend({
+  resolver.add('route:foo.bar', Route.extend({
     model() {
       return deferred.promise;
     }
-  });
+  }));
 
   bootApplication('/foo/bar');
 
@@ -918,8 +915,8 @@ QUnit.test('Prioritized loading substate entry works with preserved-namespace ne
 QUnit.test('Prioritized error substate entry works with preserved-namespace nested routes', function() {
   expect(2);
 
-  templates['foo/bar_error'] = 'FOOBAR ERROR: {{model.msg}}';
-  templates['foo/bar'] = 'YAY';
+  templates['foo.bar_error'] = 'FOOBAR ERROR: {{model.msg}}';
+  templates['foo.bar'] = 'YAY';
 
   Router.map(function() {
     this.route('foo', function() {
@@ -927,15 +924,15 @@ QUnit.test('Prioritized error substate entry works with preserved-namespace nest
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.FooBarRoute = Route.extend({
+  resolver.add('route:foo.bar', Route.extend({
     model() {
       return RSVP.reject({
         msg: 'did it broke?'
       });
     }
-  });
+  }));
 
   throws(function() {
     bootApplication('/foo/bar');
@@ -947,8 +944,8 @@ QUnit.test('Prioritized error substate entry works with preserved-namespace nest
 QUnit.test('Prioritized loading substate entry works with auto-generated index routes', function() {
   expect(2);
 
-  templates['foo/index_loading'] = 'FOO LOADING';
-  templates['foo/index'] = 'YAY';
+  templates['foo.index_loading'] = 'FOO LOADING';
+  templates['foo.index'] = 'YAY';
   templates['foo'] = '{{outlet}}';
 
   Router.map(function() {
@@ -957,19 +954,19 @@ QUnit.test('Prioritized loading substate entry works with auto-generated index r
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
   let deferred = RSVP.defer();
-  App.FooIndexRoute = Route.extend({
+  resolver.add('route:foo.index', Route.extend({
     model() {
       return deferred.promise;
     }
-  });
-  App.FooRoute = Route.extend({
+  }));
+  resolver.add('route:foo', Route.extend({
     model() {
       return true;
     }
-  });
+  }));
 
   bootApplication('/foo');
 
@@ -983,8 +980,8 @@ QUnit.test('Prioritized loading substate entry works with auto-generated index r
 QUnit.test('Prioritized error substate entry works with auto-generated index routes', function() {
   expect(2);
 
-  templates['foo/index_error'] = 'FOO ERROR: {{model.msg}}';
-  templates['foo/index'] = 'YAY';
+  templates['foo.index_error'] = 'FOO ERROR: {{model.msg}}';
+  templates['foo.index'] = 'YAY';
   templates['foo'] = '{{outlet}}';
 
   Router.map(function() {
@@ -993,20 +990,20 @@ QUnit.test('Prioritized error substate entry works with auto-generated index rou
     });
   });
 
-  App.ApplicationController = Controller.extend();
+  resolver.add('controller:application', Controller.extend());
 
-  App.FooIndexRoute = Route.extend({
+  resolver.add('route:foo.index', Route.extend({
     model() {
       return RSVP.reject({
         msg: 'did it broke?'
       });
     }
-  });
-  App.FooRoute = Route.extend({
+  }));
+  resolver.add('route:foo', Route.extend({
     model() {
       return true;
     }
-  });
+  }));
 
   throws(() => bootApplication('/foo'),
          err => err.msg === 'did it broke?');
@@ -1020,7 +1017,7 @@ QUnit.test('Rejected promises returned from ApplicationRoute transition into top
   templates['application_error'] = '<p id="toplevel-error">TOPLEVEL ERROR: {{model.msg}}</p>';
 
   let reject = true;
-  App.ApplicationRoute = Route.extend({
+  resolver.add('route:application', Route.extend({
     model() {
       if (reject) {
         return RSVP.reject({ msg: 'BAD NEWS BEARS' });
@@ -1028,7 +1025,7 @@ QUnit.test('Rejected promises returned from ApplicationRoute transition into top
         return {};
       }
     }
-  });
+  }));
 
   throws(() => bootApplication(),
         err => err.msg === 'BAD NEWS BEARS');

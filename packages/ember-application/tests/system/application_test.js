@@ -24,12 +24,13 @@ import {
   _loaded
 } from 'ember-runtime';
 import { compile } from 'ember-template-compiler';
-import { setTemplates, setTemplate } from 'ember-glimmer';
+import { setTemplates } from 'ember-glimmer';
 import { privatize as P } from 'container';
 import {
   verifyInjection,
   verifyRegistration
 } from '../test-helpers/registry-check';
+import Resolver from 'internal-test-helpers/test-resolver';
 
 let { trim } = jQuery;
 
@@ -42,7 +43,7 @@ QUnit.module('Ember.Application', {
     originalWarn = getDebugFunction('warn');
 
     jQuery('#qunit-fixture').html('<div id=\'one\'><div id=\'one-child\'>HI</div></div><div id=\'two\'>HI</div>');
-    application = run(() => Application.create({ rootElement: '#one', router: null }));
+    application = run(() => Application.create({ rootElement: '#one', router: null, Resolver }));
   },
 
   teardown() {
@@ -192,7 +193,8 @@ QUnit.module('Ember.Application initialization', {
 QUnit.test('initialized application goes to initial route', function() {
   run(() => {
     app = Application.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
     app.Router.reopen({
@@ -203,9 +205,7 @@ QUnit.test('initialized application goes to initial route', function() {
       compile('{{outlet}}')
     );
 
-    setTemplate('index', compile(
-      '<h1>Hi from index</h1>'
-    ));
+    Resolver.lastInstance.addTemplate('index', '<h1>Hi from index</h1>');
   });
 
   equal(jQuery('#qunit-fixture h1').text(), 'Hi from index');
@@ -232,7 +232,8 @@ QUnit.test('ready hook is called before routing begins', function() {
     });
 
     app = MyApplication.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
     app.Router.reopen({
@@ -246,16 +247,15 @@ QUnit.test('ready hook is called before routing begins', function() {
 QUnit.test('initialize application via initialize call', function() {
   run(() => {
     app = Application.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
     app.Router.reopen({
       location: 'none'
     });
 
-    setTemplate('application', compile(
-      '<h1>Hello!</h1>'
-    ));
+    Resolver.lastInstance.addTemplate('application', '<h1>Hello!</h1>');
   });
 
   // This is not a public way to access the container; we just
@@ -268,7 +268,8 @@ QUnit.test('initialize application via initialize call', function() {
 QUnit.test('initialize application with stateManager via initialize call from Router class', function() {
   run(() => {
     app = Application.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
     app.Router.reopen({
@@ -286,12 +287,15 @@ QUnit.test('initialize application with stateManager via initialize call from Ro
 QUnit.test('ApplicationView is inserted into the page', function() {
   run(() => {
     app = Application.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
-    setTemplate('application', compile('<h1>Hello!</h1>'));
+    let resolver = Resolver.lastInstance;
 
-    app.ApplicationController = Controller.extend();
+    resolver.addTemplate('application', '<h1>Hello!</h1>');
+
+    resolver.add('controller:application', Controller.extend());
 
     app.Router.reopen({
       location: 'none'
@@ -301,7 +305,7 @@ QUnit.test('ApplicationView is inserted into the page', function() {
   equal(jQuery('#qunit-fixture h1').text(), 'Hello!');
 });
 
-QUnit.test('Minimal Application initialized with just an application template', function() {
+QUnit.test('Minimal Application initialized with just an application template from script tags', function() {
   jQuery('#qunit-fixture').html('<script type="text/x-handlebars">Hello World</script>');
   app = run(() => {
     return Application.create({
@@ -328,7 +332,8 @@ QUnit.test('enable log of libraries with an ENV var', function() {
 
   app = run(() => {
     return Application.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
   });
 
@@ -350,7 +355,8 @@ QUnit.test('disable log version of libraries with an ENV var', function() {
 
   run(() => {
     app = Application.create({
-      rootElement: '#qunit-fixture'
+      rootElement: '#qunit-fixture',
+      Resolver
     });
 
     app.Router.reopen({
@@ -383,10 +389,21 @@ QUnit.test('can resolve custom router', function() {
   ok(app.__container__.lookup('router:main') instanceof CustomRouter, 'application resolved the correct router');
 });
 
-QUnit.test('can specify custom router', function() {
+QUnit.test('can specify custom router with default resolver', function() {
   app = run(() => {
     return Application.create({
       Router: Router.extend()
+    });
+  });
+
+  ok(app.__container__.lookup('router:main') instanceof Router, 'application resolved the correct router');
+});
+
+QUnit.test('can specify custom router without default resolver', function() {
+  app = run(() => {
+    return Application.create({
+      Router: Router.extend(),
+      Resolver
     });
   });
 
