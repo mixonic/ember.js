@@ -10,6 +10,7 @@ import {
   HAS_NATIVE_PROXY
 } from 'ember-utils';
 
+export const RAW_STRING_OPTION_KEY = symbol('RAW_STRING_OPTION_KEY');
 
 /**
  A container used to instantiate and cache objects.
@@ -89,7 +90,7 @@ export default class Container {
    @return {any}
    */
   lookup(fullName, options) {
-    assert('fullName must be a proper full name', this.registry.isValidFullName(fullName));
+    assert('fullName must be a proper full name', this.registry.isValidFullName(fullName, options));
     return lookup(this, this.registry.normalize(fullName), options);
   }
 
@@ -149,7 +150,7 @@ export default class Container {
   factoryFor(fullName, options = {}) {
     let normalizedName = this.registry.normalize(fullName);
 
-    assert('fullName must be a proper full name', this.registry.isValidFullName(normalizedName));
+    assert('fullName must be a proper full name', this.registry.isValidFullName(normalizedName, options));
 
     if (options.source) {
       let expandedFullName = this.registry.expandLocalLookup(fullName, options);
@@ -277,7 +278,7 @@ function isFactoryInstance(container, fullName, { instantiate, singleton }) {
 }
 
 function instantiateFactory(container, fullName, options) {
-  let factoryManager = EMBER_MODULE_UNIFICATION && options && options.source ? container.factoryFor(fullName, options) : container.factoryFor(fullName);
+  let factoryManager = EMBER_MODULE_UNIFICATION && options ? container.factoryFor(fullName, options) : container.factoryFor(fullName);
 
   if (factoryManager === undefined) {
     return;
@@ -353,13 +354,15 @@ function resetCache(container) {
   container.factoryManagerCache = dictionary(null);
 }
 
-function resetMember(container, fullName) {
-  let member = container.cache[fullName];
+function resetMember(container, fullName, options={}) {
+  let cacheKey = container._resolverCacheKey(fullName, options);
 
-  delete container.factoryManagerCache[fullName];
+  let member = container.cache[cacheKey];
+
+  delete container.factoryManagerCache[cacheKey];
 
   if (member) {
-    delete container.cache[fullName];
+    delete container.cache[cacheKey];
 
     if (member.destroy) {
       member.destroy();
@@ -432,5 +435,25 @@ class FactoryManager {
     }
 
     return this.class.create(props);
+  }
+}
+
+export function lookupWithRawString(container, type, rawString) {
+  if (rawString.indexOf('::') === -1) {
+    return container.lookup(`${type}:${rawString}`);
+  } else {
+    return container.lookup(`${type}`, {
+      [RAW_STRING_OPTION_KEY]: rawString
+    });
+  }
+}
+
+export function factoryForWithRawString(container, type, rawString) {
+  if (rawString.indexOf('::') === -1) {
+    return container.factoryFor(`${type}:${rawString}`);
+  } else {
+    return container.factoryFor(`${type}`, {
+      [RAW_STRING_OPTION_KEY]: rawString
+    });
   }
 }

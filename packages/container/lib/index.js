@@ -7,5 +7,8 @@ The public API, specified on the application namespace should be considered the 
 
 export { default as Registry, privatize } from './registry';
 export {
-  default as Container
+  default as Container,
+  factoryForWithRawString,
+  lookupWithRawString,
+  RAW_STRING_OPTION_KEY as _RAW_STRING_OPTION_KEY
 } from './container';
