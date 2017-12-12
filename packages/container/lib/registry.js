@@ -323,8 +323,9 @@ export default class Registry {
     }
 
     let source = options && options.source && this.normalize(options.source);
+    let rawString = options && options.rawString;
 
-    return has(this, this.normalize(fullName), source);
+    return has(this, this.normalize(fullName), source, rawString);
   }
 
   /**
@@ -577,7 +578,12 @@ export default class Registry {
       return name;
     }
 
-    return (options && options.source) ? `${options.source}:${name}` : name;
+    let parts = [];
+    if (options && options.source) { parts.push(options.source); }
+    if (options && options.rawString) { parts.push(options.rawString); }
+    parts.push(name);
+
+    return parts.join(':');
   }
 
   /**
@@ -702,7 +708,7 @@ function resolve(registry, normalizedName, options) {
   let resolved;
 
   if (registry.resolver) {
-    resolved = registry.resolver.resolve(normalizedName, options && options.source);
+    resolved = registry.resolver.resolve(normalizedName, options && options.source, options && options.rawString);
   }
 
   if (resolved === undefined) {
@@ -718,8 +724,8 @@ function resolve(registry, normalizedName, options) {
   return resolved;
 }
 
-function has(registry, fullName, source) {
-  return registry.resolve(fullName, { source }) !== undefined;
+function has(registry, fullName, source, rawString) {
+  return registry.resolve(fullName, { source, rawString }) !== undefined;
 }
 
 const privateNames = dictionary(null);

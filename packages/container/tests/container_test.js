@@ -686,39 +686,40 @@ if (EMBER_MODULE_UNIFICATION) {
 
   QUnit.test('The container can pass a namespaced path to factoryFor', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:my-addon::my-input';
+    let lookup = 'component:/';
+    let rawString = 'my-addon::my-component';
     let registry = new Registry();
     let resolveCount = 0;
-    registry.resolve = function(fullName) {
+    registry.resolve = function(fullName, options) {
       resolveCount++;
-      if (fullName === lookup) {
+      if (fullName === lookup && options.rawString === rawString) {
         return PrivateComponent;
       }
     };
 
     let container = registry.container();
 
-    assert.strictEqual(container.factoryFor(lookup).class, PrivateComponent, 'The correct factory was provided');
-    assert.strictEqual(container.factoryFor(lookup).class, PrivateComponent, 'The correct factory was provided again');
+    assert.strictEqual(container.factoryFor(lookup, { rawString }).class, PrivateComponent, 'The correct factory was provided');
+    assert.strictEqual(container.factoryFor(lookup, { rawString }).class, PrivateComponent, 'The correct factory was provided again');
     assert.equal(resolveCount, 1, 'resolve called only once and a cached factory was returned the second time');
   });
 
-  QUnit.test('The container can pass a source to lookup', function(assert) {
+  QUnit.test('The container can pass a namespace to lookup', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:my-addon::my-input';
+    let lookup = 'component:/';
+    let rawString = 'my-addon::my-component';
     let registry = new Registry();
-    registry.resolve = function(fullName) {
-      if (fullName === lookup) {
+    registry.resolve = function(fullName, options) {
+      if (fullName === lookup && options.rawString === rawString) {
         return PrivateComponent;
       }
     };
 
     let container = registry.container();
 
-    let result = container.lookup(lookup);
+    let result = container.lookup(lookup, { rawString });
     assert.ok(result instanceof PrivateComponent, 'The correct factory was provided');
-
-    assert.ok(container.cache[`my-addon::component:my-input`] instanceof PrivateComponent,
-       'The correct factory was stored in the cache with the correct key which includes the source.');
+    assert.ok(container.cache[`my-addon::my-component:component:/`] instanceof PrivateComponent,
+       'The correct factory was stored in the cache with the correct key which includes the raw string.');
   });
 }

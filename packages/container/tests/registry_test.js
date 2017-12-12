@@ -778,12 +778,13 @@ if (EMBER_MODULE_UNIFICATION) {
 
   QUnit.test('The registry can pass a namespaced lookup to the resolver', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:my-addon::my-input';
+    let lookup = 'component:/';
+    let rawString = 'my-addon::my-component';
     let resolveCount = 0;
     let resolver = {
-      resolve(fullName, src) {
+      resolve(fullName, src, _rawString) {
         resolveCount++;
-        if (fullName === lookup) {
+        if (fullName === lookup && _rawString === rawString) {
           return PrivateComponent;
         }
       }
@@ -793,8 +794,8 @@ if (EMBER_MODULE_UNIFICATION) {
       return name;
     };
 
-    assert.strictEqual(registry.resolve(lookup), PrivateComponent, 'The correct factory was provided');
-    assert.strictEqual(registry.resolve(lookup), PrivateComponent, 'The correct factory was provided again');
+    assert.strictEqual(registry.resolve(lookup, { rawString }), PrivateComponent, 'The correct factory was provided');
+    assert.strictEqual(registry.resolve(lookup, { rawString }), PrivateComponent, 'The correct factory was provided again');
     assert.equal(resolveCount, 1, 'resolve called only once and a cached factory was returned the second time');
   });
 }

@@ -147,6 +147,7 @@ export default class Container {
    @param {String} fullName
    @param {Object} [options]
    @param {String} [options.source] The fullname of the request source (used for local lookup)
+   @param {String} [options.rawString] The rawString lookup, which may contain a namespace
    @return {any}
    */
   factoryFor(fullName, options = {}) {
@@ -280,7 +281,7 @@ function isFactoryInstance(container, fullName, { instantiate, singleton }) {
 }
 
 function instantiateFactory(container, fullName, options) {
-  let factoryManager = EMBER_MODULE_UNIFICATION && options && options.source ? container.factoryFor(fullName, options) : container.factoryFor(fullName);
+  let factoryManager = EMBER_MODULE_UNIFICATION && options ? container.factoryFor(fullName, options) : container.factoryFor(fullName);
 
   if (factoryManager === undefined) {
     return;
