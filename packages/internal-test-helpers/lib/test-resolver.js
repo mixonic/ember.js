@@ -1,18 +1,36 @@
 import { compile } from 'ember-template-compiler';
 
+const DELIMITER = '\0';
+
+function serializeKey(specifier, referrer, rawString) {
+  [specifier, referrer, rawString].join(DELIMITER);
+}
+
+function deserializeKey(key) {
+  return key.split(DELIMITER);
+}
+
 class Resolver {
   constructor() {
     this._registered = {};
     this.constructor.lastInstance = this;
   }
-  resolve(specifier) {
-    return this._registered[specifier];
+  resolve(specifier, referrer, rawString) {
+    return this._registered[serializeKey(specifier, referrer, rawString)];
   }
   add(specifier, factory) {
-    if (specifier.indexOf(':') === -1) {
-      throw new Error('Specifiers added to the resolver must be in the format of type:name');
+    let key;
+    switch (typeof specifier) {
+      case 'string':
+        if (specifier.indexOf(':') === -1) {
+          throw new Error('Specifiers added to the resolver must be in the format of type:name');
+        }
+        key = specifier;
+      case 'object':
+        key = serializeKey(specifier.specifier, specifier.referrer, specifier.rawString);
     }
-    return this._registered[specifier] = factory;
+
+    return this._registered[key] = factory;
   }
   addTemplate(templateName, template) {
     let templateType = typeof template;
