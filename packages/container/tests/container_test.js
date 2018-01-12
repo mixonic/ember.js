@@ -1,8 +1,13 @@
 import { OWNER, assign } from 'ember-utils';
 import { get } from 'ember-metal';
 import { EMBER_MODULE_UNIFICATION } from 'ember/features';
-import { Registry } from '..';
+import {
+  factoryForWithRawString,
+  lookupWithRawString,
+  Registry
+} from '..';
 import { factory } from 'internal-test-helpers';
+import { ModuleBasedTestResolver } from 'internal-test-helpers';
 
 QUnit.module('Container');
 
@@ -680,46 +685,77 @@ if (EMBER_MODULE_UNIFICATION) {
     let result = container.lookup(lookup, { source: expectedSource });
     assert.ok(result instanceof PrivateComponent, 'The correct factory was provided');
 
-    assert.ok(container.cache[`template:routes/application:component:my-input`] instanceof PrivateComponent,
-       'The correct factory was stored in the cache with the correct key which includes the source.');
+    assert.ok(
+      container.cache[`component:my-input\0template:routes/application\0`] instanceof PrivateComponent,
+      'The correct factory was stored in the cache with the correct key which includes the source.'
+    );
   });
 
   QUnit.test('The container can pass a namespaced path to factoryFor', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:/';
-    let rawString = 'my-addon::my-component';
-    let registry = new Registry();
-    let resolveCount = 0;
-    registry.resolve = function(fullName, options) {
-      resolveCount++;
-      if (fullName === lookup && options.rawString === rawString) {
-        return PrivateComponent;
-      }
-    };
+    let type = 'component';
+    let namespace = 'my-addon';
+    let name = 'my-component';
+    let rawString = `${namespace}::${name}`;
+    let resolver = new ModuleBasedTestResolver();
+    let registry = new Registry({resolver});
+
+    resolver.add({
+      specifier: type,
+      rawString: rawString
+    }, PrivateComponent);
 
     let container = registry.container();
 
-    assert.strictEqual(container.factoryFor(lookup, { rawString }).class, PrivateComponent, 'The correct factory was provided');
-    assert.strictEqual(container.factoryFor(lookup, { rawString }).class, PrivateComponent, 'The correct factory was provided again');
-    assert.equal(resolveCount, 1, 'resolve called only once and a cached factory was returned the second time');
+    assert.equal(
+      container.factoryFor(`${type}:${name}`), undefined,
+      'Cannot find factoryFor by name'
+    );
+    expectAssertion(() => {
+      container.factoryFor(`${type}:${rawString}`);
+    }, /must be a proper full name/, 'Cannot find factoryFor by rawString');
+
+    let result = factoryForWithRawString(container, 'component', rawString);
+    assert.strictEqual(
+      result.class, PrivateComponent,
+      'The correct factory was provided'
+    );
+    assert.strictEqual(
+      result.class, PrivateComponent,
+      'The correct factory was provided again'
+    );
   });
+
 
   QUnit.test('The container can pass a namespace to lookup', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:/';
-    let rawString = 'my-addon::my-component';
-    let registry = new Registry();
-    registry.resolve = function(fullName, options) {
-      if (fullName === lookup && options.rawString === rawString) {
-        return PrivateComponent;
-      }
-    };
+    let type = 'component';
+    let namespace = 'my-addon';
+    let name = 'my-component';
+    let rawString = `${namespace}::${name}`;
+    let resolver = new ModuleBasedTestResolver();
+    let registry = new Registry({resolver});
+
+    resolver.add({
+      specifier: type,
+      rawString: rawString
+    }, PrivateComponent);
 
     let container = registry.container();
 
-    let result = container.lookup(lookup, { rawString });
+    assert.equal(
+      container.lookup(`${type}:${name}`), undefined,
+      'Cannot lookup by type:name'
+    );
+    expectAssertion(() => {
+      container.lookup(`${type}:${rawString}`);
+    }, /must be a proper full name/, 'Cannot lookup by type:rawString');
+
+    let result = lookupWithRawString(container, 'component', rawString);
     assert.ok(result instanceof PrivateComponent, 'The correct factory was provided');
-    assert.ok(container.cache[`my-addon::my-component:component:/`] instanceof PrivateComponent,
-       'The correct factory was stored in the cache with the correct key which includes the raw string.');
+    assert.ok(
+      container.cache[`${type}\0\0${rawString}`] instanceof PrivateComponent,
+      'The correct factory was stored in the cache with the correct key which includes the raw string.'
+    );
   });
 }

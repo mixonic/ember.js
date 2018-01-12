@@ -3,11 +3,7 @@ import { compile } from 'ember-template-compiler';
 const DELIMITER = '\0';
 
 function serializeKey(specifier, referrer, rawString) {
-  [specifier, referrer, rawString].join(DELIMITER);
-}
-
-function deserializeKey(key) {
-  return key.split(DELIMITER);
+  return [specifier, referrer, rawString].join(DELIMITER);
 }
 
 class Resolver {
@@ -16,18 +12,26 @@ class Resolver {
     this.constructor.lastInstance = this;
   }
   resolve(specifier, referrer, rawString) {
-    return this._registered[serializeKey(specifier, referrer, rawString)];
+    console.log('resolve', specifier, referrer, rawString);
+    let res = this._registered[serializeKey(specifier, referrer, rawString)];
+    console.log('resolved', res);
+    return res;
   }
   add(specifier, factory) {
+    console.log('add', specifier, factory);
     let key;
     switch (typeof specifier) {
       case 'string':
         if (specifier.indexOf(':') === -1) {
           throw new Error('Specifiers added to the resolver must be in the format of type:name');
         }
-        key = specifier;
+        key = serializeKey(specifier);
+        break;
       case 'object':
         key = serializeKey(specifier.specifier, specifier.referrer, specifier.rawString);
+        break;
+      default:
+        throw new Error('Specifier string has an unknown type');
     }
 
     return this._registered[key] = factory;
@@ -37,7 +41,7 @@ class Resolver {
     if (templateType !== 'string') {
       throw new Error(`You called addTemplate for "${templateName}" with a template argument of type of '${templateType}'. addTemplate expects an argument of an uncompiled template as a string.`);
     }
-    return this._registered[`template:${templateName}`] = compile(template, {
+    return this._registered[serializeKey(`template:${templateName}`)] = compile(template, {
       moduleName: templateName
     });
   }

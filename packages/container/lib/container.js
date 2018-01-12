@@ -12,6 +12,7 @@ import {
 } from 'ember-utils';
 
 const CONTAINER_OVERRIDE = symbol('CONTAINER_OVERRIDE');
+export const RAW_STRING_OPTION_KEY = symbol('RAW_STRING_OPTION_KEY');
 
 /**
  A container used to instantiate and cache objects.
@@ -92,7 +93,7 @@ export default class Container {
    @return {any}
    */
   lookup(fullName, options) {
-    assert('fullName must be a proper full name', this.registry.isValidFullName(fullName));
+    assert('fullName must be a proper full name', this.registry.isValidFullName(fullName, options));
     return lookup(this, this.registry.normalize(fullName), options);
   }
 
@@ -147,13 +148,12 @@ export default class Container {
    @param {String} fullName
    @param {Object} [options]
    @param {String} [options.source] The fullname of the request source (used for local lookup)
-   @param {String} [options.rawString] The rawString lookup, which may contain a namespace
    @return {any}
    */
   factoryFor(fullName, options = {}) {
     let normalizedName = this.registry.normalize(fullName);
 
-    assert('fullName must be a proper full name', this.registry.isValidFullName(normalizedName));
+    assert('fullName must be a proper full name', this.registry.isValidFullName(normalizedName, options));
 
     if (options.source) {
       let expandedFullName = this.registry.expandLocalLookup(fullName, options);
@@ -436,5 +436,25 @@ class FactoryManager {
     }
 
     return this.class.create(props);
+  }
+}
+
+export function lookupWithRawString(container, type, rawString) {
+  if (rawString.indexOf('::') === -1) {
+    return container.lookup(`${type}:${rawString}`);
+  } else {
+    return container.lookup(`${type}`, {
+      [RAW_STRING_OPTION_KEY]: rawString
+    });
+  }
+}
+
+export function factoryForWithRawString(container, type, rawString) {
+  if (rawString.indexOf('::') === -1) {
+    return container.factoryFor(`${type}:${rawString}`);
+  } else {
+    return container.factoryFor(`${type}`, {
+      [RAW_STRING_OPTION_KEY]: rawString
+    });
   }
 }
