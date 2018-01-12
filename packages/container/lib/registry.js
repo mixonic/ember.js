@@ -637,11 +637,15 @@ if (DEBUG) {
 
     for (let key in hash) {
       if (hash.hasOwnProperty(key)) {
-        assert(`Expected a proper full name, given '${hash[key]}'`, this.isValidFullName(hash[key]));
+        assert(
+          `Expected a proper full name, given '${hash[key][1]}'`,
+          hash[key][1]
+        );
 
         injections.push({
           property: key,
-          fullName: hash[key]
+          type: hash[key][0],
+          rawString: hash[key][1]
         });
       }
     }
@@ -652,12 +656,15 @@ if (DEBUG) {
   Registry.prototype.validateInjections = function(injections) {
     if (!injections) { return; }
 
-    let fullName;
+    let type;
+    let rawString;
 
     for (let i = 0; i < injections.length; i++) {
-      fullName = injections[i].fullName;
+      console.log(injections);
+      type = injections[i].type;
+      rawString = injections[i].rawString;
 
-      assert(`Attempting to inject an unknown injection: '${fullName}'`, this.has(fullName));
+      assert(`Attempting to inject an unknown injection: '${rawString}'`, this.has(type, {rawString}));
     }
   };
 }

@@ -425,7 +425,7 @@ QUnit.test('Lazy injection validations are cached', function() {
   Apple.reopenClass({
     _lazyInjections() {
       ok(true, 'should call lazy injection method');
-      return ['orange:main'];
+      return [['orange', 'main']];
     }
   });
 
@@ -647,8 +647,6 @@ QUnit.skip('#factoryFor does not add properties to the object being instantiated
 });
 
 if (EMBER_MODULE_UNIFICATION) {
-  QUnit.module('Container module unification');
-
   QUnit.test('The container can pass a source to factoryFor', function(assert) {
     let PrivateComponent = factory();
     let lookup = 'component:my-input';

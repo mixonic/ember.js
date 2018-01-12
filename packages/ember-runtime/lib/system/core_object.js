@@ -937,7 +937,7 @@ if (DEBUG) {
     for (key in proto) {
       desc = proto[key];
       if (desc instanceof InjectedProperty) {
-        injections[key] = `${desc.type}:${desc.name || key}`;
+        injections[key] = [desc.type, desc.name || key];
       }
     }
 
