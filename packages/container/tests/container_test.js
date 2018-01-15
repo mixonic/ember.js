@@ -719,7 +719,7 @@ if (EMBER_MODULE_UNIFICATION) {
         result.class, PrivateComponent,
         'The correct factory was provided again'
       );
-    });
+    }
 
     ['@test The container can pass a namespace to lookup']() {
       let PrivateComponent = factory();
