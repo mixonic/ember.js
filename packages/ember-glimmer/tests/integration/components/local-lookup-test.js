@@ -245,16 +245,7 @@ if (EMBER_MODULE_UNIFICATION) {
       return super.resolve(fullSpecifier);
     }
   }
-
-  /*
-   * This sub-classing changes `registerXXX` methods to use the resolver.
-   * Required for testing the module unification-friendly `resolve` call
-   * with a `referrer` argument.
-   *
-   * In theory all these tests can be ported to use the resolver instead of
-   * the registry.
-   */
-  moduleFor('Components test: local lookup with resolution referrer', class extends LocalLookupTest {
+  moduleFor('Components test: local lookup with module unification', class extends LocalLookupTest {
     get resolver() {
       return this.owner.__registry__.fallback.resolver;
     }
