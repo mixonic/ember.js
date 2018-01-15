@@ -8,8 +8,6 @@ import { ENV } from 'ember-environment';
 const VALID_FULL_NAME_REGEXP = /^[^:]+:[^:]+$/;
 
 let missingResolverFunctionsDeprecation = 'Passing a `resolver` function into a Registry is deprecated. Please pass in a Resolver object with a `resolve` method.';
-const missingResolverFunctionsDeprecation = 'Passing a `resolver` function into a Registry is deprecated. Please pass in a Resolver object with a `resolve` method.';
-const MODULE_UNIFICATION_VALID_FULL_NAME_REGEXP = /^[^:]+:[^:]+(::[^:]+)?$/;
 
 /**
  A registry used to store factory and option information keyed

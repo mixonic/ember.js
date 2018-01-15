@@ -9,6 +9,7 @@ import {
   assign,
   HAS_NATIVE_PROXY
 } from 'ember-utils';
+import { symbol } from 'ember-utils';
 
 export const RAW_STRING_OPTION_KEY = symbol('RAW_STRING_OPTION_KEY');
 
