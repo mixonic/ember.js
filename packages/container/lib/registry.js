@@ -184,6 +184,7 @@ export default class Registry {
 
     this._localLookupCache = Object.create(null);
 
+
     delete this.registrations[normalizedName];
     delete this._resolveCache[cacheKey];
     delete this._failCache[cacheKey];
@@ -227,7 +228,6 @@ export default class Registry {
    */
   resolve(fullName, options) {
     assert('fullName must be a proper full name', this.isValidFullName(fullName, options));
-    console.log('registry.resolve', fullName, options);
     let factory = resolve(this, this.normalize(fullName), options);
     if (factory === undefined && this.fallback !== null) {
       factory = this.fallback.resolve(...arguments);
@@ -701,7 +701,7 @@ function resolve(registry, normalizedName, options) {
   }
 
   let cacheKey = registry.resolverCacheKey(normalizedName, options);
-  let cached = registry._resolveCache[registry.normalize(cacheKey)];
+  let cached = registry._resolveCache[cacheKey];
   if (cached !== undefined) { return cached; }
   if (registry._failCache[cacheKey]) { return; }
 

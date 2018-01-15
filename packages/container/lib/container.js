@@ -357,13 +357,15 @@ function resetCache(container) {
   container.factoryManagerCache = dictionary(null);
 }
 
-function resetMember(container, fullName) {
-  let member = container.cache[fullName];
+function resetMember(container, fullName, options={}) {
+  let cacheKey = container._resolverCacheKey(fullName, options);
 
-  delete container.factoryManagerCache[fullName];
+  let member = container.cache[cacheKey];
+
+  delete container.factoryManagerCache[cacheKey];
 
   if (member) {
-    delete container.cache[fullName];
+    delete container.cache[cacheKey];
 
     if (member.destroy) {
       member.destroy();

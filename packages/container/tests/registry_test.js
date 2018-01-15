@@ -1,7 +1,8 @@
-import { Registry, privatize } from '..';
+import { Registry, privatize, _RAW_STRING_OPTION_KEY } from '..';
 import { factory } from 'internal-test-helpers';
 import { EMBER_MODULE_UNIFICATION } from 'ember/features';
 import { ENV } from 'ember-environment';
+import { ModuleBasedTestResolver } from 'internal-test-helpers';
 
 let originalResolverFunctionSupport;
 
@@ -755,47 +756,37 @@ if (EMBER_MODULE_UNIFICATION) {
 
   QUnit.test('The registry can pass a source to the resolver', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:my-input';
+    let type = 'component';
+    let name = 'my-component';
+    let fullName = `${type}:${name}`;
     let source = 'template:routes/application';
-    let resolveCount = 0;
-    let resolver = {
-      resolve(fullName, src) {
-        resolveCount++;
-        if (fullName === lookup && src === source) {
-          return PrivateComponent;
-        }
-      }
-    };
+    let resolver = new ModuleBasedTestResolver();
     let registry = new Registry({ resolver });
-    registry.normalize = function(name) {
-      return name;
-    };
 
-    assert.strictEqual(registry.resolve(lookup, { source }), PrivateComponent, 'The correct factory was provided');
-    assert.strictEqual(registry.resolve(lookup, { source }), PrivateComponent, 'The correct factory was provided again');
-    assert.equal(resolveCount, 1, 'resolve called only once and a cached factory was returned the second time');
+    resolver.add({
+      specifier: fullName,
+      referrer: source
+    }, PrivateComponent);
+
+    assert.strictEqual(registry.resolve(fullName, { source }), PrivateComponent, 'The correct factory was provided');
+    assert.strictEqual(registry.resolve(fullName, { source }), PrivateComponent, 'The correct factory was provided again');
   });
 
   QUnit.test('The registry can pass a namespaced lookup to the resolver', function(assert) {
     let PrivateComponent = factory();
-    let lookup = 'component:/';
-    let rawString = 'my-addon::my-component';
-    let resolveCount = 0;
-    let resolver = {
-      resolve(fullName, src, _rawString) {
-        resolveCount++;
-        if (fullName === lookup && _rawString === rawString) {
-          return PrivateComponent;
-        }
-      }
-    };
+    let type = 'component';
+    let namespace = 'my-addon';
+    let name = 'my-component';
+    let rawString = `${namespace}::${name}`;
+    let resolver = new ModuleBasedTestResolver();
     let registry = new Registry({ resolver });
-    registry.normalize = function(name) {
-      return name;
-    };
 
-    assert.strictEqual(registry.resolve(lookup, { rawString }), PrivateComponent, 'The correct factory was provided');
-    assert.strictEqual(registry.resolve(lookup, { rawString }), PrivateComponent, 'The correct factory was provided again');
-    assert.equal(resolveCount, 1, 'resolve called only once and a cached factory was returned the second time');
+    resolver.add({
+      specifier: type,
+      rawString
+    }, PrivateComponent);
+
+    assert.strictEqual(registry.resolve(type, { [_RAW_STRING_OPTION_KEY]: rawString }), PrivateComponent, 'The correct factory was provided');
+    assert.strictEqual(registry.resolve(type, { [_RAW_STRING_OPTION_KEY]: rawString }), PrivateComponent, 'The correct factory was provided again');
   });
 }
