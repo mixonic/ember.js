@@ -12,13 +12,9 @@ class Resolver {
     this.constructor.lastInstance = this;
   }
   resolve(specifier, referrer, rawString) {
-    console.log('resolve', specifier, referrer, rawString);
-    let res = this._registered[serializeKey(specifier, referrer, rawString)];
-    console.log('resolved', res);
-    return res;
+    return this._registered[serializeKey(specifier, referrer, rawString)];
   }
   add(specifier, factory) {
-    console.log('add', specifier, factory);
     let key;
     switch (typeof specifier) {
       case 'string':

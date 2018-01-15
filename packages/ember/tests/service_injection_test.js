@@ -5,7 +5,6 @@ import { inject, Service } from 'ember-runtime';
 moduleFor('Service Injection', class extends ApplicationTestCase {
 
   ['@test Service can be injected and is resolved'](assert) {
-    debugger;
     this.add('controller:application', Controller.extend({
       myService: inject.service('my-service')
     }));
