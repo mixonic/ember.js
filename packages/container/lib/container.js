@@ -317,9 +317,10 @@ function buildInjections(container, injections) {
     let injection;
     for (let i = 0; i < injections.length; i++) {
       injection = injections[i];
-      hash[injection.property] = lookup(container, injection.fullName);
+      hash[injection.property] = lookupWithRawString(container, injection.type, injection.rawString);
       if (!isDynamic) {
-        isDynamic = !isSingleton(container, injection.fullName);
+        // TODO this is 100% wrong. isSingleton should take the options with rawString into account
+        isDynamic = !isSingleton(container, `${injection.type}:${injection.rawString}`);
       }
     }
   }

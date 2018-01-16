@@ -964,7 +964,10 @@ if (DEBUG) {
     for (key in proto) {
       desc = descriptorFor(proto, key);
       if (desc instanceof InjectedProperty) {
-        injections[key] = `${desc.type}:${desc.name || key}`;
+        injections[key] = {
+          type: desc.type,
+          rawString: desc.name || key
+        };
       }
     }
 

@@ -449,13 +449,17 @@ export default class Registry {
   typeInjection(type, property, fullName) {
     assert('fullName must be a proper full name', this.isValidFullName(fullName));
 
-    let fullNameType = fullName.split(':')[0];
+    let [fullNameType, fullNameRawString] = fullName.split(':');
     assert(`Cannot inject a '${fullName}' on other ${type}(s).`, fullNameType !== type);
 
     let injections = this._typeInjections[type] ||
                      (this._typeInjections[type] = []);
 
-    injections.push({ property, fullName });
+    injections.push({
+      property,
+      type: fullNameType,
+      rawString: fullNameRawString
+    });
   }
 
   /**
@@ -519,7 +523,13 @@ export default class Registry {
     let injections = this._injections[normalizedName] ||
                      (this._injections[normalizedName] = []);
 
-    injections.push({ property, fullName: normalizedInjectionName });
+    let [injectionType, injectionNamePart] = normalizedInjectionName.split(':');
+
+    injections.push({
+      property,
+      type: injectionType,
+      rawString: injectionNamePart
+    });
   }
 
   /**
@@ -637,11 +647,15 @@ if (DEBUG) {
 
     for (let key in hash) {
       if (hash.hasOwnProperty(key)) {
-        assert(`Expected a proper full name, given '${hash[key]}'`, this.isValidFullName(hash[key]));
+        let desc = hash[key];
+        assert(`Expected a proper full name, given '${desc.rawString}'`, this.isValidFullName(desc.type, {
+          [RAW_STRING_OPTION_KEY]: desc.rawString
+        }));
 
         injections.push({
           property: key,
-          fullName: hash[key]
+          type: desc.type,
+          rawString: desc.rawString
         });
       }
     }
@@ -649,15 +663,16 @@ if (DEBUG) {
     return injections;
   };
 
-  Registry.prototype.validateInjections = function(injections) {
-    if (!injections) { return; }
+  Registry.prototype.validateInjections = function(normalizedInjections) {
+    if (!normalizedInjections) { return; }
 
-    let fullName;
+    for (let i = 0; i < normalizedInjections.length; i++) {
+      let {
+        type,
+        rawString
+      } = normalizedInjections[i];
 
-    for (let i = 0; i < injections.length; i++) {
-      fullName = injections[i].fullName;
-
-      assert(`Attempting to inject an unknown injection: '${fullName}'`, this.has(fullName));
+      assert(`Attempting to inject an unknown injection: '${type}:${rawString}'`, this.has(type, {[RAW_STRING_OPTION_KEY]: rawString}));
     }
   };
 }
@@ -712,7 +727,11 @@ function resolve(registry, normalizedName, options) {
   }
 
   if (resolved === undefined) {
-    resolved = registry.registrations[normalizedName];
+    if (!options || !options[RAW_STRING_OPTION_KEY]) {
+      resolved = registry.registrations[normalizedName];
+    } else if (options[RAW_STRING_OPTION_KEY].indexOf(':') === -1) {
+      resolved = registry.registrations[`${normalizedName}:${options[RAW_STRING_OPTION_KEY]}`];
+    }
   }
 
   if (resolved === undefined) {
@@ -725,7 +744,10 @@ function resolve(registry, normalizedName, options) {
 }
 
 function has(registry, fullName, source, rawString) {
-  return registry.resolve(fullName, { source, rawString }) !== undefined;
+  return registry.resolve(fullName, {
+    source,
+    [RAW_STRING_OPTION_KEY]: rawString
+  }) !== undefined;
 }
 
 const privateNames = dictionary(null);
