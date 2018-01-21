@@ -225,8 +225,9 @@ function wrapManagerInDeprecationProxy(manager) {
   return manager;
 }
 
-function isSingleton(container, fullName) {
-  return container.registry.getOption(fullName, 'singleton') !== false;
+function isSingleton(container, fullName, options) {
+  let res = container.registry.getOption(fullName, 'singleton', options) !== false;
+  return res;
 }
 
 function isInstantiatable(container, fullName) {
@@ -318,9 +319,10 @@ function buildInjections(container, injections) {
     let injection;
     for (let i = 0; i < injections.length; i++) {
       injection = injections[i];
-      hash[injection.property] = lookup(container, injection.fullName);
+      let {fullName, name, rawString, type} = parseInjectionString(injection.fullName);
+      hash[injection.property] = lookupWithRawString(container, type, rawString || name);
       if (!isDynamic) {
-        isDynamic = !isSingleton(container, injection.fullName);
+        isDynamic = !isSingleton(container, injection.fullName, {[RAW_STRING_OPTION_KEY]: rawString});
       }
     }
   }
@@ -442,6 +444,25 @@ class FactoryManager {
     FACTORY_FOR.set(instance, this);
 
     return instance;
+  }
+}
+
+export function parseInjectionString(injectionString) {
+  let typeDelimiterOffset = injectionString.indexOf(':');
+  let type = injectionString.slice(0, typeDelimiterOffset);
+  let rawString = injectionString.slice(typeDelimiterOffset+1);
+  if (rawString.indexOf('::') === -1) {
+    return {
+      fullName: injectionString,
+      name: rawString,
+      type
+    };
+  } else {
+    return {
+      fullName: type,
+      rawString,
+      type
+    };
   }
 }
 

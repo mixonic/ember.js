@@ -1,6 +1,7 @@
 import { Controller } from 'ember-runtime';
 import { moduleFor, ApplicationTestCase } from 'internal-test-helpers';
 import { inject, Service } from 'ember-runtime';
+import { EMBER_MODULE_UNIFICATION } from 'ember/features';
 
 moduleFor('Service Injection', class extends ApplicationTestCase {
 
@@ -17,22 +18,28 @@ moduleFor('Service Injection', class extends ApplicationTestCase {
       assert.ok(controller.get('myService') instanceof MyService);
     });
   }
-
-  // Pending implementation
-  ['@skip Service with namespace can be injected and is resolved'](assert) {
-    this.add('controller:application', Controller.extend({
-      myService: inject.service('my-namespace::my-service')
-    }));
-    let MyService = Service.extend();
-    this.add({
-      specifier: 'service',
-      rawString: 'my-namespace::my-service'
-    }, MyService);
-
-    this.visit('/').then(() => {
-      let controller = this.applicationInstance.lookup('controller:application');
-      assert.ok(controller.get('myService') instanceof MyService);
-    });
-  }
-
 });
+
+if (EMBER_MODULE_UNIFICATION) {
+
+  moduleFor('Service Injection (MU)', class extends ApplicationTestCase {
+
+    ['@test Service with namespace can be injected and is resolved'](assert) {
+      this.add('controller:application', Controller.extend({
+        myService: inject.service('my-namespace::my-service')
+      }));
+      let MyService = Service.extend();
+      this.add({
+        specifier: 'service',
+        rawString: 'my-namespace::my-service'
+      }, MyService);
+
+      this.visit('/').then(() => {
+        let controller = this.applicationInstance.lookup('controller:application');
+        assert.ok(controller.get('myService') instanceof MyService);
+      });
+    }
+
+  });
+
+}
