@@ -151,9 +151,10 @@ export default class Registry {
     assert(`Attempting to register an unknown factory: '${fullName}'`, factory !== undefined);
 
     let normalizedName = this.normalize(fullName);
-    assert(`Cannot re-register: '${fullName}', as it has already been resolved.`, !this._resolveCache[normalizedName]);
+    let cacheKey = this.resolverCacheKey(normalizedName);
+    assert(`Cannot re-register: '${fullName}', as it has already been resolved.`, !this._resolveCache[cacheKey]);
 
-    this._failSet.delete(normalizedName);
+    this._failSet.delete(cacheKey);
     this.registrations[normalizedName] = factory;
     this._options[normalizedName] = options;
   }
@@ -179,13 +180,14 @@ export default class Registry {
     assert('fullName must be a proper full name', this.isValidFullName(fullName));
 
     let normalizedName = this.normalize(fullName);
+    let cacheKey = this.resolverCacheKey(normalizedName);
 
     this._localLookupCache = Object.create(null);
 
     delete this.registrations[normalizedName];
-    delete this._resolveCache[normalizedName];
+    delete this._resolveCache[cacheKey];
     delete this._options[normalizedName];
-    this._failSet.delete(normalizedName);
+    this._failSet.delete(cacheKey);
   }
 
   /**
@@ -450,7 +452,7 @@ export default class Registry {
     let injections = this._typeInjections[type] ||
                      (this._typeInjections[type] = []);
 
-    injections.push({ property, fullName });
+    injections.push({ property, specifier: fullName });
   }
 
   /**
@@ -514,7 +516,7 @@ export default class Registry {
     let injections = this._injections[normalizedName] ||
                      (this._injections[normalizedName] = []);
 
-    injections.push({ property, fullName: normalizedInjectionName });
+    injections.push({ property, specifier: normalizedInjectionName });
   }
 
   /**
@@ -567,11 +569,7 @@ export default class Registry {
   }
 
   resolverCacheKey(name, options) {
-    if (!EMBER_MODULE_UNIFICATION) {
-      return name;
-    }
-
-    return (options && options.source) ? `${options.source}:${name}` : name;
+    return `${name}\0${(options && options.source) || ''}`;
   }
 
   /**
@@ -625,11 +623,13 @@ if (DEBUG) {
 
     for (let key in hash) {
       if (hash.hasOwnProperty(key)) {
-        assert(`Expected a proper full name, given '${hash[key]}'`, this.isValidFullName(hash[key]));
+        let { specifier, source } = hash[key];
+        assert(`Expected a proper full name, given '${specifier}'`, this.isValidFullName(specifier));
 
         injections.push({
           property: key,
-          fullName: hash[key]
+          specifier,
+          source
         });
       }
     }
@@ -640,12 +640,10 @@ if (DEBUG) {
   Registry.prototype.validateInjections = function(injections) {
     if (!injections) { return; }
 
-    let fullName;
-
     for (let i = 0; i < injections.length; i++) {
-      fullName = injections[i].fullName;
+      let {specifier, source} = injections[i];
 
-      assert(`Attempting to inject an unknown injection: '${fullName}'`, this.has(fullName));
+      assert(`Attempting to inject an unknown injection: '${specifier}'`, this.has(specifier, {source}));
     }
   };
 }

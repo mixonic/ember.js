@@ -21,9 +21,10 @@ import { descriptorFor } from './meta';
          to the property's name
   @private
 */
-export default function InjectedProperty(type, name) {
+export default function InjectedProperty(type, name, options) {
   this.type = type;
   this.name = name;
+  this.source = options ? options.source : undefined;
 
   this._super$Constructor(injectedPropertyGet);
   AliasedPropertyPrototype.oneWay.call(this);
@@ -36,7 +37,12 @@ function injectedPropertyGet(keyName) {
   assert(`InjectedProperties should be defined with the inject computed property macros.`, desc && desc.type);
   assert(`Attempting to lookup an injected property on an object without a container, ensure that the object was instantiated via a container.`, owner);
 
-  return owner.lookup(`${desc.type}:${desc.name || keyName}`);
+  let specifier = `${desc.type}:${desc.name || keyName}`;
+  if (desc.source) {
+    return owner.lookup(specifier, {source: desc.source});
+  } else {
+    return owner.lookup(specifier);
+  }
 }
 
 InjectedProperty.prototype = Object.create(Descriptor.prototype);

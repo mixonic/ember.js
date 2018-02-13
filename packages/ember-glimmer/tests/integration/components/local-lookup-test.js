@@ -1,5 +1,7 @@
 import { moduleFor, RenderingTest } from '../../utils/test-case';
+import { compile } from 'ember-template-compiler';
 import { ModuleBasedTestResolver } from 'internal-test-helpers';
+import { moduleFor as applicationModuleFor, ApplicationTestCase } from 'internal-test-helpers';
 import { Component } from '../../utils/helpers';
 import { EMBER_MODULE_UNIFICATION } from 'ember/features';
 import { helper, Helper } from 'ember-glimmer';
@@ -299,6 +301,36 @@ if (EMBER_MODULE_UNIFICATION) {
       } else {
         throw new Error(`Cannot register ${funcOrClassBody} as a helper`);
       }
+    }
+  });
+}
+
+if (EMBER_MODULE_UNIFICATION) {
+  applicationModuleFor('Components test: local lookup with resolution referrer (MU)', class extends ApplicationTestCase {
+    ['@test Ensure that the same specifier with two sources does not share a cache key'](assert) {
+      this.add({
+        specifier: 'template:components/x-not-shared',
+        source: 'template:x-top'
+      }, compile('child-x-not-shared'));
+
+      this.add({
+        specifier: 'template:components/x-top',
+        source: 'template:application'
+      }, compile('top-level-x-top ({{x-not-shared}})', { moduleName: 'x-top' }));
+
+      this.add({
+        specifier: 'template:components/x-not-shared',
+        source: 'template:application'
+      }, compile('top-level-x-not-shared'));
+
+      this.addTemplate('application', '{{x-not-shared}} {{x-top}} {{x-not-shared}} {{x-top}}');
+
+      return this.visit('/').then(() => {
+        assert.equal(
+          this.element.textContent,
+          'top-level-x-not-shared top-level-x-top (child-x-not-shared) top-level-x-not-shared top-level-x-top (child-x-not-shared)'
+        );
+      });
     }
   });
 }

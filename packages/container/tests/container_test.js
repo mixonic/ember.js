@@ -388,7 +388,7 @@ moduleFor('Container', class extends AbstractTestCase {
     assert.deepEqual(resolveWasCalled, ['foo:post']);
   }
 
-  ['@test A factory\'s lazy injections are validated when first instantiated'](assert) {
+  [`@test A factory's lazy injections are validated when first instantiated`](assert) {
     let registry = new Registry();
     let container = registry.container();
     let Apple = factory();
@@ -396,7 +396,10 @@ moduleFor('Container', class extends AbstractTestCase {
 
     Apple.reopenClass({
       _lazyInjections() {
-        return ['orange:main', 'banana:main'];
+        return [
+          {specifier: 'orange:main'},
+          {specifier: 'banana:main'}
+        ];
       }
     });
 
@@ -419,7 +422,9 @@ moduleFor('Container', class extends AbstractTestCase {
     Apple.reopenClass({
       _lazyInjections: () => {
         assert.ok(true, 'should call lazy injection method');
-        return ['orange:main'];
+        return [
+          {specifier: 'orange:main'}
+        ];
       }
     });
 
@@ -676,7 +681,7 @@ if (EMBER_MODULE_UNIFICATION) {
       let result = container.lookup(lookup, { source: expectedSource });
       this.assert.ok(result instanceof PrivateComponent, 'The correct factory was provided');
 
-      this.assert.ok(container.cache[`template:routes/application:component:my-input`] instanceof PrivateComponent,
+      this.assert.ok(container.cache[`component:my-input\0template:routes/application`] instanceof PrivateComponent,
         'The correct factory was stored in the cache with the correct key which includes the source.');
     }
   });

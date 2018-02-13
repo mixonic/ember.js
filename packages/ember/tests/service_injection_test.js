@@ -2,7 +2,7 @@ import { Controller } from 'ember-runtime';
 import { moduleFor, ApplicationTestCase } from 'internal-test-helpers';
 import { inject, Service } from 'ember-runtime';
 import { computed } from 'ember-metal';
-import { EMBER_METAL_ES5_GETTERS } from 'ember/features';
+import { EMBER_METAL_ES5_GETTERS, EMBER_MODULE_UNIFICATION } from 'ember/features';
 
 moduleFor('Service Injection', class extends ApplicationTestCase {
 
@@ -42,4 +42,107 @@ if (EMBER_METAL_ES5_GETTERS) {
       });
     }
   });
+}
+
+if (EMBER_MODULE_UNIFICATION) {
+  moduleFor('Service Injection (MU)', class extends ApplicationTestCase {
+    ['@test Service can be injected with source and is resolved'](assert) {
+      let source = 'src/ui/routes/application/controller';
+      this.add('controller:application', Controller.extend({
+        myService: inject.service('my-service', { source })
+      }));
+      let MyService = Service.extend();
+      this.add({
+        specifier: 'service:my-service',
+        source
+      }, MyService);
+
+      return this.visit('/').then(() => {
+        let controller = this.applicationInstance.lookup('controller:application');
+
+        assert.ok(controller.get('myService') instanceof MyService);
+      });
+    }
+
+    ['@test Services can be injected with same name, different source, but same resolution result, and share an instance'](assert) {
+      let routeASource = 'src/ui/routes/route-a/controller';
+      let routeBSource = 'src/ui/routes/route-b/controller';
+
+      this.add('controller:route-a', Controller.extend({
+        myService: inject.service('my-service', { source: routeASource })
+      }));
+
+      this.add('controller:route-b', Controller.extend({
+        myService: inject.service('my-service', { source: routeBSource })
+      }));
+
+      let MyService = Service.extend();
+      this.add({
+        specifier: 'service:my-service',
+        source: routeASource
+      }, MyService);
+
+      this.add({
+        specifier: 'service:my-service',
+        source: routeBSource
+      }, MyService);
+
+      return this.visit('/').then(() => {
+        let controllerA = this.applicationInstance.lookup('controller:route-a');
+        let serviceFromControllerA = controllerA.get('myService');
+        assert.ok(serviceFromControllerA instanceof MyService);
+
+        let controllerB = this.applicationInstance.lookup('controller:route-a');
+        assert.strictEqual(serviceFromControllerA, controllerB.get('myService'));
+      });
+    }
+
+    /*
+     * This test demonstrates a failure in the caching system of ember's
+     * container around singletons and and local lookup. The local lookup
+     * is cached and the global injection is then looked up incorrectly.
+     *
+     * The paractical rules of Ember's module unification config are such
+     * that services cannot be locally looked up, thus this case is really
+     * just a demonstration of what could go wrong if we permit arbitrary
+     * configuration (such as a singleton type that has local lookup).
+     */
+    ['@skip Services can be injected with same name, different source, but same resolution result, and share an instance'](assert) {
+      // This test implies that there is a file src/ui/routes/route-a/-services/my-service
+      let routeASource = 'src/ui/routes/route-a/controller';
+      let routeBSource = 'src/ui/routes/route-b/controller';
+
+      this.add('controller:route-a', Controller.extend({
+        myService: inject.service('my-service', { source: routeASource })
+      }));
+
+      this.add('controller:route-b', Controller.extend({
+        myService: inject.service('my-service', { source: routeBSource })
+      }));
+
+      let LocalLookupService = Service.extend();
+      this.add({
+        specifier: 'service:my-service',
+        source: routeASource
+      }, LocalLookupService);
+
+      let MyService = Service.extend();
+      this.add({
+        specifier: 'service:my-service',
+        source: routeBSource
+      }, MyService);
+
+      return this.visit('/').then(() => {
+        let controllerA = this.applicationInstance.lookup('controller:route-a');
+        let serviceFromControllerA = controllerA.get('myService');
+        assert.ok(serviceFromControllerA instanceof LocalLookupService, 'local lookup service is returned');
+
+        let controllerB = this.applicationInstance.lookup('controller:route-a');
+        let serviceFromControllerB = controllerB.get('myService');
+        assert.ok(serviceFromControllerB instanceof MyService, 'global service is returned');
+      });
+    }
+
+  });
+
 }

@@ -313,12 +313,15 @@ function buildInjections(container, injections) {
       container.registry.validateInjections(injections);
     }
 
-    let injection;
     for (let i = 0; i < injections.length; i++) {
-      injection = injections[i];
-      hash[injection.property] = lookup(container, injection.fullName);
+      let {property, specifier, source} = injections[i];
+      if (source) {
+        hash[property] = lookup(container, specifier, {source});
+      } else {
+        hash[property] = lookup(container, specifier);
+      }
       if (!isDynamic) {
-        isDynamic = !isSingleton(container, injection.fullName);
+        isDynamic = !isSingleton(container, specifier);
       }
     }
   }
@@ -355,12 +358,13 @@ function resetCache(container) {
 }
 
 function resetMember(container, fullName) {
-  let member = container.cache[fullName];
+  let cacheKey = container._resolverCacheKey(fullName);
+  let member = container.cache[cacheKey];
 
-  delete container.factoryManagerCache[fullName];
+  delete container.factoryManagerCache[cacheKey];
 
   if (member) {
-    delete container.cache[fullName];
+    delete container.cache[cacheKey];
 
     if (member.destroy) {
       member.destroy();
