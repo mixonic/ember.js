@@ -150,9 +150,9 @@ export default class Environment extends GlimmerEnvironment {
     return s;
   }
 
-  _resolveLocalLookupName(name: string, source: string, owner: any) {
-    return EMBER_MODULE_UNIFICATION ? `${source}:${name}`
-      : owner._resolveLocalLookupName(name, source);
+  _resolveLocalLookupName(name: string, referrer: string, owner: any) {
+    return EMBER_MODULE_UNIFICATION ? `${referrer}:${name}`
+      : owner._resolveLocalLookupName(name, referrer);
   }
 
   /*

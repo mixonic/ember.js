@@ -424,7 +424,7 @@ moduleFor('Registry', class extends AbstractTestCase{
 
     assert.equal(registry.getTypeInjections('model').length, 0, 'No injections in the primary registry');
 
-    fallback.injection('model', 'source', 'source:main');
+    fallback.injection('model', 'referrer', 'referrer:main');
 
     assert.equal(registry.getTypeInjections('model').length, 1, 'Injections from the fallback registry are merged');
   }
@@ -523,7 +523,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     let result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, null);
@@ -533,10 +533,10 @@ moduleFor('Registry', class extends AbstractTestCase{
     assert.expect(4);
 
     let resolver = {
-      expandLocalLookup: (targetFullName, sourceFullName) => {
+      expandLocalLookup: (targetFullName, referrerFullName) => {
         assert.ok(true, 'expandLocalLookup is called on the resolver');
         assert.equal(targetFullName, 'foo:bar', 'the targetFullName was passed through');
-        assert.equal(sourceFullName, 'baz:qux', 'the sourceFullName was passed through');
+        assert.equal(referrerFullName, 'baz:qux', 'the referrerFullName was passed through');
 
         return 'foo:qux/bar';
       }
@@ -547,7 +547,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     let result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar');
@@ -557,20 +557,20 @@ moduleFor('Registry', class extends AbstractTestCase{
     assert.expect(9);
 
     let fallbackResolver = {
-      expandLocalLookup: (targetFullName, sourceFullName) => {
+      expandLocalLookup: (targetFullName, referrerFullName) => {
         assert.ok(true, 'expandLocalLookup is called on the fallback resolver');
         assert.equal(targetFullName, 'foo:bar', 'the targetFullName was passed through');
-        assert.equal(sourceFullName, 'baz:qux', 'the sourceFullName was passed through');
+        assert.equal(referrerFullName, 'baz:qux', 'the referrerFullName was passed through');
 
         return 'foo:qux/bar-fallback';
       }
     };
 
     let resolver = {
-      expandLocalLookup: (targetFullName, sourceFullName) => {
+      expandLocalLookup: (targetFullName, referrerFullName) => {
         assert.ok(true, 'expandLocalLookup is called on the resolver');
         assert.equal(targetFullName, 'foo:bar', 'the targetFullName was passed through');
-        assert.equal(sourceFullName, 'baz:qux', 'the sourceFullName was passed through');
+        assert.equal(referrerFullName, 'baz:qux', 'the referrerFullName was passed through');
 
         return 'foo:qux/bar-resolver';
       }
@@ -586,7 +586,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     let result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar-resolver', 'handled by the resolver');
@@ -594,7 +594,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     registry.resolver = null;
 
     result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar-fallback', 'handled by the fallback registry');
@@ -602,7 +602,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     registry.fallback = null;
 
     result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, null, 'null is returned by default when no resolver or fallback registry is present');
@@ -625,13 +625,13 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar');
 
     result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar');
@@ -654,7 +654,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar');
@@ -662,21 +662,21 @@ moduleFor('Registry', class extends AbstractTestCase{
     registry.unregister('foo:bar');
 
     result = registry.expandLocalLookup('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.equal(result, 'foo:qux/bar');
   }
 
-  ['@test resolve calls expandLocallookup when it receives options.source'](assert) {
+  ['@test resolve calls expandLocallookup when it receives options.referrer'](assert) {
     assert.expect(3);
 
     let resolver = {
       resolve() { },
-      expandLocalLookup: (targetFullName, sourceFullName) => {
+      expandLocalLookup: (targetFullName, referrerFullName) => {
         assert.ok(true, 'expandLocalLookup is called on the resolver');
         assert.equal(targetFullName, 'foo:bar', 'the targetFullName was passed through');
-        assert.equal(sourceFullName, 'baz:qux', 'the sourceFullName was passed through');
+        assert.equal(referrerFullName, 'baz:qux', 'the referrerFullName was passed through');
 
         return 'foo:qux/bar';
       }
@@ -687,7 +687,7 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     registry.resolve('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
   }
 
@@ -720,13 +720,13 @@ moduleFor('Registry', class extends AbstractTestCase{
     });
 
     result = registry.has('foo:bar', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.ok(result, 'found foo:bar/qux');
 
     result = registry.has('foo:baz', {
-      source: 'baz:qux'
+      referrer: 'baz:qux'
     });
 
     assert.ok(!result, 'foo:baz/qux not found');
@@ -749,24 +749,24 @@ moduleFor('Registry privatize', class extends AbstractTestCase {
 
 if (EMBER_MODULE_UNIFICATION) {
   moduleFor('Registry module unification', class extends AbstractTestCase {
-    ['@test The registry can pass a source to the resolver'](assert) {
+    ['@test The registry can pass a referrer to the resolver'](assert) {
       let PrivateComponent = factory();
       let type = 'component';
       let name = 'my-input';
       let specifier = `${type}:${name}`;
-      let source = 'template:routes/application';
+      let referrer = 'template:routes/application';
 
       let resolver = new ModuleBasedTestResolver();
-      resolver.add({specifier, source}, PrivateComponent);
+      resolver.add({specifier, referrer}, PrivateComponent);
       let registry = new Registry({ resolver });
 
       assert.strictEqual(
-        registry.resolve(specifier, { source }),
+        registry.resolve(specifier, { referrer }),
         PrivateComponent,
         'The correct factory was provided'
       );
       assert.strictEqual(
-        registry.resolve(specifier, { source }),
+        registry.resolve(specifier, { referrer }),
         PrivateComponent,
         'The correct factory was provided again'
       );

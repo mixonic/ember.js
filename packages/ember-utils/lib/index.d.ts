@@ -20,7 +20,7 @@ export interface Owner {
   hasRegistration(name: string, options?: LookupOptions): boolean;
 
   // maybe not needed, we were only using for cache key
-  _resolveLocalLookupName(name: string, source: string): any;
+  _resolveLocalLookupName(name: string, referrer: string): any;
 }
 
 export const NAME_KEY: string;

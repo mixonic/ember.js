@@ -85,7 +85,7 @@ export default class Container {
    @method lookup
    @param {String} fullName
    @param {Object} [options]
-   @param {String} [options.source] The fullname of the request source (used for local lookup)
+   @param {String} [options.referrer] The fullname of the request referrer (used for local lookup)
    @return {any}
    */
   lookup(fullName, options) {
@@ -143,7 +143,7 @@ export default class Container {
    @method factoryFor
    @param {String} fullName
    @param {Object} [options]
-   @param {String} [options.source] The fullname of the request source (used for local lookup)
+   @param {String} [options.referrer] The fullname of the request referrer (used for local lookup)
    @return {any}
    */
   factoryFor(fullName, options = {}) {
@@ -151,7 +151,7 @@ export default class Container {
 
     assert('fullName must be a proper full name', this.registry.isValidFullName(normalizedName));
 
-    if (options.source) {
+    if (options.referrer) {
       let expandedFullName = this.registry.expandLocalLookup(fullName, options);
       // if expandLocalLookup returns falsey, we do not support local lookup
       if (!EMBER_MODULE_UNIFICATION) {
@@ -162,7 +162,7 @@ export default class Container {
         normalizedName = expandedFullName;
       } else if (expandedFullName) {
         // with ember-module-unification, if expandLocalLookup returns something,
-        // pass it to the resolve without the source
+        // pass it to the resolve without the referrer
         normalizedName = expandedFullName;
         options = {};
       }
@@ -232,7 +232,7 @@ function isInstantiatable(container, fullName) {
 }
 
 function lookup(container, fullName, options = {}) {
-  if (options.source) {
+  if (options.referrer) {
     let expandedFullName = container.registry.expandLocalLookup(fullName, options);
 
     if (!EMBER_MODULE_UNIFICATION) {
@@ -244,7 +244,7 @@ function lookup(container, fullName, options = {}) {
       fullName = expandedFullName;
     } else if (expandedFullName) {
       // with ember-module-unification, if expandLocalLookup returns something,
-      // pass it to the resolve without the source
+      // pass it to the resolve without the referrer
       fullName = expandedFullName;
       options = {};
     }
@@ -278,7 +278,7 @@ function isFactoryInstance(container, fullName, { instantiate, singleton }) {
 }
 
 function instantiateFactory(container, fullName, options) {
-  let factoryManager = EMBER_MODULE_UNIFICATION && options && options.source ? container.factoryFor(fullName, options) : container.factoryFor(fullName);
+  let factoryManager = EMBER_MODULE_UNIFICATION && options && options.referrer ? container.factoryFor(fullName, options) : container.factoryFor(fullName);
 
   if (factoryManager === undefined) {
     return;

@@ -220,7 +220,7 @@ export default class Registry {
    @method resolve
    @param {String} fullName
    @param {Object} [options]
-   @param {String} [options.source] the fullname of the request source (used for local lookups)
+   @param {String} [options.referrer] the fullname of the request referrer (used for local lookups)
    @return {Function} fullName's factory
    */
   resolve(fullName, options) {
@@ -313,7 +313,7 @@ export default class Registry {
    @method has
    @param {String} fullName
    @param {Object} [options]
-   @param {String} [options.source] the fullname of the request source (used for local lookups)
+   @param {String} [options.referrer] the fullname of the request referrer (used for local lookups)
    @return {Boolean}
    */
   has(fullName, options) {
@@ -321,9 +321,9 @@ export default class Registry {
       return false;
     }
 
-    let source = options && options.source && this.normalize(options.source);
+    let referrer = options && options.referrer && this.normalize(options.referrer);
 
-    return has(this, this.normalize(fullName), source);
+    return has(this, this.normalize(fullName), referrer);
   }
 
   /**
@@ -470,7 +470,7 @@ export default class Registry {
    let registry = new Registry();
    let container = registry.container();
 
-   registry.register('source:main', Source);
+   registry.register('referrer:main', Referrer);
    registry.register('model:user', User);
    registry.register('model:post', Post);
 
@@ -479,18 +479,18 @@ export default class Registry {
    registry.injection('model:user', 'post', 'model:post');
 
    // injecting one fullName on another type
-   registry.injection('model', 'source', 'source:main');
+   registry.injection('model', 'referrer', 'referrer:main');
 
    let user = container.lookup('model:user');
    let post = container.lookup('model:post');
 
-   user.source instanceof Source; //=> true
-   post.source instanceof Source; //=> true
+   user.referrer instanceof Referrer; //=> true
+   post.referrer instanceof Referrer; //=> true
 
    user.post instanceof Post; //=> true
 
-   // and both models share the same source
-   user.source === post.source; //=> true
+   // and both models share the same referrer
+   user.referrer === post.referrer; //=> true
    ```
 
    @private
@@ -571,37 +571,37 @@ export default class Registry {
       return name;
     }
 
-    return (options && options.source) ? `${options.source}:${name}` : name;
+    return (options && options.referrer) ? `${options.referrer}:${name}` : name;
   }
 
   /**
-   Given a fullName and a source fullName returns the fully resolved
+   Given a fullName and a referrer fullName returns the fully resolved
    fullName. Used to allow for local lookup.
 
    ```javascript
    let registry = new Registry();
 
    // the twitter factory is added to the module system
-   registry.expandLocalLookup('component:post-title', { source: 'template:post' }) // => component:post/post-title
+   registry.expandLocalLookup('component:post-title', { referrer: 'template:post' }) // => component:post/post-title
    ```
 
    @private
    @method expandLocalLookup
    @param {String} fullName
    @param {Object} [options]
-   @param {String} [options.source] the fullname of the request source (used for local lookups)
+   @param {String} [options.referrer] the fullname of the request referrer (used for local lookups)
    @return {String} fullName
    */
   expandLocalLookup(fullName, options) {
     if (this.resolver !== null && this.resolver.expandLocalLookup) {
       assert('fullName must be a proper full name', this.isValidFullName(fullName));
-      assert('options.source must be provided to expandLocalLookup', options && options.source);
-      assert('options.source must be a proper full name', this.isValidFullName(options.source));
+      assert('options.referrer must be provided to expandLocalLookup', options && options.referrer);
+      assert('options.referrer must be a proper full name', this.isValidFullName(options.referrer));
 
       let normalizedFullName = this.normalize(fullName);
-      let normalizedSource = this.normalize(options.source);
+      let normalizedReferrer = this.normalize(options.referrer);
 
-      return expandLocalLookup(this, normalizedFullName, normalizedSource);
+      return expandLocalLookup(this, normalizedFullName, normalizedReferrer);
     } else if (this.fallback !== null) {
       return this.fallback.expandLocalLookup(fullName, options);
     } else {
@@ -650,7 +650,7 @@ if (DEBUG) {
   };
 }
 
-function expandLocalLookup(registry, normalizedName, normalizedSource) {
+function expandLocalLookup(registry, normalizedName, normalizedReferrer) {
   let cache = registry._localLookupCache;
   let normalizedNameCache = cache[normalizedName];
 
@@ -658,19 +658,19 @@ function expandLocalLookup(registry, normalizedName, normalizedSource) {
     normalizedNameCache = cache[normalizedName] = Object.create(null);
   }
 
-  let cached = normalizedNameCache[normalizedSource];
+  let cached = normalizedNameCache[normalizedReferrer];
 
   if (cached !== undefined) { return cached; }
 
-  let expanded = registry.resolver.expandLocalLookup(normalizedName, normalizedSource);
+  let expanded = registry.resolver.expandLocalLookup(normalizedName, normalizedReferrer);
 
-  return normalizedNameCache[normalizedSource] = expanded;
+  return normalizedNameCache[normalizedReferrer] = expanded;
 }
 
 function resolve(registry, normalizedName, options) {
-  if (options && options.source) {
-    // when `source` is provided expand normalizedName
-    // and source into the full normalizedName
+  if (options && options.referrer) {
+    // when `referrer` is provided expand normalizedName
+    // and referrer into the full normalizedName
     let expandedNormalizedName = registry.expandLocalLookup(normalizedName, options);
 
     // if expandLocalLookup returns falsey, we do not support local lookup
@@ -682,7 +682,7 @@ function resolve(registry, normalizedName, options) {
       normalizedName = expandedNormalizedName;
     } else if (expandedNormalizedName) {
       // with ember-module-unification, if expandLocalLookup returns something,
-      // pass it to the resolve without the source
+      // pass it to the resolve without the referrer
       normalizedName = expandedNormalizedName;
       options = {};
     }
@@ -696,7 +696,7 @@ function resolve(registry, normalizedName, options) {
   let resolved;
 
   if (registry.resolver) {
-    resolved = registry.resolver.resolve(normalizedName, options && options.source);
+    resolved = registry.resolver.resolve(normalizedName, options && options.referrer);
   }
 
   if (resolved === undefined) {
@@ -712,8 +712,8 @@ function resolve(registry, normalizedName, options) {
   return resolved;
 }
 
-function has(registry, fullName, source) {
-  return registry.resolve(fullName, { source }) !== undefined;
+function has(registry, fullName, referrer) {
+  return registry.resolve(fullName, { referrer }) !== undefined;
 }
 
 const privateNames = dictionary(null);

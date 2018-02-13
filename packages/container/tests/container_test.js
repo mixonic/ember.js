@@ -449,12 +449,12 @@ moduleFor('Container', class extends AbstractTestCase {
     registry.expandLocalLookup = (fullName, options) => {
       assert.ok(true, 'expandLocalLookup was called');
       assert.equal(fullName, 'foo:bar');
-      assert.deepEqual(options, { source: 'baz:qux' });
+      assert.deepEqual(options, { referrer: 'baz:qux' });
 
       return 'controller:post';
     };
 
-    let PostControllerLookupResult = container.lookup('foo:bar', { source: 'baz:qux' });
+    let PostControllerLookupResult = container.lookup('foo:bar', { referrer: 'baz:qux' });
 
     assert.ok(PostControllerLookupResult instanceof PostController);
   }
@@ -640,44 +640,44 @@ if (EMBER_MODULE_UNIFICATION) {
   QUnit.module('Container module unification');
 
   moduleFor('Container module unification', class extends AbstractTestCase {
-    ['@test The container can pass a source to factoryFor'](assert) {
+    ['@test The container can pass a referrer to factoryFor'](assert) {
       let PrivateComponent = factory();
       let lookup = 'component:my-input';
-      let expectedSource = 'template:routes/application';
+      let expectedReferrer = 'template:routes/application';
       let registry = new Registry();
       let resolveCount = 0;
-      registry.resolve = function(fullName, { source }) {
+      registry.resolve = function(fullName, { referrer }) {
         resolveCount++;
-        if (fullName === lookup && source === expectedSource) {
+        if (fullName === lookup && referrer === expectedReferrer) {
           return PrivateComponent;
         }
       };
 
       let container = registry.container();
 
-      assert.strictEqual(container.factoryFor(lookup, { source: expectedSource }).class, PrivateComponent, 'The correct factory was provided');
-      assert.strictEqual(container.factoryFor(lookup, { source: expectedSource }).class, PrivateComponent, 'The correct factory was provided again');
+      assert.strictEqual(container.factoryFor(lookup, { referrer: expectedReferrer }).class, PrivateComponent, 'The correct factory was provided');
+      assert.strictEqual(container.factoryFor(lookup, { referrer: expectedReferrer }).class, PrivateComponent, 'The correct factory was provided again');
       assert.equal(resolveCount, 1, 'resolve called only once and a cached factory was returned the second time');
     }
 
-    ['@test The container can pass a source to lookup']() {
+    ['@test The container can pass a referrer to lookup']() {
       let PrivateComponent = factory();
       let lookup = 'component:my-input';
-      let expectedSource = 'template:routes/application';
+      let expectedReferrer = 'template:routes/application';
       let registry = new Registry();
-      registry.resolve = function(fullName, { source }) {
-        if (fullName === lookup && source === expectedSource) {
+      registry.resolve = function(fullName, { referrer }) {
+        if (fullName === lookup && referrer === expectedReferrer) {
           return PrivateComponent;
         }
       };
 
       let container = registry.container();
 
-      let result = container.lookup(lookup, { source: expectedSource });
+      let result = container.lookup(lookup, { referrer: expectedReferrer });
       this.assert.ok(result instanceof PrivateComponent, 'The correct factory was provided');
 
       this.assert.ok(container.cache[`template:routes/application:component:my-input`] instanceof PrivateComponent,
-        'The correct factory was stored in the cache with the correct key which includes the source.');
+        'The correct factory was stored in the cache with the correct key which includes the referrer.');
     }
   });
 }

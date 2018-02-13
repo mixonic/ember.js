@@ -198,20 +198,20 @@ class LocalLookupTest extends RenderingTest {
 function buildResolver() {
   let resolver = {
     resolve() { },
-    expandLocalLookup(fullName, sourceFullName) {
-      let [sourceType, sourceName ] = sourceFullName.split(':');
+    expandLocalLookup(fullName, referrerFullName) {
+      let [referrerType, referrerName ] = referrerFullName.split(':');
       let [type, name ] = fullName.split(':');
 
-      if (type !== 'template' && sourceType === 'template' && sourceName.slice(0, 11) === 'components/') {
-        sourceName = sourceName.slice(11);
+      if (type !== 'template' && referrerType === 'template' && referrerName.slice(0, 11) === 'components/') {
+        referrerName = referrerName.slice(11);
       }
 
-      if (type === 'template' && sourceType === 'template' && name.slice(0, 11) === 'components/') {
+      if (type === 'template' && referrerType === 'template' && name.slice(0, 11) === 'components/') {
         name = name.slice(11);
       }
 
 
-      let result = `${type}:${sourceName}/${name}`;
+      let result = `${type}:${referrerName}/${name}`;
 
       return result;
     }
@@ -234,8 +234,8 @@ if (EMBER_MODULE_UNIFICATION) {
       if (referrer) {
         let namespace = referrer.split('template:components/')[1];
         if (specifier.indexOf('template:components/') !== -1) {
-            let name = specifier.split('template:components/')[1];
-            fullSpecifier = `template:components/${namespace}/${name}`;
+          let name = specifier.split('template:components/')[1];
+          fullSpecifier = `template:components/${namespace}/${name}`;
         } else if (specifier.indexOf(':') !== -1) {
           let [type, name] = specifier.split(':');
           fullSpecifier = `${type}:${namespace}/${name}`;
@@ -260,7 +260,7 @@ if (EMBER_MODULE_UNIFICATION) {
     }
 
     getResolver() {
-      return new LocalLookupTestResolver();
+      return new ModuleBasedTestResolver();
     }
 
     registerComponent(name, { ComponentClass = Component, template = null }) {

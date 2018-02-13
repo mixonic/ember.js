@@ -97,17 +97,17 @@ let containerProxyMixin = {
   },
 
   /**
-   Given a name and a source path, resolve the fullName
+   Given a name and a referrer path, resolve the fullName
 
    @private
    @method _resolveLocalLookupName
    @param {String} fullName
-   @param {String} source
+   @param {String} referrer
    @return {String}
    */
-  _resolveLocalLookupName(name, source) {
+  _resolveLocalLookupName(name, referrer) {
     return this.__container__.registry.expandLocalLookup(`component:${name}`, {
-      source
+      referrer
     });
   },
 
