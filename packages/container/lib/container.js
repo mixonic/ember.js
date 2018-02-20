@@ -29,7 +29,9 @@ export default class Container {
     this.registry        = registry;
     this.owner           = options.owner || null;
     this.cache           = dictionary(options.cache || null);
+    this.instancesByFactoryManagerCache = new WeakMap();
     this.factoryManagerCache = dictionary(options.factoryManagerCache || null);
+    this.factoryManagerByFactoryCache = new WeakMap();
     this.isDestroyed = false;
 
     if (DEBUG) {
@@ -183,10 +185,22 @@ export default class Container {
       factory._onLookup(fullName);
     }
 
-    let manager = new FactoryManager(this, factory, fullName, normalizedName);
+    let manager;
 
-    if (DEBUG) {
-      manager = wrapManagerInDeprecationProxy(manager);
+    if (factory) {
+      manager = this.factoryManagerByFactoryCache.get(factory);
+    }
+
+    if (!manager) {
+      manager = new FactoryManager(this, factory, fullName, normalizedName);
+
+      if (DEBUG) {
+        manager = wrapManagerInDeprecationProxy(manager);
+      }
+
+      if (factory) {
+        this.factoryManagerByFactoryCache.set(factory, manager);
+      }
     }
 
     this.factoryManagerCache[cacheKey] = manager;
@@ -287,8 +301,14 @@ function instantiateFactory(container, fullName, options) {
   // SomeClass { singleton: true, instantiate: true } | { singleton: true } | { instantiate: true } | {}
   // By default majority of objects fall into this case
   if (isSingletonInstance(container, fullName, options)) {
+    let instance = container.instancesByFactoryManagerCache.get(factoryManager);
+    if (!instance) {
+      instance = factoryManager.create();
+      container.instancesByFactoryManagerCache.set(factoryManager, instance);
+    }
     let cacheKey = container._resolverCacheKey(fullName, options);
-    return container.cache[cacheKey] = factoryManager.create();
+    container.cache[cacheKey] = instance;
+    return instance;
   }
 
   // SomeClass { singleton: false, instantiate: true }
@@ -345,7 +365,7 @@ function destroyDestroyables(container) {
     let key = keys[i];
     let value = cache[key];
 
-    if (value.destroy) {
+    if (value.destroy && !value.isDestroyed) {
       value.destroy();
     }
   }
@@ -354,14 +374,20 @@ function destroyDestroyables(container) {
 function resetCache(container) {
   destroyDestroyables(container);
   container.cache = dictionary(null);
+  container.instancesByFactoryManagerCache = new WeakMap();
   container.factoryManagerCache = dictionary(null);
+  container.factoryManagerByFactoryCache = new WeakMap();
 }
 
 function resetMember(container, fullName) {
   let cacheKey = container._resolverCacheKey(fullName);
   let member = container.cache[cacheKey];
 
+  let factoryManager = container.factoryManagerCache[cacheKey];
   delete container.factoryManagerCache[cacheKey];
+
+  container.factoryManagerByFactoryCache.remove(factoryManager.class);
+  container.instancesByFactoryManagerCache.remove(factoryManager);
 
   if (member) {
     delete container.cache[cacheKey];

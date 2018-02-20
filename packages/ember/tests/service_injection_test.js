@@ -107,7 +107,7 @@ if (EMBER_MODULE_UNIFICATION) {
      * just a demonstration of what could go wrong if we permit arbitrary
      * configuration (such as a singleton type that has local lookup).
      */
-    ['@skip Services can be injected with same name, different source, but same resolution result, and share an instance'](assert) {
+    ['@test Services can be injected with same name, different source, but same resolution result, and share an instance'](assert) {
       // This test implies that there is a file src/ui/routes/route-a/-services/my-service
       let routeASource = 'src/ui/routes/route-a/controller';
       let routeBSource = 'src/ui/routes/route-b/controller';

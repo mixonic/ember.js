@@ -500,14 +500,16 @@ moduleFor('Container', class extends AbstractTestCase {
     let container = registry.container();
 
     let Component = factory();
+    let ComponentB = factory();
     registry.register('component:foo-bar', Component);
-    registry.register('component:baz-bar', Component);
+    registry.register('component:baz-bar', ComponentB);
 
     let factoryManager1 = container.factoryFor('component:foo-bar');
     let factoryManager2 = container.factoryFor('component:foo-bar');
-    let factoryManager3 = container.factoryFor('component:baz-bar');
 
-    assert.equal(factoryManager1, factoryManager2, 'cache hit');
+    assert.strictEqual(factoryManager1, factoryManager2, 'cache hit');
+
+    let factoryManager3 = container.factoryFor('component:baz-bar');
     assert.notEqual(factoryManager1, factoryManager3, 'cache miss');
   }
 

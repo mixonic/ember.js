@@ -130,7 +130,7 @@ moduleFor('ApplicationInstance', class extends TestCase {
 
     appInstance.register('controller:post', PostController1);
 
-    let postController1 = appInstance.lookup('controller:post');
+    appInstance.lookup('controller:post');
     let postControllerLookupWithSource = appInstance.lookup('controller:post', {source: 'doesnt-even-matter'});
 
     appInstance.unregister('controller:post');
